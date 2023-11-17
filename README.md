@@ -1,71 +1,61 @@
 # LinkeXtractor
 
+## User Stories
+| User Story | Beschrijving | Acceptatiecriteria                                                                                                                                                                                      |
+|------------|--------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Annoteren van Wetteksten met Labels** | Als jurist wil ik wetteksten kunnen annoteren met labels op basis van het kleurenmodel van het juridisch analyseschema. | - Mogelijkheid om tekst in de wet te selecteren en te labelen.<br>- Labels corresponderen met het kleurenmodel van het juridisch analyseschema.<br>- Verschillende labels toepasbaar op dezelfde tekst. |
+| **Toevoegen van Optioneel Commentaar bij Labels** | Als jurist wil ik optioneel commentaar kunnen toevoegen bij labels. | - Mogelijkheid om commentaar te schrijven bij elk label.<br>- Commentaarveld is optioneel.<br>- Commentaar is zichtbaar voor alle gebruikers.                                                           |
+| **Vastleggen van Relaties tussen Labels** | Als jurist wil ik relaties kunnen vastleggen tussen verschillende labels. | - Mogelijkheid om relaties te creëren tussen twee of meer labels.<br>- Aangeven van het type relatie (bijv. tegenstelling, overeenkomst).<br>- Relaties zijn visueel onderscheidbaar.                   |
+| **Definiëren en Hergebruiken van Begrippen** | Als jurist wil ik begrippen kunnen definiëren en/of reeds vastgelegde begrippen kunnen hergebruiken. | - Functie om nieuwe begrippen te definiëren.<br>- Toegang tot bibliotheek van gedefinieerde begrippen.<br>- Gemakkelijk in te voegen begrippen in annotaties en labels.                                 |
+| **Vastleggen van Metadata** | Als jurist wil ik metadata kunnen vastleggen bij annotaties. | - Mogelijkheid om metadata toe te voegen aan annotaties.<br>- Metadata bestaat uit: datum, auteur, titel, bron, versie.<br>- Metadata is zichtbaar voor alle gebruikers.                                |
+| **Exporteren van Annotaties** | Als jurist wil ik annotaties kunnen exporteren naar een bestand. | - Mogelijkheid om annotaties te exporteren naar een bestand.<br>- Bestand is in een leesbaar formaat (bijv. JSON).<br>- Bestand bevat alle annotaties en metadata.                                      |
 
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.fdmci.hva.nl/se-specialization-2023-1/projects-io/bamischijf/linkextractor.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.fdmci.hva.nl/se-specialization-2023-1/projects-io/bamischijf/linkextractor/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
 
 ## Name
-Choose a self-explaining name for your project.
+LinkeXtractor
 
 ## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+De LinkeXtractor is software die juridische citaties in tekstdocumenten herkent en deze dan omzet
+naar gestandaardiseerde identifiers. Deze identifiers kunnen vervolgens worden gebruikt in
+hyperlinks of worden opgeslagen voor verder gebruik. De LinkeXtractor herkent (Nederlandse en
+Europese) rechterlijke uitspraken, wetten en wetsartikelen, parlementaire documenten en Europese
+regelgeving, zowel aan de hand van titels, afkortingen en roepnamen, als door middel van een brede
+variatie aan documentnummers en vindplaatsaanduidingen.
+De LinkeXtractor is tussen 2014 en 2017 ontwikkeld door het Kennis- en Exploitatiecentrum Officiële
+Overheidspublicaties (KOOP), in samenwerking met de Raad voor de rechtspraak en het Ministerie
+van Financiën, en wordt op dit moment onder meer gebruikt voor het detecteren van verwijzingen
+in de rechterlijke uitspraken die worden gepubliceerd op Rechtspraak.nl.
+De van hyperlinks voorziene uitspraken zijn toegankelijk op linkeddata.overheid.nl (de ‘LiDO-
+website’) en via een deeplink ook toegankelijk vanaf de uitsprakendatabank van Rechtspraak.nl.
+De miljoenen links die inmiddels zijn gevonden kunnen op de LiDO-website worden geraadpleegd;
+ook vanaf wetten.overheid.nl kunnen bij ieder wetsartikel rechtstreeks de gerelateerde documenten
+worden opgevraagd, waaronder de rechterlijke uitspraken waarin het wetsartikel voorkomt.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## Overzicht Tech Stack
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### Frontend
+- **Framework:** SvelteKit
+    - Beschrijving: Een framework voor het bouwen van webapplicaties, gericht op eenvoud en snelheid.
+- **Programmeertaal:** TypeScript
+    - Beschrijving: Een getypeerde superset van JavaScript.
 
+### Styling
+- **CSS Framework:** TailwindCSS
+    - Beschrijving: Een utility-first CSS framework. 
+
+### Testen
+- **Test Framework:** Vitest
+    - Beschrijving: Een Vite-native testframework, werkt direct met Vite/SvelteKit projecten.
+
+### Backend (Optie voor Database)
+- **PostgreSQL**
+    - Beschrijving: Een open-source relationele database met een sterke reputatie voor betrouwbaarheid, functionaliteit en prestaties. Goed geschikt voor schaalbare en veilige toepassingen.
+### Deployment
+- **Opties:** Deployment services zoals Vercel, Netlify of AWS. AWS is de veiligste optie denk ik?
+
+
+***
 ## Usage
 Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
