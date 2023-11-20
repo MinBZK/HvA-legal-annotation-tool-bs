@@ -1,63 +1,29 @@
 # LinkeXtractor
 
-## Project Omschrijving
-De LinkeXtractor is software die juridische citaties in tekstdocumenten herkent en deze dan omzet
-naar gestandaardiseerde identifiers. Deze identifiers kunnen vervolgens worden gebruikt in
-hyperlinks of worden opgeslagen voor verder gebruik. De LinkeXtractor herkent (Nederlandse en
-Europese) rechterlijke uitspraken, wetten en wetsartikelen, parlementaire documenten en Europese
-regelgeving, zowel aan de hand van titels, afkortingen en roepnamen, als door middel van een brede
-variatie aan documentnummers en vindplaatsaanduidingen.
-De LinkeXtractor is tussen 2014 en 2017 ontwikkeld door het Kennis- en Exploitatiecentrum Officiële
-Overheidspublicaties (KOOP), in samenwerking met de Raad voor de rechtspraak en het Ministerie
-van Financiën, en wordt op dit moment onder meer gebruikt voor het detecteren van verwijzingen
-in de rechterlijke uitspraken die worden gepubliceerd op Rechtspraak.nl.
-De van hyperlinks voorziene uitspraken zijn toegankelijk op linkeddata.overheid.nl (de ‘LiDO-
-website’) en via een deeplink ook toegankelijk vanaf de uitsprakendatabank van Rechtspraak.nl.
-De miljoenen links die inmiddels zijn gevonden kunnen op de LiDO-website worden geraadpleegd;
-ook vanaf wetten.overheid.nl kunnen bij ieder wetsartikel rechtstreeks de gerelateerde documenten
-worden opgevraagd, waaronder de rechterlijke uitspraken waarin het wetsartikel voorkomt.
+## Project Description
+The LinkeXtractor is software developed between 2014 and 2017 that identifies legal citations in text documents and converts them into standardized identifiers. It is used for recognizing references in Dutch and European legal documents, including judicial rulings and laws. The software is employed by various government entities, including the Council for the Judiciary and the Ministry of Finance.
 
-## Overzicht Tech Stack
+The previous software that was used by MinBZK, LinkeXtractor, was created between 2014 and 2017 and has since fallen behind in technological ways. Thus the MinBZK desires to convert this system to an Open-Source approach, with hopefully newer methods.
+
+## Overview Tech Stack
 
 ### Front-end
 - **Framework:** SvelteKit
-    - Beschrijving: Een framework voor het bouwen van webapplicaties, gericht op eenvoud en snelheid.
+    - Description: A framework for building web applications, focused on simplicity and speed.
 - **Programmeertaal:** TypeScript
-    - Beschrijving: Een getypeerde superset van JavaScript.
+    - Description: A typed superset of JavaScript.
 
 ### Styling
 - **CSS Framework:** TailwindCSS
-    - Beschrijving: Een utility-first CSS framework. 
+    - Description: An utility-first CSS framework.
 
 ### Testen
 - **Test Framework:** Vitest
-    - Beschrijving: Een Vite-native testframework, werkt direct met Vite/SvelteKit projecten.
+    - Description: A Vite-native testframework, works directly with Vite/SvelteKit projects.
 
 ### Backend (Optie voor Database)
 - **PostgreSQL**
-    - Beschrijving: Een open-source relationele database met een sterke reputatie voor betrouwbaarheid, functionaliteit en prestaties. Goed geschikt voor schaalbare en veilige toepassingen.
+    - Description: An open-source relational database with a strong reputation for reliability, functionality and performance. Well suited for scalable and secure applications.
+
 ### Deployment
-- **Opties:** Deployment services zoals Vercel, Netlify of AWS. AWS is de veiligste optie denk ik?
-
-## User Stories
-| User Story | Beschrijving | Acceptatiecriteria                                                                                                                                                                                      |
-|------------|--------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Annoteren van Wetteksten met Labels** | Als jurist wil ik wetteksten kunnen annoteren met labels op basis van het kleurenmodel van het juridisch analyseschema. | - Mogelijkheid om tekst in de wet te selecteren en te labelen.<br>- Labels corresponderen met het kleurenmodel van het juridisch analyseschema.<br>- Verschillende labels toepasbaar op dezelfde tekst. |
-| **Toevoegen van Commentaar bij Labels** | Als jurist wil ik commentaar kunnen toevoegen bij labels. | - Mogelijkheid om commentaar te schrijven bij elk label.<br>- Commentaarveld is optioneel.<br>- Commentaar is zichtbaar voor alle gebruikers.                                                           |
-| **Vastleggen van Relaties tussen Labels** | Als jurist wil ik relaties kunnen vastleggen tussen verschillende labels. | - Mogelijkheid om relaties te creëren tussen twee of meer labels.<br>- Aangeven van het type relatie (bijv. tegenstelling, overeenkomst).<br>- Relaties zijn visueel onderscheidbaar.                   |
-| **Definiëren en Hergebruiken van Begrippen** | Als jurist wil ik begrippen kunnen definiëren en/of reeds vastgelegde begrippen kunnen hergebruiken. | - Functie om nieuwe begrippen te definiëren.<br>- Toegang tot bibliotheek van gedefinieerde begrippen.<br>- Gemakkelijk in te voegen begrippen in annotaties en labels.                                 |
-| **Vastleggen van Metadata** | Als jurist wil ik metadata kunnen vastleggen bij annotaties. | - Mogelijkheid om metadata toe te voegen aan annotaties.<br>- Metadata bestaat uit: datum, auteur, titel, bron, versie.<br>- Metadata is zichtbaar voor alle gebruikers.                                |
-| **Exporteren van Annotaties** | Als jurist wil ik annotaties kunnen exporteren naar een bestand. | - Mogelijkheid om annotaties te exporteren naar een bestand.<br>- Bestand is in een leesbaar formaat (bijv. JSON).<br>- Bestand bevat alle annotaties en metadata.                                      |
-
-
-## Roadmap (Gant chart?)
-
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+- **Opties:** Deployment services like Vercel, Netlify of AWS. AWS is the safest option.
