@@ -6,7 +6,7 @@
 </script>
 
 
-<div class="container">
+<div class="mx-10">
     <UploadFile on:fileUploaded={e => fileContent = e.detail} />
     <AnnotationView fileContent={fileContent} />
 </div>

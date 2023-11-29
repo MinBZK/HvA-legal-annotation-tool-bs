@@ -36,7 +36,7 @@
 
 <!--TODO: After converting to JSON or HTML, remove contenteditable-->
 {#if formattedContent}
-    <div class="annotation-view" bind:innerHTML={formattedContent} contenteditable></div>
+    <div class="annotation-view h-[85vh] w-1/2 relative mt-5 mb-10" bind:innerHTML ={formattedContent} contenteditable="false"></div>
     {:else}
     <p>No File Uploaded.</p>
 {/if}
