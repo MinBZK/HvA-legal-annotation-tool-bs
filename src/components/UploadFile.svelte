@@ -3,14 +3,17 @@
 
     const dispatch = createEventDispatcher();
 
-    async function handleFileChange(event: any) {
-        const file = event.target.files[0];
+    async function handleFileChange(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const file = input.files ? input.files[0] : null;
         if (file && file.type === "text/xml") {
             const reader = new FileReader();
-            reader.onload = (e: any) => {
-                const fileContent = e.target.result;
-                localStorage.setItem("uploadedXML", fileContent);
-                dispatch("fileUploaded", e.target.result);
+            reader.onload = (e: ProgressEvent<FileReader>) => {
+                if (e.target && e.target.result) {
+                    const fileContent = e.target.result as string;
+                    localStorage.setItem("uploadedXML", fileContent);
+                    dispatch("fileUploaded", fileContent);
+                }
             };
             reader.readAsText(file);
         } else {
