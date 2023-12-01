@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher} from "svelte";
+    import { createEventDispatcher } from "svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -17,9 +17,18 @@
             };
             reader.readAsText(file);
         } else {
-            alert("Please upload a valid XML file.");
+            alert("AUB alleen een .xml bestand uploaden.");
         }
     }
 </script>
 
-<input type="file" accept=".xml" on:change={handleFileChange} />
+<div>
+    <h2 class="text-xl font-bold mb-5">1. Upload bestand:</h2>
+    <div class="flex flex-col items-center justify-center rounded-2xl p-2 mb-4">
+        <div>
+            <input type="file" class="" on:change={handleFileChange} />
+        </div>
+    </div>
+    <hr/>
+</div>
+
