@@ -6,12 +6,14 @@
     onMount(() => {
         let contentToDisplay = fileContent;
 
+        // If no file content is passed, check if there is a file in local storage
         if (!contentToDisplay) {
             const storedContent = localStorage.getItem('uploadedXML');
             if(storedContent) {
                 contentToDisplay = storedContent;
             }
         }
+        // If there is content to display, format it
         if (contentToDisplay) {
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(contentToDisplay, 'text/xml');
@@ -20,6 +22,7 @@
         }
     })
 
+    // Convert XML tags to divs
     function convertXMLTagsToDiv(xmlDoc: Document) {
         xmlDoc.querySelectorAll('kop').forEach((el: any) => {
             const div = document.createElement('div');
@@ -33,7 +36,10 @@
             div.innerHTML = el.innerHTML;
             el?.parentNode.replaceChild(div, el);
         });
-        xmlDoc.querySelectorAll("intitule, aanhef,bwb-inputbestand,redactionele-correcties,citeertitel").forEach((el: Element) => {
+        // Remove all tags that should not be displayed
+        //TODO: find a way to keep the content of these tags for exporting
+        xmlDoc.querySelectorAll("intitule,aanhef,bwb-inputbestand,redactionele-correcties,citeertitel")
+            .forEach((el: Element) => {
             el.remove();
         });
     }
