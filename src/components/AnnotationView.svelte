@@ -45,8 +45,9 @@
     }
 </script>
 
-<div>
-    <h2 class="text-3xl font-bold mb-5">Annoteer:</h2>
+<div class="border border-gray-200 p-4 rounded-lg">
+    <h2 class="text-xl font-bold mb-5">Annoteer:</h2>
+    <hr>
     {#if formattedContent}
         <div class="annotation-view h-[80vh] w-[750px] relative mt-5 mb-10" bind:innerHTML={formattedContent} contenteditable="false"></div>
     {:else}
@@ -59,10 +60,8 @@
         font-family: 'Inter', sans-serif;
         white-space: pre-line;
         overflow-x: auto;
-        background-color: #f4f4f4;
         padding: 1em;
         border-radius: 8px;
-        border: 1px solid #ccc;
         list-style-type: none;
     }
 </style>

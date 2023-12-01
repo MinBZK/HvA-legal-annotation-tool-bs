@@ -23,11 +23,12 @@
 </script>
 
 <div>
-    <h2 class="text-3xl font-bold mb-5">Upload:</h2>
-    <div class="flex flex-col items-center justify-center border-dashed border-gray-300 rounded-2xl p-2 border-2">
+    <h2 class="text-xl font-bold mb-5">1. Upload bestand:</h2>
+    <div class="flex flex-col items-center justify-center rounded-2xl p-2 mb-4">
         <div>
-            <input type="file" class="file:mr-4 file:py-2 file:px-4" on:change={handleFileChange} />
+            <input type="file" class="" on:change={handleFileChange} />
         </div>
     </div>
+    <hr/>
 </div>
 
