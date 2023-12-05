@@ -1,6 +1,7 @@
-# LinkeXtractor
+# Open-Source Legal Annotation Tool
 
 ## Project Description
+This software is based on the previously developed LinkeXtractor.
 The LinkeXtractor is software developed between 2014 and 2017 that identifies legal citations in text documents and converts them into standardized identifiers. It is used for recognizing references in Dutch and European legal documents, including judicial rulings and laws. The software is employed by various government entities, including the Council for the Judiciary and the Ministry of Finance.
 
 The previous software that was used by MinBZK, LinkeXtractor, was created between 2014 and 2017 and has since fallen behind in technological ways. Thus the MinBZK desires to convert this system to an Open-Source approach, with hopefully newer methods.
@@ -10,7 +11,7 @@ The previous software that was used by MinBZK, LinkeXtractor, was created betwee
 ### Front-end
 - **Framework:** SvelteKit
     - Description: A framework for building web applications, focused on simplicity and speed.
-- **Programmeertaal:** TypeScript
+- **Programming Language:** TypeScript
     - Description: A typed superset of JavaScript.
 
 ### Styling
@@ -26,4 +27,4 @@ The previous software that was used by MinBZK, LinkeXtractor, was created betwee
     - Description: An open-source relational database with a strong reputation for reliability, functionality and performance. Well suited for scalable and secure applications.
 
 ### Deployment
-- **Opties:** Deployment services like Vercel, Netlify of AWS. AWS is the safest option.
+- **Options:** Deployment services like Vercel, Netlify of AWS. AWS is the safest option.
