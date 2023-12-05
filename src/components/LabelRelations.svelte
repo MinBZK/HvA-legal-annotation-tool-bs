@@ -1,18 +1,21 @@
 <script lang="ts">
 	import { onMount } from "svelte";
     import RelationForm from "./RelationForm.svelte";
-    import { Label, Relation, loadRelations as load } from "./classes";
+    import { Relation } from "./models/Relation";
+    import { loadRelations as load } from "./server";
+	import { Label } from "./models/Label";
 
     export let relationArray: Relation[] = []; 
     export let newRelation = new Relation(
         99, 
-        new Label(99, "abc", "abc", null as any, "abc"), 
-        new Label(99, "abc", "abc", null as any, "abc"), 
-        "abc");
+        new Label(1, "abc", "abc", null as any, "abc"),
+        new Label(2, "abc", "abc", null as any, "abc"),
+        "abc"
+    );
+    
     let show = false;
 
     export function addRelation(relation: Relation) {
-        console.log(relation);
         relationArray = [...relationArray, relation];
         show = false;
     }

@@ -1,11 +1,14 @@
 <script lang="ts">
-	import { Label, Relation } from "./classes";
+    import Button from "./UI/Button.svelte";
+	import { Label } from "./models/Label";
+    import { Relation } from "./models/Relation";
+	import { loadLabels } from "./server";
     export let show = false;
     export let onSubmit: Function;
     export let newRelation = new Relation(
         99, 
-        null as any, 
-        null as any, 
+        new Label(1, "abc", "abc", null as any, "abc"),
+        new Label(2, "abc", "abc", null as any, "abc"),
         "abc"
     );
 
@@ -22,16 +25,10 @@
 
         <input bind:value={newRelation.label2.name} type="text" placeholder="Label 2" class="border border-gray-400 rounded-lg p-2 mb-2" />
 
-        <button on:click={() => onSubmit()} class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Submit
-        </button>
+        <Button type="green" text="Submit" onClickAction={() => onSubmit(newRelation)} />
 
-        <button on:click={cancel} class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Cancel
-        </button>
+        <Button type="red" text="Cancel" onClickAction={cancel} />
     {:else}
-        <button on:click={() => show = true} class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Add relation
-        </button>
+        <Button type="green" text="Add relation" onClickAction={() => show = true} />
     {/if}
 </div>
