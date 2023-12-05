@@ -1,10 +1,15 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import labelStore from "./LabelStore.svelte";
+
     export let fileContent = '';
     let formattedContent = '';
+    let selectedColor = '';
+    let labelID = '';
 
     onMount(() => {
         let contentToDisplay = fileContent;
+        document.addEventListener('mouseup', handleSelection);
 
         // If no file content is passed, check if there is a file in local storage
         if (!contentToDisplay) {
@@ -20,6 +25,11 @@
             convertXMLTagsToDiv(xmlDoc);
             formattedContent = new XMLSerializer().serializeToString(xmlDoc);
         }
+
+        labelStore.subscribe(value => {
+            selectedColor = value.selectedColor;
+            labelID = value.labelID;
+        })
     })
 
     // Convert XML tags to divs
@@ -42,6 +52,23 @@
             .forEach((el: Element) => {
             el.remove();
         });
+    }
+
+    // Add event listener to detect user selection
+    function handleSelection(event) {
+        const selection = window.getSelection();
+        if (selection && selection.toString().length > 0) {
+            const selectedText = selection.toString();
+
+            // Apply background color to the selected text
+            const span = document.createElement('span');
+            span.style.backgroundColor = selectedColor; // Apply the selected color
+            span.appendChild(document.createTextNode(selectedText));
+            selection.getRangeAt(0).surroundContents(span);
+
+            // // Assign the label ID to the selected text or store it in your data structure
+            // assignLabelID(selectedText, ID); // Function to assign the label ID to the selected text
+        }
     }
 </script>
 
