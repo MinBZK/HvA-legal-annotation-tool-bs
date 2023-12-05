@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import labelStore from "./LabelStore.svelte";
+	import { labelStore } from '../lib/LabelStore.ts';
 
     export let fileContent = '';
     let formattedContent = '';

@@ -1,5 +1,7 @@
 <script>
-    import labelStore from "./LabelStore.svelte";
+    import { onMount } from 'svelte';
+	import { labelStore } from '../lib/LabelStore.ts';
+	
 
     let showCreateLabelInput = false;
     let customLabels = [];
@@ -16,6 +18,7 @@
     ];
 
     function selectLabel(label, color) {
+        console.log(label)
         labelStore.update(store => {
             return { ...store, selectedColor: color, labelID: label};
         })
@@ -25,6 +28,7 @@
         customLabel = customLabel.trim(); // Remove leading/trailing whitespace
         if (customLabel !== '' && customColor !== '') {
             customLabels = [...customLabels, { label: customLabel, color: customColor }];
+            console.log(customLabel)
             customLabel = '';
         }
     }
@@ -43,7 +47,7 @@
             <span on:click={() => { showCreateLabelInput = true; }}>Create New Label</span>
         </div>
         {#each customLabels as labelObj}
-            <div style="color: {labelObj.color}" >{labelObj.label}</div>
+            <div style="color: {labelObj.color}" on:click={() => selectLabel(labelObj.label, labelObj.color)}>{labelObj.label}</div>
         {/each}
         {#if showCreateLabelInput}
             <input type="text" bind:value={customLabel} placeholder="Enter custom label">
