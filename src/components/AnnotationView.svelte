@@ -1,26 +1,37 @@
 <script lang="ts">
+    import { fileContentStore } from "../stores/fileStore";
     import { onMount } from 'svelte';
-    export let fileContent = '';
+    // export let fileContent = '';
     let formattedContent = '';
 
-    onMount(() => {
-        let contentToDisplay = fileContent;
-
-        // If no file content is passed, check if there is a file in local storage
-        if (!contentToDisplay) {
-            const storedContent = localStorage.getItem('uploadedXML');
-            if(storedContent) {
-                contentToDisplay = storedContent;
-            }
-        }
-        // If there is content to display, format it
-        if (contentToDisplay) {
+    // Subscribe to the store
+    fileContentStore.subscribe(content => {
+        if (content) {
             const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(contentToDisplay, 'text/xml');
+            const xmlDoc = parser.parseFromString(content, 'text/xml');
             convertXMLTagsToDiv(xmlDoc);
             formattedContent = new XMLSerializer().serializeToString(xmlDoc);
         }
-    })
+    });
+
+    // onMount(() => {
+    //     let contentToDisplay = fileContent;
+    //
+    //     // If no file content is passed, check if there is a file in local storage
+    //     if (!contentToDisplay) {
+    //         const storedContent = localStorage.getItem('uploadedXML');
+    //         if(storedContent) {
+    //             contentToDisplay = storedContent;
+    //         }
+    //     }
+    //     // If there is content to display, format it
+    //     if (contentToDisplay) {
+    //         const parser = new DOMParser();
+    //         const xmlDoc = parser.parseFromString(contentToDisplay, 'text/xml');
+    //         convertXMLTagsToDiv(xmlDoc);
+    //         formattedContent = new XMLSerializer().serializeToString(xmlDoc);
+    //     }
+    // })
 
     // Convert XML tags to divs
     function convertXMLTagsToDiv(xmlDoc: Document) {
@@ -37,7 +48,7 @@
             el?.parentNode.replaceChild(div, el);
         });
         // Remove all tags that should not be displayed
-        //TODO: find a way to keep the content of these tags for exporting
+        // TODO: find a way to keep the content of these tags for exporting
         xmlDoc.querySelectorAll("intitule,aanhef,bwb-inputbestand,redactionele-correcties,citeertitel")
             .forEach((el: Element) => {
             el.remove();
