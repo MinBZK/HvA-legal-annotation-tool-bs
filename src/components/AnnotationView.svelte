@@ -1,7 +1,6 @@
 <script lang="ts">
     import { fileContentStore } from "../stores/fileStore";
-    import { onMount } from 'svelte';
-    // export let fileContent = '';
+
     let formattedContent = '';
 
     // Subscribe to the store
@@ -13,25 +12,6 @@
             formattedContent = new XMLSerializer().serializeToString(xmlDoc);
         }
     });
-
-    // onMount(() => {
-    //     let contentToDisplay = fileContent;
-    //
-    //     // If no file content is passed, check if there is a file in local storage
-    //     if (!contentToDisplay) {
-    //         const storedContent = localStorage.getItem('uploadedXML');
-    //         if(storedContent) {
-    //             contentToDisplay = storedContent;
-    //         }
-    //     }
-    //     // If there is content to display, format it
-    //     if (contentToDisplay) {
-    //         const parser = new DOMParser();
-    //         const xmlDoc = parser.parseFromString(contentToDisplay, 'text/xml');
-    //         convertXMLTagsToDiv(xmlDoc);
-    //         formattedContent = new XMLSerializer().serializeToString(xmlDoc);
-    //     }
-    // })
 
     // Convert XML tags to divs
     function convertXMLTagsToDiv(xmlDoc: Document) {
