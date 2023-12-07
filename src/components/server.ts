@@ -1,9 +1,9 @@
 import { Label } from "./models/Label";
 import { Relation } from "./models/Relation";
 
-export function loadRelations() {
+export function loadAllRelations() {
     // Should get relationships from db/localstorage
-    // Fake data
+    // Hardcoded data
 
     let [rechtsSubject, rechtsObject, voorwaarden] = loadLabels();
 
@@ -13,6 +13,19 @@ export function loadRelations() {
         new Relation(3, rechtsObject, rechtsObject, "Is specialisatie van"),
         new Relation(4, rechtsObject, voorwaarden, "Is geldig indien voldaan aan")
     ];
+}
+
+export function loadRelationsForLabel(label: Label) {
+    let relationsForLabel = [];
+
+    for(const dbRelation of loadAllRelations()) {
+        if(dbRelation.getLabel1().getLabelId() === label.getLabelId() ||
+            dbRelation.getLabel2().getLabelId() === label.getLabelId()) {
+            relationsForLabel.push(dbRelation);
+        }
+    }
+
+    return relationsForLabel;
 }
 
 export function loadLabels() {

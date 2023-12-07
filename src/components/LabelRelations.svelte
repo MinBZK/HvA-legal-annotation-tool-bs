@@ -2,16 +2,20 @@
 	import { onMount } from "svelte";
     import RelationForm from "./RelationForm.svelte";
     import { Relation } from "./models/Relation";
-    import { loadRelations as load } from "./server";
+    import { loadAllRelations as load, loadLabels, loadRelationsForLabel } from "./server";
 	import { Label } from "./models/Label";
+	import AnnotationResults from "./AnnotationResults.svelte";
+	import AnnotationView from "./AnnotationView.svelte";
+
+    let selectedLabel: Label;
 
     export let relationArray: Relation[] = []; 
-    export let newRelation = new Relation(
-        99, 
-        new Label(1, "abc", "abc", null as any, "abc"),
-        new Label(2, "abc", "abc", null as any, "abc"),
-        "abc"
-    );
+    // export let newRelation = new Relation(
+    //     99, 
+    //     new Label(1, "abc", "abc", null as any, "abc"),
+    //     new Label(2, "abc", "abc", null as any, "abc"),
+    //     "abc"
+    // );
     
     let show = false;
 
@@ -26,32 +30,25 @@
 </script>
 
 <div>
-    <table class="table-auto">
-        <thead>
-            <tr>
-                <th class="px-4 py-2">Label 1</th>
-                <th class="px-4 py-2">Description</th>
-                <th class="px-4 py-2">Label 2</th>
-                <th class="px-4 py-2">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {#each relationArray as relation}
-                <tr>
-                    <td class="border px-4 py-2">{relation.getLabel1().getName()}</td>
-                    <td class="border px-4 py-2">{relation.getDescription()}</td>
-                    <td class="border px-4 py-2">{relation.getLabel2().getName()}</td>
-                    <td class="border px-4 py-2">
-                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Edit
-                        </button>
-                        <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            {/each}
-        </tbody>
-    </table>
-    <RelationForm show={show} newRelation={newRelation} onSubmit={() => addRelation(newRelation)} />
+    {#each loadLabels() as Label}
+        <!-- Generate a button with tailwind styling for every label to click, and if it's clicked set it as the selected Label -->
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" on:click={() => {
+            selectedLabel = Label;
+        }}>
+            {Label.name}
+        </button>
+    {/each}
+
+    {#if selectedLabel}
+        <h2 class="font-bold">{selectedLabel.name}</h2>
+        {#each loadRelationsForLabel(selectedLabel) as Relation}
+            <div class="flex gap-3 mt-5">
+                <h3 class="align-middle">{Relation.label1.name}</h3>
+                <p class="align-middle">{Relation.description}</p>
+                <h3 class="align-middle">{Relation.label2.name}</h3>
+                <button>Edit</button>
+                <button>Delete</button>
+            </div>
+        {/each}
+    {/if}
 </div>
