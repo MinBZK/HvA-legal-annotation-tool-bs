@@ -1,11 +1,14 @@
 <script>
-	import { labelStore } from '../lib/LabelStore.ts';
+	import { onMount } from 'svelte';
+	import { isOpen, labelStore } from '../lib/LabelStore.ts';
 
 	let showCreateLabelInput = false;
 	let customLabels = [];
 	let customLabel = '';
 	let customColor = '';
+	let openSidebar = false;
 
+	
 	// Created with hexadecimal codes that represent the RGB of the labels
 	const preMadeLabels = [
 		{ label: 'Rechtssubject', color: '#c2e7ff' },
@@ -26,6 +29,14 @@
 		{ label: 'Brondefinitie', color: '#f6f6f6' }
 	];
 
+	onMount(() => {
+		isOpen.subscribe((value) => {
+			openSidebar = value;
+			console.log("sub value" + value)
+			console.log(openSidebar)
+		})
+	})
+
 	function selectLabel(label, color) {
         console.log('Label: ' + label + ' Color: ' + color);
 		labelStore.update((store) => {
@@ -45,8 +56,9 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<main>
-	<div class="annotation-results h-[80vh] w-[550px] relative mt-5 mb-10">
+<div class="annotation-results fixed top-0 right-0 h-full w-1/4 bg-gray-200 z-10 transition-transform ease-in-out duration-300 transform" 
+	class:translate-x-0={openSidebar} class:translate-x-full={!openSidebar}>
+	<div class="p-4">
 		<h1>Label Selection</h1>
 		<h4>Select Label/Color:</h4>
 		<div class="label-container">
@@ -80,8 +92,8 @@
 			<button on:click={createNewLabel}>Create</button>
 		{/if}
 	</div>
-</main>
-
+  </div>
+  
 <style>
 	.annotation-results {
 		font-family: 'Inter', sans-serif;
