@@ -1,31 +1,25 @@
 <script lang="ts">
 	import { onMount } from "svelte";
     import RelationForm from "./RelationForm.svelte";
-    import { Relation } from "./models/Relation";
-    import { loadAllRelations as load, loadLabels, loadRelationsForLabel } from "./server";
-	import { Label } from "./models/Label";
-	import AnnotationResults from "./AnnotationResults.svelte";
-	import AnnotationView from "./AnnotationView.svelte";
+    import type { Relation } from "./models/Relation";
+    import { loadRelations as load, loadLabels, relations as relationArray, saveRelation } from "./server";
+	import type { Label } from "./models/Label";
 
     let selectedLabel: Label;
-
-    export let relationArray: Relation[] = []; 
-    // export let newRelation = new Relation(
-    //     99, 
-    //     new Label(1, "abc", "abc", null as any, "abc"),
-    //     new Label(2, "abc", "abc", null as any, "abc"),
-    //     "abc"
-    // );
     
     let show = false;
 
     export function addRelation(relation: Relation) {
-        relationArray = [...relationArray, relation];
+        saveRelation(relation);
         show = false;
     }
 
+    export function filterRelations(label: Label) {
+        return relationArray.filter(relation => relation.label1.getLabelId() === label.getLabelId() || relation.label2.getLabelId() === label.getLabelId());
+    }
+
     onMount(() => {
-        relationArray = load();
+        load();
     });
 </script>
 
@@ -41,7 +35,7 @@
 
     {#if selectedLabel}
         <h2 class="font-bold">{selectedLabel.name}</h2>
-        {#each loadRelationsForLabel(selectedLabel) as Relation}
+        {#each filterRelations(selectedLabel) as Relation}
             <div class="flex gap-3 mt-5">
                 <h3 class="align-middle">{Relation.label1.name}</h3>
                 <p class="align-middle">{Relation.description}</p>
@@ -50,5 +44,6 @@
                 <button>Delete</button>
             </div>
         {/each}
+        <RelationForm show={show} onSubmit={addRelation} forLabel={selectedLabel} />
     {/if}
 </div>

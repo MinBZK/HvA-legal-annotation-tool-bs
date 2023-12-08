@@ -1,39 +1,56 @@
 import { Label } from "./models/Label";
 import { Relation } from "./models/Relation";
 
-export function loadAllRelations() {
-    // Should get relationships from db/localstorage
+export let labels: Label[] = [
+    new Label(1, "Label1", "blue", null as any, ""),
+    new Label(2, "Label2", "blue", null as any, ""),
+    new Label(3, "Label3", "blue", null as any, ""),
+    new Label(4, "Label4", "blue", null as any, ""),
+    new Label(5, "Label5", "green", null as any, "")
+];
+
+export let relationsText: string[] = [
+    "Wie heeft het recht",
+    "Wie heeft de plicht",
+    "Heeft als voorwerp",
+    "Wordt gecreëerd door",
+    "Wordt gewijzigd door",
+    "Wordt beëindigd door",
+    "Is geldig indien voldaan aan",
+    "Wordt uitgevoerd door",
+    "Vindt plaats op",
+    "Vindt plaats in",
+    "Is specalisatie van",
+    "Heeft als invoer",
+    "Heeft als uitvoer",
+    "Gebruikt"
+];
+
+export let relations: Relation[] = [
+    new Relation(1, labels[0], labels[1], relationsText[0]),
+    new Relation(2, labels[0], labels[2], relationsText[1]),
+    new Relation(3, labels[0], labels[3], relationsText[2]),
+    new Relation(4, labels[1], labels[4], relationsText[3])
+];
+
+export function loadRelations() {
+    // TODO: Should get relationships from db/localstorage
+
+    // Fetch relations
     // Hardcoded data
-
-    let [rechtsSubject, rechtsObject, voorwaarden] = loadLabels();
-
-    return [
-        new Relation(1, rechtsSubject, rechtsSubject, "Is specialisatie van"),
-        new Relation(2, rechtsSubject, voorwaarden, "Is geldig indien voldaan aan"),
-        new Relation(3, rechtsObject, rechtsObject, "Is specialisatie van"),
-        new Relation(4, rechtsObject, voorwaarden, "Is geldig indien voldaan aan")
-    ];
+    return relations;
 }
 
-export function loadRelationsForLabel(label: Label) {
-    let relationsForLabel = [];
-
-    for(const dbRelation of loadAllRelations()) {
-        if(dbRelation.getLabel1().getLabelId() === label.getLabelId() ||
-            dbRelation.getLabel2().getLabelId() === label.getLabelId()) {
-            relationsForLabel.push(dbRelation);
-        }
-    }
-
-    return relationsForLabel;
+export function saveRelation(relation: Relation) {
+    relations.push(relation);
 }
 
 export function loadLabels() {
-    // Should get labels from db
+    // TODO: Should get labels from db
 
-    return [
-        new Label(1, "Rechtssubject", "red", null as any, ""),
-        new Label(2, "Rechtsobject", "blue", null as any, ""),
-        new Label(3, "voorwaarden", "green", null as any, "")
-    ];
+    return labels;
+}
+
+export function loadRelationsText() {
+    return relationsText;
 }
