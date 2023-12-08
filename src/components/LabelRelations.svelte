@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
     import RelationForm from "./RelationForm.svelte";
     import type { Relation } from "./models/Relation";
-    import { loadRelations as load, loadLabels, relations as relationArray, saveRelation } from "./server";
+    import { deleteRelation, loadRelations as load, loadLabels, relations as relationArray, saveRelation } from "./server";
 	import type { Label } from "./models/Label";
 
     let selectedLabel: Label;
@@ -41,7 +41,7 @@
                 <p class="align-middle">{Relation.description}</p>
                 <h3 class="align-middle">{Relation.label2.name}</h3>
                 <button>Edit</button>
-                <button>Delete</button>
+                <button on:click={() => deleteRelation(Relation)}>Delete</button>
             </div>
         {/each}
         <RelationForm show={show} onSubmit={addRelation} forLabel={selectedLabel} />

@@ -45,6 +45,11 @@ export function saveRelation(relation: Relation) {
     relations.push(relation);
 }
 
+export function deleteRelation(relation: Relation) {
+    let index = relations.findIndex((r) => r.getRelationId() == relation.getRelationId());
+    relations.splice(index, 1);
+}
+
 export function loadLabels() {
     // TODO: Should get labels from db
 
