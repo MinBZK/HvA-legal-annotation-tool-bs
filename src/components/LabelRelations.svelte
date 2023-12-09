@@ -2,16 +2,17 @@
 	import { onMount } from "svelte";
     import RelationForm from "./RelationForm.svelte";
     import type { Relation } from "./models/Relation";
-    import { deleteRelation, loadRelations as load, loadLabels, relations as relationArray, saveRelation } from "./server";
+    import { deleteRelation, loadRelations as load, loadLabels, saveRelation } from "./server";
 	import type { Label } from "./models/Label";
 
     let selectedLabel: Label;
-    
     let show = false;
+    let relationArray: Relation[] = [];
 
     export function addRelation(relation: Relation) {
         saveRelation(relation);
         show = false;
+        relationArray = load();
     }
 
     export function filterRelations(label: Label) {
@@ -19,13 +20,12 @@
     }
 
     onMount(() => {
-        load();
+        relationArray = load();
     });
 </script>
 
 <div>
     {#each loadLabels() as Label}
-        <!-- Generate a button with tailwind styling for every label to click, and if it's clicked set it as the selected Label -->
         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" on:click={() => {
             selectedLabel = Label;
         }}>
@@ -41,7 +41,10 @@
                 <p class="align-middle">{Relation.description}</p>
                 <h3 class="align-middle">{Relation.label2.name}</h3>
                 <button>Edit</button>
-                <button on:click={() => deleteRelation(Relation)}>Delete</button>
+                <button on:click={() => {
+                    deleteRelation(Relation);
+                    relationArray = load();
+                }}>Delete</button>
             </div>
         {/each}
         <RelationForm show={show} onSubmit={addRelation} forLabel={selectedLabel} />

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from "svelte";
     import Button from "./UI/Button.svelte";
 	import { Label } from "./models/Label";
     import { Relation } from "./models/Relation";
