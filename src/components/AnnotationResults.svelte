@@ -1,120 +1,81 @@
-<script>
-	import { onMount } from 'svelte';
-	import { isOpen, labelStore } from '../lib/LabelStore.ts';
+<script lang="ts">
+	import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
+	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
+	import { labelStore } from '$lib/LabelStore';
 
-	let showCreateLabelInput = false;
-	let customLabels = [];
-	let customLabel = '';
-	let customColor = '';
-	let openSidebar = false;
+	let inputChip = '';
+	let inputChipList: string[] = [];
+	let openInput = false;
 
-	
+	type PreMadeLabels = AutocompleteOption<string, { colorCode: string }>;
+
 	// Created with hexadecimal codes that represent the RGB of the labels
-	const preMadeLabels = [
-		{ label: 'Rechtssubject', color: '#c2e7ff' },
-		{ label: 'Rechtsbetrekking', color: '#70a4ff' },
-		{ label: 'Rechtsobject', color: '#98bee1' },
-		{ label: 'Rechtsfeit', color: '#97d6fe' },
-		{ label: 'Voorwaarde', color: '#91e8d3' },
-		{ label: 'Afleidingsregel', color: '#ff7a7a' },
-		{ label: 'Variabele', color: '#ffd95d' },
-		{ label: 'Variabelewaarde', color: '#fff380' },
-		{ label: 'Parameter', color: '#ffb4b4' },
-		{ label: 'Parameterwaarde', color: '#ffd8ef' },
-		{ label: 'Operator', color: '#c1ebe1' },
-		{ label: 'Tijdsaanduiding', color: '#d8b0f9' },
-		{ label: 'Plaatsaanduiding', color: '#efcaf6' },
-		{ label: 'Delegatiebevoegdheid', color: '#cecece' },
-		{ label: 'Delegatie-invulling', color: '#e2e2e2' },
-		{ label: 'Brondefinitie', color: '#f6f6f6' }
+	let preMadeLabels: PreMadeLabels[] = [
+		{ label: 'Rechtssubject', value: 'Rechtssubject', meta: { colorCode: '#c2e7ff' } },
+		{ label: 'Rechtsbetrekking', value: 'Rechtsbetrekking', meta: { colorCode: '#70a4ff' } },
+		{ label: 'Rechtsobject', value: 'Rechtsobject', meta: { colorCode: '#98bee1' } },
+		{ label: 'Rechtsfeit', value: 'Rechtsfeit', meta: { colorCode: '#97d6fe' } },
+		{ label: 'Voorwaarde', value: 'Voorwaarde', meta: { colorCode: '#91e8d3' } },
+		{ label: 'Afleidingsregel', value: 'Afleidingsregel', meta: { colorCode: '#ff7a7a' } },
+		{ label: 'Variabele', value: 'Variabele', meta: { colorCode: '#ffd95d' } },
+		{ label: 'Variabelewaarde', value: 'Variabelewaarde', meta: { colorCode: '#fff380' } },
+		{ label: 'Parameter', value: 'Parameter', meta: { colorCode: '#ffb4b4' } },
+		{ label: 'Parameterwaarde', value: 'Parameterwaarde', meta: { colorCode: '#ffd8ef' } },
+		{ label: 'Operator', value: 'Operator', meta: { colorCode: '#c1ebe1' } },
+		{ label: 'Tijdsaanduiding', value: 'Tijdsaanduiding', meta: { colorCode: '#d8b0f9' } },
+		{ label: 'Plaatsaanduiding', value: 'Plaatsaanduiding', meta: { colorCode: '#efcaf6' } },
+		{ label: 'Delegatiebevoegdheid',value: 'Delegatiebevoegdheid',meta: { colorCode: '#cecece' }},
+		{ label: 'Delegatie-invulling', value: 'Delegatie-invulling', meta: { colorCode: '#e2e2e2' } },
+		{ label: 'Brondefinitie', value: 'Brondefinitie', meta: { colorCode: '#f6f6f6' } }
 	];
 
-	onMount(() => {
-		isOpen.subscribe((value) => {
-			openSidebar = value;
-			console.log("sub value" + value)
-			console.log(openSidebar)
-		})
-	})
+	const colorLookup = {
+  		'Rechtssubject': '#c2e7ff',
+  		'Rechtsbetrekking': '#70a4ff',
+  		'Rechtsobject': '#98bee1',
+  		'Rechtsfeit': '#97d6fe',
+ 		'Voorwaarde': '#91e8d3',
+  		'Afleidingsregel': '#ff7a7a',
+ 		'Variabele': '#ffd95d',
+ 		'Variabelewaarde': '#fff380',
+ 		'Parameter': '#ffb4b4',
+  		'Parameterwaarde': '#ffd8ef',
+ 		'Operator': '#c1ebe1',
+  		'Tijdsaanduiding': '#d8b0f9',
+		'Plaatsaanduiding': '#efcaf6',
+		'Delegatiebevoegdheid': '#cecece',
+ 		'Delegatie-invulling': '#e2e2e2',
+ 		'Brondefinitie': '#f6f6f6'
+	};
 
-	function selectLabel(label, color) {
-        console.log('Label: ' + label + ' Color: ' + color);
-		labelStore.update((store) => {
-			return { ...store, selectedColor: color, labelID: label };
-		});
-	}
+	function onInputChipSelect(event: CustomEvent<PreMadeLabels>): void {
+		console.log('onInputChipSelect', event.detail);
+		if (inputChipList.includes(event.detail.value) === false) {
+			inputChipList = [...inputChipList, event.detail.value];
+			inputChip = '';
 
-	function createNewLabel() {
-		customLabel = customLabel.trim(); // Remove leading/trailing whitespace
-		if (customLabel !== '' && customColor !== '') {
-			customLabels = [...customLabels, { label: customLabel, color: customColor }];
-			console.log('Label: ' + customLabel + ' Color: ' + customColor);
-			customLabel = '';
+			let inputColor: string = '';
+			inputColor = colorLookup[event.detail.value];
+
+			labelStore.update((store) => {
+				return { ...store, selectedColor: inputColor, labelID: event.detail.value}
+			})
 		}
 	}
+
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="annotation-results fixed top-0 right-0 h-full w-1/4 bg-gray-200 z-10 transition-transform ease-in-out duration-300 transform" 
-	class:translate-x-0={openSidebar} class:translate-x-full={!openSidebar}>
-	<div class="p-4">
-		<h1>Label Selection</h1>
-		<h4>Select Label/Color:</h4>
-		<div class="label-container">
-			{#each preMadeLabels as preMadeLabel}
-				<span
-					class="label-item"
-					style="background-color: {preMadeLabel.color}"
-					on:click={() => selectLabel(preMadeLabel.label, preMadeLabel.color)}
-					>{preMadeLabel.label}</span
-				>
-			{/each}
-			<span
-				class="create-label"
-				on:click={() => {
-					showCreateLabelInput = true;
-				}}>Create New Label</span
-			>
-		</div>
-		{#each customLabels as labelObj}
-			<div
-				class="custom-label-item"
-				style="background-color: {labelObj.color}"
-				on:click={() => selectLabel(labelObj.label, labelObj.color)}
-			>
-				{labelObj.label}
-			</div>
-		{/each}
-		{#if showCreateLabelInput}
-			<input type="text" bind:value={customLabel} placeholder="Enter custom label" />
-			<input type="color" bind:value={customColor} />
-			<button on:click={createNewLabel}>Create</button>
-		{/if}
+<!-- <div class:translate-x-0={!openInput} class:translate-x-full={openInput}>
+	<InputChip bind:input={inputChip} bind:value={inputChipList} name="chips" />
+	<div class="card w-full max-w-sm max-h-48 p-4 " tabindex="-1">
+		<Autocomplete
+			bind:input={inputChip}
+			options={preMadeLabels}
+			denylist={inputChipList}
+			on:selection={onInputChipSelect}
+		/>
 	</div>
-  </div>
-  
+</div> -->
+
 <style>
-	.annotation-results {
-		font-family: 'Inter', sans-serif;
-		white-space: pre-line;
-		overflow-x: auto;
-		padding: 1em;
-		border-radius: 8px;
-		list-style-type: none;
-	}
-
-	.label-container {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-	}
-
-	.label-item, .create-label, .custom-label-item {
-		padding: 8px;
-		cursor: pointer;
-		border-radius: 4px;
-		margin-bottom: 8px;
-		display: inline-block;
-	}
 </style>
