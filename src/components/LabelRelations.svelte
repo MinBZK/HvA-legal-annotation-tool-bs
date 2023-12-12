@@ -16,7 +16,7 @@
     }
 
     export function filterRelations(label: Label) {
-        return relationArray.filter(relation => relation.label1.getLabelId() === label.getLabelId() || relation.label2.getLabelId() === label.getLabelId());
+        return relationArray.filter(relation => relation.label1.labelId === label.labelId || relation.label2.labelId === label.labelId);
     }
 
     onMount(() => {
@@ -40,11 +40,14 @@
                 <h3 class="align-middle">{Relation.label1.name}</h3>
                 <p class="align-middle">{Relation.description}</p>
                 <h3 class="align-middle">{Relation.label2.name}</h3>
-                <button>Edit</button>
+                <!-- <button>Edit</button> -->
                 <button on:click={() => {
                     deleteRelation(Relation);
                     relationArray = load();
-                }}>Delete</button>
+                }} 
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold my-[10%] px-4 rounded">
+                    Delete
+                </button>
             </div>
         {/each}
         <RelationForm show={show} onSubmit={addRelation} forLabel={selectedLabel} />

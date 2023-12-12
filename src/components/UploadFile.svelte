@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { fileContentStore } from "../stores/fileStore";
     import { createEventDispatcher } from "svelte";
 
     const dispatch = createEventDispatcher();
@@ -11,6 +12,7 @@
             reader.onload = (e: ProgressEvent<FileReader>) => {
                 if (e.target && e.target.result) {
                     const fileContent = e.target.result as string;
+                    fileContentStore.set(fileContent);
                     localStorage.setItem("uploadedXML", fileContent);
                     dispatch("fileUploaded", fileContent);
                 }
