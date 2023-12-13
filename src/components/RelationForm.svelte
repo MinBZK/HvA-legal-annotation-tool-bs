@@ -1,44 +1,62 @@
 <script lang="ts">
-    import Button from "./UI/Button.svelte";
+	import { onMount } from "svelte";
 	import Label from "../models/Label";
     import Relation from "../models/Relation";
-	import { loadLabels, loadRelationsText } from "./server";
+    import { labelStore, relationsStore, relationsTextStore } from "../stores/relationStore";
 
     export let forLabel: Label;
     export let show = false;
-    export let onSubmit: Function;
+    let relationsArray;
+    let relationsTextArray;
+    let labelsArray;
+    
+    relationsStore.subscribe(e => relationsArray = e);
+    labelStore.subscribe(e => labelsArray = e);
+    relationsTextStore.subscribe(e => relationsTextArray = e);
+
     export let newRelation = new Relation(
-        99, 
+        relationsArray[relationsArray.length - 1].relationId + 1,
         forLabel,
         new Label(2, "abc", "abc", null as any),
         "abc"
     );
+
+    function addRelation(relation: Relation) {
+        relationsStore.update(arr => JSON.parse(JSON.stringify([...arr, relation])));
+        show = false;
+    }
 </script>
 
 <div class="pt-5">
     {#if show}
-        <input hidden bind:value={forLabel} type="text" placeholder="Label 1" class="border border-gray-400 rounded-lg p-2 mb-2" />
+        <input hidden bind:value={forLabel} type="text" class="border border-gray-400 rounded-lg p-2 mb-2" />
         <h1>{forLabel.name}</h1>
 
-        <select bind:value={newRelation.description} placeholder="Description" class="border border-gray-400 rounded-lg p-2 mb-2">
-            {#each loadRelationsText() as desc}
+        <select bind:value={newRelation.description} class="border border-gray-400 rounded-lg p-2 mb-2 text-black">
+            {#each relationsTextArray as desc}
                 <option value={desc}>{desc}</option>
             {/each}
         </select>
 
-        <select bind:value={newRelation.label2} placeholder="Label 2" class="border border-gray-400 rounded-lg p-2 mb-2">
-            {#each loadLabels() as lab}
+        <select bind:value={newRelation.label2} class="border border-gray-400 rounded-lg p-2 mb-2 text-black">
+            {#each labelsArray as lab}
                 <option value={lab}>{lab.name}</option>
             {/each}
         </select>
 
-        <Button type="green" text="Submit" onClickAction={() => {
-            onSubmit(newRelation);
-            show = false;
-        }} />
+        <button on:click={() => addRelation(newRelation)} 
+                class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full">
+            Submit
+        </button>
 
-        <Button type="red" text="Cancel" onClickAction={() => show = false} />
+        <button on:click={() => show = false}
+                class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full">
+            Cancel
+        </button>
     {:else}
-        <Button type="green" text="Add relation" onClickAction={() => show = true} />
+        <button on:click={() => show = true}
+                class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full">
+            Add relation
+        </button>
     {/if}
 </div>

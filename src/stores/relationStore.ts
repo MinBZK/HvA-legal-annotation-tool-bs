@@ -1,5 +1,7 @@
-import Label from "../models/Label";
-import Relation from "../models/Relation";
+import { localStorageStore } from '@skeletonlabs/skeleton';
+import type { Writable } from 'svelte/store';
+import Label from '../models/Label';
+import Relation from '../models/Relation';
 
 export let labels: Label[] = [
     new Label(1, "Label1", "blue", null as any),
@@ -26,36 +28,15 @@ export let relationsText: string[] = [
     "Gebruikt"
 ];
 
-export let relations: Relation[] = [
+export let relationArray: Relation[] = [
     new Relation(1, labels[0], labels[1], relationsText[0]),
     new Relation(2, labels[0], labels[2], relationsText[1]),
     new Relation(3, labels[0], labels[3], relationsText[2]),
     new Relation(4, labels[1], labels[4], relationsText[3])
 ];
 
-export function loadRelations() {
-    // TODO: Should get relationships from db/localstorage
+export const labelStore: Writable<string> = localStorageStore('labels', JSON.parse(JSON.stringify(labels)));
 
-    // Fetch relations
-    // Hardcoded data
-    return relations;
-}
+export const relationsTextStore: Writable<string> = localStorageStore('relationsText', JSON.parse(JSON.stringify(relationsText)));
 
-export function saveRelation(relation: Relation) {
-    relations.push(relation);
-}
-
-export function deleteRelation(relation: Relation) {
-    let index = relations.findIndex((r) => r.getRelationId() == relation.getRelationId());
-    relations.splice(index, 1);
-}
-
-export function loadLabels() {
-    // TODO: Should get labels from db
-
-    return labels;
-}
-
-export function loadRelationsText() {
-    return relationsText;
-}
+export const relationsStore: Writable<string> = localStorageStore('relations', JSON.parse(JSON.stringify(relationArray)));

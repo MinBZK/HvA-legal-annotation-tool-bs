@@ -1,32 +1,32 @@
 <script lang="ts">
-	import { onMount } from "svelte";
     import RelationForm from "./RelationForm.svelte";
     import type Relation from "../models/Relation";
-    import { deleteRelation, loadRelations as load, loadLabels, saveRelation } from "./server";
 	import type Label from "../models/Label";
+    import { labelStore, relationsStore, relationsTextStore } from "../stores/relationStore";
+	import { onMount } from "svelte";
 
     let selectedLabel: Label;
     let show = false;
-    let relationArray: Relation[] = [];
 
-    export function addRelation(relation: Relation) {
-        saveRelation(relation);
-        show = false;
-        relationArray = load();
+    let relationsArray;
+    let relationsTextArray;
+    let labelsArray;
+
+    relationsStore.subscribe(e => relationsArray = e);
+    labelStore.subscribe(e => labelsArray = e);
+    relationsTextStore.subscribe(e => relationsTextArray = e);
+
+    function removeRelation(relation: Relation) {
+        let updatedRelations = relationsArray.filter(r => r.relationId !== relation.relationId);
+        relationsStore.update(() => updatedRelations);
     }
 
-    export function filterRelations(label: Label) {
-        return relationArray.filter(relation => relation.label1.labelId === label.labelId || relation.label2.labelId === label.labelId);
-    }
-
-    onMount(() => {
-        relationArray = load();
-    });
+    onMount(() => localStorage.removeItem('relations'));
 </script>
 
 <div>
-    {#each loadLabels() as Label}
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" on:click={() => {
+    {#each labelsArray as Label}
+        <button class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full" on:click={() => {
             selectedLabel = Label;
         }}>
             {Label.name}
@@ -35,21 +35,20 @@
 
     {#if selectedLabel}
         <h2 class="font-bold">{selectedLabel.name}</h2>
-        {#each filterRelations(selectedLabel) as Relation}
+        {#each relationsArray.filter(relation => relation.label1.labelId === selectedLabel.labelId || relation.label2.labelId === selectedLabel.labelId) as Relation}
             <div class="flex gap-3 mt-5">
                 <h3 class="align-middle">{Relation.label1.name}</h3>
                 <p class="align-middle">{Relation.description}</p>
                 <h3 class="align-middle">{Relation.label2.name}</h3>
-                <!-- <button>Edit</button> -->
-                <button on:click={() => {
-                    deleteRelation(Relation);
-                    relationArray = load();
-                }} 
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold my-[10%] px-4 rounded">
+                <button on:click={() => removeRelation(Relation)} 
+                class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full">
                     Delete
                 </button>
             </div>
         {/each}
-        <RelationForm show={show} onSubmit={addRelation} forLabel={selectedLabel} />
+        <RelationForm 
+            show={show} 
+            forLabel={selectedLabel}
+        />
     {/if}
 </div>
