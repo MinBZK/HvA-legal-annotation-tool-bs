@@ -25,7 +25,7 @@
 				convertXMLtoObj(content, file.name);
 			};
 
-			reader.onerror = function (event) {
+			reader.onerror = function () {
 				console.error('File could not be read!');
 			};
 
@@ -66,7 +66,6 @@
 		objStore.set(data);
 		localStorage.setItem('data', JSON.stringify(data, null, 2));
 		fileContent = $objStore;
-		console.log($objStore);
 		dispatch('fileUploaded', fileContent);
 	}
 </script>

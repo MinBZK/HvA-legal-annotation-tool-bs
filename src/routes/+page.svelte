@@ -15,7 +15,6 @@
 			<ImportXml
 				on:fileUploaded={(e) => {
 					fileContent = e.detail;
-					console.log(fileContent);
 				}}
 			/>
 		</div>
