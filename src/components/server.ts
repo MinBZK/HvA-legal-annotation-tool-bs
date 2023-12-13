@@ -1,12 +1,12 @@
-import { Label } from "./models/Label";
-import { Relation } from "./models/Relation";
+import Label from "../models/Label";
+import Relation from "../models/Relation";
 
 export let labels: Label[] = [
-    new Label(1, "Label1", "blue", null as any, ""),
-    new Label(2, "Label2", "blue", null as any, ""),
-    new Label(3, "Label3", "blue", null as any, ""),
-    new Label(4, "Label4", "blue", null as any, ""),
-    new Label(5, "Label5", "green", null as any, "")
+    new Label(1, "Label1", "blue", null as any),
+    new Label(2, "Label2", "blue", null as any),
+    new Label(3, "Label3", "blue", null as any),
+    new Label(4, "Label4", "blue", null as any),
+    new Label(5, "Label5", "green", null as any)
 ];
 
 export let relationsText: string[] = [

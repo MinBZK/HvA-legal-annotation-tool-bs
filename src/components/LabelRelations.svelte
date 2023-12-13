@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
     import RelationForm from "./RelationForm.svelte";
-    import type { Relation } from "./models/Relation";
+    import type Relation from "../models/Relation";
     import { deleteRelation, loadRelations as load, loadLabels, saveRelation } from "./server";
-	import type { Label } from "./models/Label";
+	import type Label from "../models/Label";
 
     let selectedLabel: Label;
     let show = false;

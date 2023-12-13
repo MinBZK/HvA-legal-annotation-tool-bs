@@ -1,4 +1,4 @@
-import type LegalDoc from "./Legaldoc";
+import type LegalDoc from "./LegalDoc";
 import type Comment from "./Comment";
 import type Definition from "./Definition";
 

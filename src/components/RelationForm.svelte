@@ -1,7 +1,7 @@
 <script lang="ts">
     import Button from "./UI/Button.svelte";
-	import { Label } from "./models/Label";
-    import { Relation } from "./models/Relation";
+	import Label from "../models/Label";
+    import Relation from "../models/Relation";
 	import { loadLabels, loadRelationsText } from "./server";
 
     export let forLabel: Label;
@@ -10,7 +10,7 @@
     export let newRelation = new Relation(
         99, 
         forLabel,
-        new Label(2, "abc", "abc", null as any, "abc"),
+        new Label(2, "abc", "abc", null as any),
         "abc"
     );
 </script>
@@ -18,7 +18,7 @@
 <div class="pt-5">
     {#if show}
         <input hidden bind:value={forLabel} type="text" placeholder="Label 1" class="border border-gray-400 rounded-lg p-2 mb-2" />
-        <h1>{forLabel.getName()}</h1>
+        <h1>{forLabel.name}</h1>
 
         <select bind:value={newRelation.description} placeholder="Description" class="border border-gray-400 rounded-lg p-2 mb-2">
             {#each loadRelationsText() as desc}
@@ -28,7 +28,7 @@
 
         <select bind:value={newRelation.label2} placeholder="Label 2" class="border border-gray-400 rounded-lg p-2 mb-2">
             {#each loadLabels() as lab}
-                <option value={lab}>{lab.getName()}</option>
+                <option value={lab}>{lab.name}</option>
             {/each}
         </select>
 

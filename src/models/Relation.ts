@@ -1,6 +1,6 @@
-import type { Label } from "./Label";
+import type Label from "./Label";
 
-export class Relation {
+export default class Relation {
     private relationId: number;
     public label1: Label;
     public label2: Label;
