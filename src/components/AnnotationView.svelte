@@ -4,6 +4,7 @@
 	import type { PopupSettings, AutocompleteOption } from '@skeletonlabs/skeleton';
 	import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
 	import Page from '../routes/+page.svelte';
+	import { popup } from '@skeletonlabs/skeleton';
 
 	export let fileContent = '';
 	let formattedContent = '';
