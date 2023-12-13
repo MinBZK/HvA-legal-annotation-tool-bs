@@ -1,4 +1,7 @@
-<script>
+<script lang="ts">
+	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	const modalStore = getModalStore();
+
 	let data = {
 		annotations: [
 			{
@@ -25,11 +28,27 @@
 		text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc ne que.'
 	};
 
+	function handleClickExport(fileName = 'data.xml', data: Object) {
+		new Promise<boolean>((resolve) => {
+			const modal: ModalSettings = {
+				type: 'confirm',
+				title: 'Exporting annotations...',
+				body: 'Are you sure you wish to proceed?',
+				response: (r: boolean) => resolve(r)
+			};
+			modalStore.trigger(modal);
+		}).then((r) => {
+			if (r) {
+				download(fileName, jsonToXML(data));
+			}
+		});
+	}
+
 	/**
 	 * @param {Object} json
 	 */
 
-	function jsonToXML(json, indent = 0) {
+	function jsonToXML(json: Object, indent = 0) {
 		let xml = '';
 		const indentation = ' '.repeat(indent * 2);
 
@@ -53,10 +72,10 @@
 
 	/**
 	 * @param {string} filename
-	 * @param {string | number | boolean} text
+	 * @param {string} text
 	 */
 
-	function download(filename, text) {
+	function download(filename: string, text: string) {
 		var element = document.createElement('a');
 		element.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(text));
 		element.setAttribute('download', filename);
@@ -70,4 +89,9 @@
 	}
 </script>
 
-<button type="button" class="btn btn-xl variant-filled" on:click={() => download('data.xml', jsonToXML(data))}>Export to XML</button>
+<button
+	type="button"
+	class="btn btn-xl variant-filled sticky bottom-0"
+	on:click={() => handleClickExport('data.xml', data)}
+>Export to XML
+</button>
