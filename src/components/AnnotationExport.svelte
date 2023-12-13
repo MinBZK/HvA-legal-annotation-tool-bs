@@ -1,34 +1,11 @@
 <script lang="ts">
 	import { getModalStore, type ModalSettings } from '@skeletonlabs/skeleton';
+	import objStore from '../stores/ObjStore';
 	const modalStore = getModalStore();
 
-	let data = {
-		annotations: [
-			{
-				id: 1234,
-				start_offset: 1,
-				end_offset: 5,
-				relationWith: 4321,
-				relationType: 'parent',
-				label: 'WetsBegrip',
-				comment: 'This is an important comment!',
-				definition: 'This defines the entire annotation!'
-			},
-			{
-				id: 4321,
-				start_offset: 7,
-				end_offset: 11,
-				relationWith: 1234,
-				relationType: 'child',
-				label: 'Variable',
-				comment: 'This is an important comment!',
-				definition: 'This defines the entire annotation!'
-			}
-		],
-		text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget nunc ne que.'
-	};
+	let data = $objStore;
 
-	function handleClickExport(fileName = 'data.xml', data: Object) {
+	function handleClickExport(fileName = '', data: Object) {
 		new Promise<boolean>((resolve) => {
 			const modal: ModalSettings = {
 				type: 'confirm',
@@ -39,6 +16,8 @@
 			modalStore.trigger(modal);
 		}).then((r) => {
 			if (r) {
+				fileName = (data as { document: { filename: string }[] }).document[0].filename;
+				fileName = 'LAT_' + fileName;
 				download(fileName, jsonToXML(data));
 			}
 		});
@@ -93,5 +72,5 @@
 	type="button"
 	class="btn btn-xl variant-filled sticky bottom-0"
 	on:click={() => handleClickExport('data.xml', data)}
->Export to XML
+	>Export to XML
 </button>
