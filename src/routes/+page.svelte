@@ -2,7 +2,7 @@
     import UploadFile from "../components/UploadFile.svelte";
     import AnnotationView from "../components/AnnotationView.svelte";
     import FilterFile from "../components/FilterFile.svelte";
-    import AnnotationResults from "../components/AnnotationResults.svelte";
+	import LabelInputChips from "../components/LabelInputChips.svelte";
 
     let fileContent = "";
 </script>
@@ -15,5 +15,7 @@
     <div>
         <AnnotationView fileContent={fileContent} />
     </div>
-    <AnnotationResults />
+    <div class="max-w-48">
+        <LabelInputChips></LabelInputChips>
+    </div>
 </div>
