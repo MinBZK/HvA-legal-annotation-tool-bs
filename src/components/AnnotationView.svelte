@@ -108,8 +108,7 @@
 	}
 </script>
 
-<svelte:document on:selectstart={handleSelection}/>
-<div class="border border-gray-200 p-4 rounded-lg">
+<div class="border border-gray-200 p-4 rounded-lg" on:selectstart={handleSelection}>
 	<h2 class="text-xl font-bold mb-5">Annoteer:</h2>
 	<hr />
 	{#if formattedContent}
