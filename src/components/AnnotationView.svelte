@@ -6,11 +6,25 @@
 	import Page from '../routes/+page.svelte';
 	import { popup } from '@skeletonlabs/skeleton';
 
+	import { Toast, getToastStore } from '@skeletonlabs/skeleton';
+	import type { ToastSettings, ToastStore } from '@skeletonlabs/skeleton';
+
 	export let fileContent = '';
 	let formattedContent = '';
 	let selectedColor = '';
 	let labelID = '';
 	let visible = false;
+
+
+	// Toast message function
+	// TODO make it reusable for other functions
+    const toastStore = getToastStore();
+	const t: ToastSettings = {
+		message: 'Commenteren staat aan',
+		autohide: true,
+		timeout: 2_000,
+		background: 'variant-filled-success',
+	};
 
 	const popupFocusClick: PopupSettings = {
 		event: 'focus-click',
@@ -165,14 +179,21 @@
 		})
 	}
 
+	function startCommentate(){
+		toastStore.trigger(t);
+		
+	}
+
 	function clearSelection() {
 		visible = false;
 	}
 </script>
 
 <svelte:body on:dblclick={clearSelection} on:mouseup={handleSelection} />
-<div class="py-2"><button class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full " on:click={startAnnotate}>Annotate</button></div>
-
+<div class="py-2">
+	<button class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full " on:click={startAnnotate}>Annotate</button>
+	<button class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full " on:click={startCommentate}>Commenteren</button>
+</div>
 <div class="border border-gray-200 p-4 rounded-lg">
 	<h2 class="text-xl font-bold mb-5">Annoteer:</h2>
 	<hr />
@@ -200,7 +221,6 @@
 		</div>
 	{/if}
 </div>
-
 <style>
 	.annotation-view {
 		font-family: 'Inter', sans-serif;
