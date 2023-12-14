@@ -3,6 +3,7 @@
     import AnnotationView from "../components/AnnotationView.svelte";
     import FilterFile from "../components/FilterFile.svelte";
     import AnnotationResults from "../components/AnnotationResults.svelte";
+	import AnnotationComment from "../components/AnnotationComment.svelte";
 
     let fileContent = "";
 </script>
@@ -14,6 +15,7 @@
     </div>
     <div>
         <AnnotationView fileContent={fileContent} />
+        <AnnotationComment />
     </div>
     <AnnotationResults />
 </div>
