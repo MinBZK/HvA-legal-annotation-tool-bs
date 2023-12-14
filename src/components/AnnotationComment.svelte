@@ -53,7 +53,7 @@
   
     const saveComment = () => {
       // Save the additional comment and selection information
-      console.log("Additional Comment:", additionalComment + " text: " + text );
+      console.log("Additional Comment:", additionalComment );
       const comment = {
         start: selectionStart,
         end: selectionEnd,
