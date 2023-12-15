@@ -77,6 +77,7 @@
 			const xmlDoc = parser.parseFromString(contentToDisplay, 'text/xml');
 			convertXMLTagsToDiv(xmlDoc);
 			formattedContent = new XMLSerializer().serializeToString(xmlDoc);
+			formattedContent = formattedContent;
 		}
 
 		labelStore.subscribe((value) => {
@@ -170,14 +171,14 @@
 </script>
 
 <svelte:body on:dblclick={clearSelection} on:mouseup={handleSelection} />
-<div class="py-2"><button class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full " on:click={startAnnotate}>Annotate</button></div>
+<div class="py-2"><button class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full sticky top-0" on:click={startAnnotate}>Annotate</button></div>
 
-<div class="border border-gray-200 p-4 rounded-lg">
+<div class="border border-gray-300 h-[75vh] p-4 m-5 rounded-lg">
 	<h2 class="text-xl font-bold mb-5">Annoteer:</h2>
 	<hr />
 	{#if formattedContent}
 		<div
-			class="annotation-view h-[80vh] w-[750px] relative mt-5 mb-10"
+			class="text-xl leading-loose list-none relative m-10 overflow-scroll"
 			bind:innerHTML={formattedContent}
 			contenteditable="false"
 		></div>
@@ -199,14 +200,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-	.annotation-view {
-		font-family: 'Inter', sans-serif;
-		white-space: pre-line;
-		overflow-x: auto;
-		padding: 1em;
-		border-radius: 8px;
-		list-style-type: none;
-	}
-</style>
