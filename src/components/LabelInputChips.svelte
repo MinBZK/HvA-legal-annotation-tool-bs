@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { labelStore, selectedColor, chipSelected, textSelection } from '$lib/LabelStore';
+	import { labelStore, selectedColor, chipSelected, textSelection } from '../stores/LabelStore';
 	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 	import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
 	import Label from '../models/Label';

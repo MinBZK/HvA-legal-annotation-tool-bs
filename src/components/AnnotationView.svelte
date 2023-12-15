@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { selectedColor, chipSelected, textSelection } from '../lib/LabelStore.ts';
+	import { selectedColor, chipSelected, textSelection } from '../stores/LabelStore.ts';
 
 	export let fileContent = '';
 	let formattedContent = '';
