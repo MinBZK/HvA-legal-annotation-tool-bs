@@ -3,6 +3,9 @@
 	import AnnotationResults from '../components/AnnotationResults.svelte';
 	import AnnotationExport from '../components/AnnotationExport.svelte';
 	import ImportXml from '../components/ImportXML.svelte';
+	import UploadFile from "../components/UploadFile.svelte";
+    import FilterFile from "../components/FilterFile.svelte";
+	import LabelInputChips from "../components/LabelInputChips.svelte";
 
 	let fileContent = '';
 </script>
@@ -28,6 +31,9 @@
 			<AnnotationView />
 			<AnnotationExport />
 		</div>
+		<div class="max-w-48">
+        <LabelInputChips></LabelInputChips>
+    	</div>
 	</div>
 {/if}
 
