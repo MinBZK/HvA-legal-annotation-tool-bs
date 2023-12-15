@@ -26,6 +26,7 @@
 			const xmlDoc = parser.parseFromString(contentToDisplay, 'text/xml');
 			convertXMLTagsToDiv(xmlDoc);
 			formattedContent = new XMLSerializer().serializeToString(xmlDoc);
+			formattedContent = formattedContent;
 		}
 
 		selectedColor.subscribe((value) => {
@@ -135,7 +136,7 @@
 	<hr />
 	{#if formattedContent}
 		<div
-			class="annotation-view h-[80vh] w-[750px] relative mt-5 mb-10"
+			class="text-xl leading-loose list-none relative m-10 overflow-scroll"
 			bind:innerHTML={formattedContent}
 			contenteditable="false"
 		></div>
