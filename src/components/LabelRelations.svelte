@@ -42,10 +42,12 @@
                     <h3 class="align-middle">{Relation.label1.name}</h3>
                     <p class="align-middle">{Relation.description}</p>
                     <h3 class="align-middle">{Relation.label2.name}</h3>
-                    <button on:click={() => removeRelation(Relation)} 
-                            class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full">
-                        Delete
-                    </button>
+                    {#if !Relation.mandatory}
+                        <button on:click={() => removeRelation(Relation)} 
+                                class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full">
+                            Delete
+                        </button>
+                    {/if}
                 </div>
             {/each}
             <RelationForm 

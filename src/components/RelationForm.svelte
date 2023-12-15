@@ -17,7 +17,7 @@
     export let newRelation = new Relation(
         relationsArray[relationsArray.length - 1].relationId + 1,
         forLabel,
-        new Label(2, "abc", "abc", null as any),
+        new Label(2, "abc", "abc"),
         "abc"
     );
 

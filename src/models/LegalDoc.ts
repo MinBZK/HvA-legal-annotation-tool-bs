@@ -12,17 +12,4 @@ export default class LegalDoc {
         this.text = text;
         this.annotations = annotations;
     }
-
-    exportDocument() {
-        return {
-            id: this.id,
-            source: this.source,
-            text: this.text,
-            annotations: this.annotations
-        }
-    }
-
-    importDocument() {
-        // TODO: implement
-    }
 }

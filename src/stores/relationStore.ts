@@ -4,11 +4,22 @@ import Label from '../models/Label';
 import Relation from '../models/Relation';
 
 export let labels: Label[] = [
-    new Label(1, "Label1", "blue", null as any),
-    new Label(2, "Label2", "blue", null as any),
-    new Label(3, "Label3", "blue", null as any),
-    new Label(4, "Label4", "blue", null as any),
-    new Label(5, "Label5", "green", null as any)
+    new Label(1, "Rechtssubject", "#c2e7ff"),
+    new Label(2, "Rechtsbetrekking", "#70a4ff"),
+    new Label(3, "Rechtsobject", "#98bee1"),
+    new Label(4, "Rechtsfeit", "#97d6fe"),
+    new Label(5, "Voorwaarde", "#91e8d3"),
+    new Label(6, "Afleidingsregel", "#ff7a7a"),
+    new Label(7, "Variabele", "#ffd95d"),
+    new Label(8, "Variabelewaarde", "#fff380"),
+    new Label(9, "Parameter", "#ffb4b4"),
+    new Label(10, "Parameterwaarde", "#ffd8ef"),
+    new Label(11, "Operator", "#c1ebe1"),
+    new Label(12, "Tijdsaanduiding", "#d8b0f9"),
+    new Label(13, "Plaatsaanduiding", "#efcaf6"),
+    new Label(14, "Delegatiebevoegdheid", "#cecece"),
+    new Label(15, "Delegatie-invulling", "#e2e2e2"),
+    new Label(16, "Brondefinitie", "#f6f6f6")
 ];
 
 export let relationsText: string[] = [
@@ -29,10 +40,25 @@ export let relationsText: string[] = [
 ];
 
 export let relationArray: Relation[] = [
-    new Relation(1, labels[0], labels[1], relationsText[0]),
-    new Relation(2, labels[0], labels[2], relationsText[1]),
-    new Relation(3, labels[0], labels[3], relationsText[2]),
-    new Relation(4, labels[1], labels[4], relationsText[3])
+    new Relation(1, labels[1], labels[0], relationsText[0], true),
+    new Relation(2, labels[1], labels[0], relationsText[1], true),
+    new Relation(3, labels[1], labels[2], relationsText[2], true),
+    new Relation(4, labels[1], labels[3], relationsText[3], true),
+    new Relation(5, labels[1], labels[3], relationsText[4], true),
+    new Relation(6, labels[1], labels[3], relationsText[5], true),
+    new Relation(7, labels[1], labels[4], relationsText[6], true),
+
+    new Relation(8, labels[3], labels[0], relationsText[7], true),
+    new Relation(9, labels[3], labels[2], relationsText[2], true),
+    new Relation(10, labels[3], labels[4], relationsText[6], true),
+    new Relation(11, labels[3], labels[12], relationsText[9], true),
+    new Relation(12, labels[3], labels[11], relationsText[8], true),
+
+    new Relation(13, labels[0], labels[0], relationsText[10], true),
+    new Relation(14, labels[0], labels[4], relationsText[6], true),
+
+    new Relation(15, labels[2], labels[2], relationsText[10], true),
+    new Relation(16, labels[2], labels[4], relationsText[6], true),
 ];
 
 export const labelStore: Writable<string> = localStorageStore('labels', JSON.parse(JSON.stringify(labels)));
