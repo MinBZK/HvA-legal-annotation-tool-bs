@@ -59,6 +59,13 @@ export let relationArray: Relation[] = [
 
     new Relation(15, labels[2], labels[2], relationsText[10], true),
     new Relation(16, labels[2], labels[4], relationsText[6], true),
+
+    new Relation(17, labels[5], labels[6], relationsText[12], true),
+    new Relation(18, labels[5], labels[6], relationsText[11], true),
+    new Relation(19, labels[5], labels[8], relationsText[11], true),
+    new Relation(20, labels[5], labels[9], relationsText[11], true),
+    new Relation(21, labels[5], labels[4], relationsText[6], true),
+    new Relation(22, labels[5], labels[10], relationsText[14], true),
 ];
 
 export const labelStore: Writable<string> = localStorageStore('labels', JSON.parse(JSON.stringify(labels)));
