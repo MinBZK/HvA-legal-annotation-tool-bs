@@ -29,12 +29,14 @@
 
 		selectedColor.subscribe((value) => {
 			inputColor = value.color;
-		})
+		});
 
 		chipSelected.subscribe((value) => {
-			selectChip = value;
-		})
-		
+			if (value) {
+				changeTextBackground();
+				chipSelected.set(false); // reset the trigger
+			}
+		});
 	});
 
 	// Convert XML tags to divs
@@ -61,18 +63,20 @@
 	}
 
 	// Add event listener to detect user selection
-	const handleSelection = (e) => (selectedText = document.getSelection(), selectionLogic(selectedText));
+	const handleSelection = (e) => (
+		(selectedText = document.getSelection()), selectionLogic(selectedText)
+	);
 
 	function selectionLogic(selectionInput: Selection | null) {
 		const selection = selectionInput;
 		const inputChipsDiv = document.querySelector('.input-chips') as HTMLElement;
 
-		if(selectChip) {
+		if (selectChip) {
 			changeTextBackground();
 		}
 
 		if (selection && selection.toString().length > 3) {
-			inputChipsDiv.style.display = "block"
+			inputChipsDiv.style.display = 'block';
 			const selectedText = selection.toString();
 			console.log(selectedText);
 
@@ -89,26 +93,27 @@
 				inputChipsDiv.style.left = selectedTextLeft + 'px';
 			}
 		} else {
-			inputChipsDiv.style.display = "none"
+			inputChipsDiv.style.display = 'none';
 		}
 	}
 
 	// Apply background color to the selected text
 	function changeTextBackground() {
 		const selection = document.getSelection();
-			if(selection && selection.toString().length > 3) {
-				console.log("color= " + inputColor)
-				const selectedText = selection.toString();
-				
-				const span = document.createElement('span');
-				span.style.color = inputColor; 
-				span.appendChild(document.createTextNode(selectedText));
-				selection?.getRangeAt(0).surroundContents(span);		
-			}
+		if (selection && selection.toString().length > 3) {
+			console.log('color= ' + inputColor);
+			const selectedText = selection.toString();
+
+			const span = document.createElement('span');
+			span.style.color = inputColor;
+			span.appendChild(document.createTextNode(selectedText));
+			selection?.getRangeAt(0).surroundContents(span);
+		}
 	}
 </script>
 
-<div class="border border-gray-200 p-4 rounded-lg" on:selectstart={handleSelection}>
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<div class="border border-gray-200 p-4 rounded-lg" role="main" on:mouseup={handleSelection}>
 	<h2 class="text-xl font-bold mb-5">Annoteer:</h2>
 	<hr />
 	{#if formattedContent}
