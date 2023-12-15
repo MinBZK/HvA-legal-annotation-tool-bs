@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { labelStore, selectedColor, chipSelected } from '../lib/LabelStore.ts';
+	import { selectedColor, chipSelected, textSelection } from '../lib/LabelStore.ts';
 
 	export let fileContent = '';
 	let formattedContent = '';
@@ -12,6 +12,7 @@
 		let contentToDisplay = fileContent;
 		selectionLogic(null);
 
+		
 		// If no file content is passed, check if there is a file in local storage
 		if (!contentToDisplay) {
 			const storedContent = localStorage.getItem('uploadedXML');
@@ -35,8 +36,9 @@
 			if (value) {
 				changeTextBackground();
 				chipSelected.set(false); // reset the trigger
-			}
+			} 
 		});
+		
 	});
 
 	// Convert XML tags to divs
@@ -64,7 +66,7 @@
 
 	// Add event listener to detect user selection
 	const handleSelection = (e) => (
-		(selectedText = document.getSelection()), selectionLogic(selectedText)
+		(selectedText = document.getSelection()), selectionLogic(selectedText), detectSelection()
 	);
 
 	function selectionLogic(selectionInput: Selection | null) {
@@ -97,6 +99,19 @@
 		}
 	}
 
+	function detectSelection() {
+		const selection = document.getSelection();
+		if (selection && selection.toString().length > 3) {
+			textSelection.update((store) => {
+				return { ...store, text: selection.toString() };
+			});
+		} else {
+			textSelection.update((store) => {
+				return { ...store, text: '' };
+			});
+		}
+	}
+
 	// Apply background color to the selected text
 	function changeTextBackground() {
 		const selection = document.getSelection();
@@ -110,8 +125,10 @@
 			selection?.getRangeAt(0).surroundContents(span);
 		}
 	}
+
 </script>
 
+<!-- svelte-ignore non-top-level-reactive-declaration -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <div class="border border-gray-200 p-4 rounded-lg" role="main" on:mouseup={handleSelection}>
 	<h2 class="text-xl font-bold mb-5">Annoteer:</h2>

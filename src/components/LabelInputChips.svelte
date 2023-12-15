@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { labelStore, selectedColor, chipSelected } from '$lib/LabelStore';
+	import { labelStore, selectedColor, chipSelected, textSelection } from '$lib/LabelStore';
 	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 	import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
 	import Label from '../models/Label';
@@ -34,7 +34,7 @@
 		{ label: 'Brondefinitie', value: 'Brondefinitie', meta: '15' }
 	];
 
-    // Look up color-code accorrding to value
+	// Look up color-code accorrding to value
 	const colorLookup = {
 		Rechtssubject: '#c2e7ff',
 		Rechtsbetrekking: '#70a4ff',
@@ -71,20 +71,34 @@
 				labelName = label.name;
 			});
 		});
+
+		textSelection.subscribe((selection) => {
+			let selectedText = selection.text;
+			if (!selectedText || selectedText === '') {
+				inputChipList = [];
+			}
+		});
 	});
 
 	function onInputChipSelect(event: CustomEvent<PreMadeLabels>): void {
-		console.log('onInputChipSelect', event.detail);
 		if (inputChipList.includes(event.detail.value) === false) {
 			inputChipList = [...inputChipList, event.detail.value];
 			inputChip = '';
 
 			inputColor = colorLookup[event.detail.value];
-            selectedColor.update((store) => {
-                return { ...store, color: inputColor}
-            });
-            
-            chipSelected.set(true);
+			selectedColor.update((store) => {
+				return { ...store, color: inputColor };
+			});
+
+			chipSelected.set(true);
+		} else {
+			// Remove the chip from the list
+			inputChipList = inputChipList.filter((chip) => chip !== event.detail.value);
+
+			// If no chip is selected, set chipSelected to false
+			if (inputChipList.length === 0) {
+				chipSelected.set(false);
+			}
 		}
 	}
 
@@ -93,10 +107,16 @@
 
 <div class="input-chips max-w-sm mt-5 bg-primary-900">
 	<div class="m-3">
-		<input type="text" placeholder="Add Comment" class="border p-2 mr-2 placeholder-white bg-primary-700" />
-		<button on:click={createComment} class="bg-primary-700 text-white px-4 py-2 rounded-md">Comment</button>
+		<input
+			type="text"
+			placeholder="Add Comment"
+			class="border p-2 mr-2 placeholder-white bg-primary-700"
+		/>
+		<button on:click={createComment} class="bg-primary-700 text-white px-4 py-2 rounded-md"
+			>Comment</button
+		>
 	</div>
-	<InputChip bind:input={inputChip} bind:value={inputChipList} name="chips" />
+	<InputChip bind:input={inputChip} bind:value={inputChipList} name="chips" allowUpperCase />
 	<div class="card max-h-48 p-4 overflow-y-auto" tabindex="-1">
 		<Autocomplete
 			bind:input={inputChip}
