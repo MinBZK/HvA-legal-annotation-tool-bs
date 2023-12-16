@@ -1,7 +1,7 @@
 import { localStorageStore } from '@skeletonlabs/skeleton';
 import type { Writable } from 'svelte/store';
 import Label from '../models/Label';
-import Relation from '../models/Relation';
+import Annotation from '../models/Annotation';
 
 export let labels: Label[] = [
     new Label(1, "Rechtssubject", "#c2e7ff"),
@@ -22,7 +22,7 @@ export let labels: Label[] = [
     new Label(16, "Brondefinitie", "#f6f6f6")
 ];
 
-export let relationsText: string[] = [
+export let relationTypes: string[] = [
     "Wie heeft het recht",
     "Wie heeft de plicht",
     "Heeft als voorwerp",
@@ -39,37 +39,50 @@ export let relationsText: string[] = [
     "Gebruikt"
 ];
 
-export let relationArray: Relation[] = [
-    new Relation(1, labels[1], labels[0], relationsText[0], true),
-    new Relation(2, labels[1], labels[0], relationsText[1], true),
-    new Relation(3, labels[1], labels[2], relationsText[2], true),
-    new Relation(4, labels[1], labels[3], relationsText[3], true),
-    new Relation(5, labels[1], labels[3], relationsText[4], true),
-    new Relation(6, labels[1], labels[3], relationsText[5], true),
-    new Relation(7, labels[1], labels[4], relationsText[6], true),
-
-    new Relation(8, labels[3], labels[0], relationsText[7], true),
-    new Relation(9, labels[3], labels[2], relationsText[2], true),
-    new Relation(10, labels[3], labels[4], relationsText[6], true),
-    new Relation(11, labels[3], labels[12], relationsText[9], true),
-    new Relation(12, labels[3], labels[11], relationsText[8], true),
-
-    new Relation(13, labels[0], labels[0], relationsText[10], true),
-    new Relation(14, labels[0], labels[4], relationsText[6], true),
-
-    new Relation(15, labels[2], labels[2], relationsText[10], true),
-    new Relation(16, labels[2], labels[4], relationsText[6], true),
-
-    new Relation(17, labels[5], labels[6], relationsText[12], true),
-    new Relation(18, labels[5], labels[6], relationsText[11], true),
-    new Relation(19, labels[5], labels[8], relationsText[11], true),
-    new Relation(20, labels[5], labels[9], relationsText[11], true),
-    new Relation(21, labels[5], labels[4], relationsText[6], true),
-    new Relation(22, labels[5], labels[10], relationsText[14], true),
+export let annotations: Annotation[] = [
+    new Annotation(1, null as any, "Deze wet", "Rechtssubject", null as any, null as any, [
+        { type: relationTypes[10], source: 1, target: 2 },
+        { type: relationTypes[6], source: 1, target: 3 }
+    ]),
+    new Annotation(2, null as any, "Die andere wet", "Rechtssubject", null as any, null as any, [
+        { type: relationTypes[10], source: 1, target: 2 },
+    ]),
+    new Annotation(3, null as any, "Als Bamischijf het toelaat", "Voorwaarden", null as any, null as any, [
+        { type: relationTypes[6], source: 1, target: 3 }
+    ])
 ];
+
+// export let relationArray: Relation[] = [
+//     new Relation(1, labels[1], labels[0], relationsText[0], true),
+//     new Relation(2, labels[1], labels[0], relationsText[1], true),
+//     new Relation(3, labels[1], labels[2], relationsText[2], true),
+//     new Relation(4, labels[1], labels[3], relationsText[3], true),
+//     new Relation(5, labels[1], labels[3], relationsText[4], true),
+//     new Relation(6, labels[1], labels[3], relationsText[5], true),
+//     new Relation(7, labels[1], labels[4], relationsText[6], true),
+
+//     new Relation(8, labels[3], labels[0], relationsText[7], true),
+//     new Relation(9, labels[3], labels[2], relationsText[2], true),
+//     new Relation(10, labels[3], labels[4], relationsText[6], true),
+//     new Relation(11, labels[3], labels[12], relationsText[9], true),
+//     new Relation(12, labels[3], labels[11], relationsText[8], true),
+
+//     new Relation(13, labels[0], labels[0], relationsText[10], true),
+//     new Relation(14, labels[0], labels[4], relationsText[6], true),
+
+//     new Relation(15, labels[2], labels[2], relationsText[10], true),
+//     new Relation(16, labels[2], labels[4], relationsText[6], true),
+
+//     new Relation(17, labels[5], labels[6], relationsText[12], true),
+//     new Relation(18, labels[5], labels[6], relationsText[11], true),
+//     new Relation(19, labels[5], labels[8], relationsText[11], true),
+//     new Relation(20, labels[5], labels[9], relationsText[11], true),
+//     new Relation(21, labels[5], labels[4], relationsText[6], true),
+//     new Relation(22, labels[5], labels[10], relationsText[14], true),
+// ];
 
 export const labelStore: Writable<string> = localStorageStore('labels', JSON.parse(JSON.stringify(labels)));
 
-export const relationsTextStore: Writable<string> = localStorageStore('relationsText', JSON.parse(JSON.stringify(relationsText)));
+export const relationsTypesStore: Writable<string> = localStorageStore('relationsTypes', JSON.parse(JSON.stringify(relationTypes)));
 
-export const relationsStore: Writable<string> = localStorageStore('relations', JSON.parse(JSON.stringify(relationArray)));
+export const annotationsStore: Writable<string> = localStorageStore('FarajAnnotations', JSON.parse(JSON.stringify(annotations)));

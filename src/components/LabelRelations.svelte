@@ -1,4 +1,60 @@
 <script lang="ts">
+	import type Annotation from "../models/Annotation";
+	import { annotationsStore, labelStore, relationsTypesStore } from "../stores/relationStore";
+
+    export let selectedAnnotation: Annotation;
+
+    let labels;
+    let relationTypes;
+    let annotations;
+
+    // annotationsStore.subscribe(e => annotations = e);
+    labelStore.subscribe(e => labels = e);
+    relationsTypesStore.subscribe(e => relationTypes = e);
+    annotationsStore.subscribe(e => annotations = e);
+
+    // Get all relations for the selected annotation
+    let relations = annotations.filter(annotation => annotation.id === selectedAnnotation.id)[0].relationships;
+    console.log(relations);
+</script>
+
+<div class="m-5">
+    <div class="gap-3 mt-5">
+        <h3 class="align-middle">{selectedAnnotation.text}</h3>
+        <p class="align-middle">{selectedAnnotation.label}</p>
+        {#each relations as relationship}
+            <div class="flex gap-3 mt-5">
+                <h3 class="align-middle">{annotations.find(a => a.id === relationship.source).text}</h3>
+                <p class="align-middle">{relationship.type}</p>
+                <h3 class="align-middle">{annotations.find(a => a.id === relationship.target).text}</h3>
+            </div>
+        {/each}
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <script lang="ts">
     import RelationForm from "./RelationForm.svelte";
     import type Relation from "../models/Relation";
 	import type Label from "../models/Label";
@@ -56,7 +112,7 @@
             />
         </div>
     {/if}
-    <!-- <div class="mt-5">
+    <div class="mt-5">
         <AddLabel />
-    </div> -->
-</div>
+    </div>
+</div> -->
