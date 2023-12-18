@@ -35,11 +35,12 @@
 		}
 	}
 
-	function collectText(obj: any, parentKey: string = ''): string[] {
+	function collectText(obj: any, prevKey: string = ''): string[] {
 		let texts: string[] = [];
 		for (let key in obj) {
-			if (key === '_text' && parentKey !== 'kop') {
-				texts.push(obj[key]);
+			if (key === '_text') {
+				const shouldNotAppendNewline = ['lidnr', 'li.nr'].includes(prevKey) || obj[key].trim().match(/^[0-9]+\.$/);
+				texts.push(obj[key] + (shouldNotAppendNewline ? '' : '\n'));
 			} else if (typeof obj[key] === 'object') {
 				texts = texts.concat(collectText(obj[key], key));
 			}
@@ -47,10 +48,11 @@
 		return texts;
 	}
 
+
 	function convertXMLtoObj(xml: string, filename: string): void {
 		const result = xml2js(xml, { compact: true }) as any;
 		const title = result.artikel.kop._text;
-		const textContent = collectText(result.artikel).join('\n');
+		const textContent = collectText(result.artikel).join('');
 
 		const data = {
 			document: [
