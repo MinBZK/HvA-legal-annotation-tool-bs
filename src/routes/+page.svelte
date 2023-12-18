@@ -1,55 +1,69 @@
 <script lang="ts">
-    import UploadFile from "../components/UploadFile.svelte";
-    import AnnotationView from "../components/AnnotationView.svelte";
+	import AnnotationView from '../components/AnnotationView.svelte';
+	import AnnotationResults from '../components/AnnotationResults.svelte';
+	import AnnotationExport from '../components/AnnotationExport.svelte';
+	import ImportXml from '../components/ImportXML.svelte';
+	import UploadFile from "../components/UploadFile.svelte";
     import FilterFile from "../components/FilterFile.svelte";
-    import AnnotationResults from "../components/AnnotationResults.svelte";
+	import LabelInputChips from "../components/LabelInputChips.svelte";
 	import LabelRelations from "../components/LabelRelations.svelte";
 
     import { Drawer, getDrawerStore, initializeStores } from "@skeletonlabs/skeleton";
 	import Annotation from "../models/Annotation";
-	import { annotationsStore, relationsTypesStore } from "../stores/relationStore";
-	import { labelStore } from "$lib/LabelStore";
+	import { labelStore } from "../stores/LabelStore";
 	import Label from "../models/Label";
 
     initializeStores();
     const drawerStore = getDrawerStore();
 
-    let fileContent = "";
+	let fileContent = '';
 
     let relationTypes;
-    let annotations;
-
-    relationsTypesStore.subscribe(e => relationTypes = e);
-    annotationsStore.subscribe(e => annotations = e);
-
-    const selectedAnnotation = annotations[0];
 </script>
 
-<div class="mx-10 mt-10 flex gap-10">
-    <Drawer>
-        {#if $drawerStore.id === 'relationships'}
-            <LabelRelations selectedAnnotation={selectedAnnotation}/>
-        {/if}
-    </Drawer>
-    <div class="flex flex-col gap-10 border border-gray-200 rounded-lg p-4">
-        <UploadFile on:fileUploaded={e => fileContent = e.detail} />
-        <FilterFile />
-    </div>
-    <div>
-        <AnnotationView fileContent={fileContent} />
-    </div>
-    <AnnotationResults />
-    <div>
-        <button class="mt-5 variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 mt-2 mr-2 rounded-full"
-                on:click={() => drawerStore.open({
-                    id: "relationships",
-                    position: 'right',
-                    bgDrawer: 'bg-indigo-900 text-white',
-                    width: 'w-[50%]',
-                    padding: 'p-4',
-                    rounded: 'rounded-xl',
-                })}>
-            Modify relationships
-        </button>
-    </div>
-</div>
+{#if !fileContent}
+	<div class="flex flex-col">
+		<div class="self-center">
+			<ImportXml
+				on:fileUploaded={(e) => {
+					fileContent = e.detail;
+				}}
+			/>
+		</div>
+	</div>
+{:else}
+	<div class="flex flex-row">
+        <Drawer>
+            {#if $drawerStore.id === 'relationships'}
+                <LabelRelations />
+            {/if}
+        </Drawer>
+		<div
+			class="w-1/2 border dark:border-gray-200 border-gray-950 m-5 p-5 rounded-lg h-[90vh] overflow-auto"
+		></div>
+		<div
+			class="w-1/2 border dark:border-gray-200 border-gray-950 m-5 p-5 rounded-lg h-[90vh] overflow-auto"
+		>
+			<AnnotationView />
+			<AnnotationExport />
+		</div>
+		<div class="max-w-48">
+        <LabelInputChips></LabelInputChips>
+    	</div>
+        <div>
+            <button class="mt-5 variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 mt-2 mr-2 rounded-full"
+                    on:click={() => drawerStore.open({
+                        id: "relationships",
+                        position: 'right',
+                        bgDrawer: 'bg-indigo-900 text-white',
+                        width: 'w-[50%]',
+                        padding: 'p-4',
+                        rounded: 'rounded-xl',
+                    })}>
+                Modify relationships
+            </button>
+        </div>
+	</div>
+{/if}
+
+<AnnotationResults />

@@ -1,118 +1,97 @@
 <script lang="ts">
-	import type Annotation from "../models/Annotation";
-	import { annotationsStore, labelStore, relationsTypesStore } from "../stores/relationStore";
+	import Annotation from "../models/Annotation";
+    import { annotationStore, addAnnotation } from "../stores/AnnotationStore";
+	import { onMount } from "svelte";
+	import RelationForm from "./RelationForm.svelte";
+    import { relationTypes } from "../stores/relationStore";
 
-    export let selectedAnnotation: Annotation;
-
-    let labels;
-    let relationTypes;
     let annotations;
+    let selectedAnnotation = null as any;
+    let showForm = false;
 
-    // annotationsStore.subscribe(e => annotations = e);
-    labelStore.subscribe(e => labels = e);
-    relationsTypesStore.subscribe(e => relationTypes = e);
-    annotationsStore.subscribe(e => annotations = e);
+    annotationStore.set([new Annotation(1, null as any, "Deze wet", "Rechtssubject", null as any, null as any, [
+            { type: relationTypes[10], source: 1, target: 2 },
+            { type: relationTypes[6], source: 1, target: 3 }
+        ]),
+        new Annotation(2, null as any, "Die andere wet", "Rechtssubject", null as any, null as any, [
+            { type: relationTypes[10], source: 1, target: 2 },
+        ]),
+        new Annotation(3, null as any, "Als Bamischijf het toelaat", "Voorwaarden", null as any, null as any, [
+            { type: relationTypes[6], source: 1, target: 3 }
+        ])]
+    );
 
-    // Get all relations for the selected annotation
-    let relations = annotations.filter(annotation => annotation.id === selectedAnnotation.id)[0].relationships;
-    console.log(relations);
+    annotationStore.subscribe(e => annotations = e);
+
+    function onDeleteRelation(relation) {
+
+    annotationStore.update(annotations => {
+        const sourceAnnotation = annotations.find(a => a.id === relation.source);
+        const targetAnnotation = annotations.find(a => a.id === relation.target);
+
+        if (sourceAnnotation && targetAnnotation) {
+            sourceAnnotation.relationships = sourceAnnotation.relationships.filter(r =>
+                !(r.source === relation.source && r.target === relation.target)
+            );
+
+            targetAnnotation.relationships = targetAnnotation.relationships.filter(r =>
+                !(r.source === relation.source && r.target === relation.target)
+            );
+        }
+
+        return annotations;
+    });
+}
+
+
 </script>
 
 <div class="m-5">
-    <div class="gap-3 mt-5">
-        <h3 class="align-middle">{selectedAnnotation.text}</h3>
-        <p class="align-middle">{selectedAnnotation.label}</p>
-        {#each relations as relationship}
-            <div class="flex gap-3 mt-5">
-                <h3 class="align-middle">{annotations.find(a => a.id === relationship.source).text}</h3>
-                <p class="align-middle">{relationship.type}</p>
-                <h3 class="align-middle">{annotations.find(a => a.id === relationship.target).text}</h3>
+    {#if selectedAnnotation === null}
+        <h1 class="font-bold">All Annotations</h1>
+        {#each annotations as annotation}
+            <div class="gap-3 mt-5">
+                <button type="button" class="btn variant-filled"
+                on:click={() => selectedAnnotation = annotation}>
+                    <p class="align-middle">{annotation.text}</p>
+                </button>
             </div>
         {/each}
-    </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <script lang="ts">
-    import RelationForm from "./RelationForm.svelte";
-    import type Relation from "../models/Relation";
-	import type Label from "../models/Label";
-    import { labelStore, relationsStore, relationsTextStore } from "../stores/relationStore";
-	import { onMount } from "svelte";
-	import AddLabel from "./addLabel.svelte";
-
-    let selectedLabel: Label;
-    let show = false;
-
-    let relationsArray;
-    let relationsTextArray;
-    let labelsArray;
-
-    relationsStore.subscribe(e => relationsArray = e);
-    labelStore.subscribe(e => labelsArray = e);
-    relationsTextStore.subscribe(e => relationsTextArray = e);
-
-    function removeRelation(relation: Relation) {
-        let updatedRelations = relationsArray.filter(r => r.relationId !== relation.relationId);
-        relationsStore.update(() => updatedRelations);
-    }
-
-    onMount(() => localStorage.removeItem('relations'));
-</script>
-
-<div>
-    {#each labelsArray as Label}
-        <button class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 mt-2 mr-2 rounded-full" on:click={() => {
-            selectedLabel = Label;
-        }}>
-            {Label.name}
-        </button>
-    {/each}
-
-    {#if selectedLabel}
-        <div class="mt-5">
-            <h2 class="font-bold">{selectedLabel.name}</h2>
-            {#each relationsArray.filter(relation => relation.label1.labelId === selectedLabel.labelId || relation.label2.labelId === selectedLabel.labelId) as Relation}
-                <div class="flex gap-3 mt-5">
-                    <h3 class="align-middle">{Relation.label1.name}</h3>
-                    <p class="align-middle">{Relation.description}</p>
-                    <h3 class="align-middle">{Relation.label2.name}</h3>
-                    {#if !Relation.mandatory}
-                        <button on:click={() => removeRelation(Relation)} 
-                                class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full">
-                            Delete
-                        </button>
-                    {/if}
+        {:else}
+        {#if !showForm}
+            <div>
+                <button type="button" class="btn variant-filled float-right mb-5" on:click={() => selectedAnnotation = null}>Return</button>
+                <div class="table-container">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Annotatie 1</th>
+                                <th>Relationship</th>
+                                <th>Annotatie 2</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {#each selectedAnnotation.relationships as relationship}
+                                <tr>
+                                    <th>{annotations.find(a => a.id === relationship.source).text}</th>
+                                    <th>{relationship.type}</th>
+                                    <th>{annotations.find(a => a.id === relationship.target).text}</th>
+                                    <th><button type="button" class="btn variant-filled"
+                                        on:click={() => onDeleteRelation(relationship)}
+                                        >Delete</button></th>
+                                </tr>
+                            {/each}
+                        </tbody>
+                    </table>
                 </div>
-            {/each}
-            <RelationForm 
-                show={show} 
-                forLabel={selectedLabel}
-            />
-        </div>
+                <button type="button" class="btn variant-filled mt-5"
+                    on:click={() => showForm = true}
+                    >Add relationship</button>
+            </div>
+            {:else}
+            <RelationForm selectedAnnotationId={selectedAnnotation.id} setShowForm={(value) => showForm = value} />
+        {/if}
     {/if}
-    <div class="mt-5">
-        <AddLabel />
-    </div>
-</div> -->
+    
+</div>

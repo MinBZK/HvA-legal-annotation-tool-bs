@@ -1,62 +1,44 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import Label from "../models/Label";
-    import Relation from "../models/Relation";
-    import { labelStore, relationsStore, relationsTextStore } from "../stores/relationStore";
+	import { annotationStore } from "../stores/AnnotationStore";
+    import { relationTypes } from "../stores/relationStore";
 
-    export let forLabel: Label;
-    export let show = false;
-    let relationsArray;
-    let relationsTextArray;
-    let labelsArray;
-    
-    relationsStore.subscribe(e => relationsArray = e);
-    labelStore.subscribe(e => labelsArray = e);
-    relationsTextStore.subscribe(e => relationsTextArray = e);
+    export let setShowForm: Function;
+    export let selectedAnnotationId: number;
+    let annotations;
+    let selectedAnnotation;
 
-    export let newRelation = new Relation(
-        relationsArray[relationsArray.length - 1].relationId + 1,
-        forLabel,
-        new Label(2, "abc", "abc"),
-        "abc"
-    );
-
-    function addRelation(relation: Relation) {
-        relationsStore.update(arr => JSON.parse(JSON.stringify([...arr, relation])));
-        show = false;
-    }
+    annotationStore.subscribe(e => {
+        annotations = e;
+        selectedAnnotation = e.find(a => a.id === selectedAnnotationId);
+    });
 </script>
 
+<div>
+    <button type="button" class="btn variant-filled float-right mb-5" on:click={() => setShowForm(false)}>Return</button>
+    <h1 class="h5 font-bold mb-5">Add relationship for de annotatie: "{selectedAnnotation.text}"</h1>
+
+    <label for="relationTypesSelect" class="label mb-1">Select a relation type</label>
+    <select id="relationTypesSelect" class="border border-gray-400 rounded-lg p-2 mb-2 text-black">
+        {#each relationTypes as val}
+            <option value={val}>{val}</option>
+        {/each}
+    </select>
+
+    <label for="annotationsSelect" class="label mb-1">Select other annotation</label>
+    <select id="annotationsSelect" class="border border-gray-400 rounded-lg p-2 mb-2 text-black">
+        {#each annotations as annotation}
+            <option value={annotation.id}>{annotation.text}</option>
+        {/each}
+    </select>
+
+    <button on:click={() => null} 
+            class="block variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 mt-2 rounded-full">
+        Submit
+    </button>
+    
+</div>
+
+
 <div class="pt-5">
-    {#if show}
-        <input hidden bind:value={forLabel} type="text" class="border border-gray-400 rounded-lg p-2 mb-2" />
-        <h1>{forLabel.name}</h1>
-
-        <select bind:value={newRelation.description} class="border border-gray-400 rounded-lg p-2 mb-2 text-black">
-            {#each relationsTextArray as desc}
-                <option value={desc}>{desc}</option>
-            {/each}
-        </select>
-
-        <select bind:value={newRelation.label2} class="border border-gray-400 rounded-lg p-2 mb-2 text-black">
-            {#each labelsArray as lab}
-                <option value={lab}>{lab.name}</option>
-            {/each}
-        </select>
-
-        <button on:click={() => addRelation(newRelation)} 
-                class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full">
-            Submit
-        </button>
-
-        <button on:click={() => show = false}
-                class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full">
-            Cancel
-        </button>
-    {:else}
-        <button on:click={() => show = true}
-                class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full">
-            Add relation
-        </button>
-    {/if}
+    
 </div>
