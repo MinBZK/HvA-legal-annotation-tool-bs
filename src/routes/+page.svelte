@@ -3,7 +3,6 @@
 	import AnnotationResults from '../components/AnnotationResults.svelte';
 	import AnnotationExport from '../components/AnnotationExport.svelte';
 	import ImportXml from '../components/ImportXML.svelte';
-	import UploadFile from "../components/UploadFile.svelte";
     import FilterFile from "../components/FilterFile.svelte";
 	import LabelInputChips from "../components/LabelInputChips.svelte";
 
@@ -24,7 +23,9 @@
 	<div class="flex flex-row">
 		<div
 			class="w-1/2 border dark:border-gray-200 border-gray-950 m-5 p-5 rounded-lg h-[90vh] overflow-auto"
-		></div>
+		>
+			<FilterFile />
+		</div>
 		<div
 			class="w-1/2 border dark:border-gray-200 border-gray-950 m-5 p-5 rounded-lg h-[90vh] overflow-auto"
 		>
@@ -32,7 +33,7 @@
 			<AnnotationExport />
 		</div>
 		<div class="max-w-48">
-        <LabelInputChips></LabelInputChips>
+        <LabelInputChips />
     	</div>
 	</div>
 {/if}
