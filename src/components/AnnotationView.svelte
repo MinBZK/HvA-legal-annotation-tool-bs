@@ -21,7 +21,7 @@
 		chipSelected.subscribe((value) => {
 			if (value) {
 				changeTextBackground();
-				chipSelected.set(false); // reset the trigger
+				chipSelected.set(false);
 			}
 		});
 	});
