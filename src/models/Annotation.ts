@@ -29,9 +29,4 @@ export default class Annotation {
         this.definition = definition;
         this.relationships = relationships;
     }
-
-    public addRelationship(type: string, target: Annotation) {
-        this.relationships.push({ type, source: this.id, target: target.id });
-        target.relationships.push({ type, source: this.id, target: target.id });
-    }
 }

@@ -9,41 +9,41 @@
     let selectedAnnotation = null as any;
     let showForm = false;
 
-    annotationStore.set([new Annotation(1, null as any, "Deze wet", "Rechtssubject", null as any, null as any, [
-            { type: relationTypes[10], source: 1, target: 2 },
-            { type: relationTypes[6], source: 1, target: 3 }
-        ]),
-        new Annotation(2, null as any, "Die andere wet", "Rechtssubject", null as any, null as any, [
-            { type: relationTypes[10], source: 1, target: 2 },
-        ]),
-        new Annotation(3, null as any, "Als Bamischijf het toelaat", "Voorwaarden", null as any, null as any, [
-            { type: relationTypes[6], source: 1, target: 3 }
-        ])]
-    );
+    // For testing purposes
+    // annotationStore.set([
+    //     new Annotation(1, null as any, "Deze wet", "Rechtssubject", null as any, null as any, [
+    //         { type: relationTypes[10], source: 1, target: 2 },
+    //         { type: relationTypes[6], source: 1, target: 3 }
+    //     ]),
+    //     new Annotation(2, null as any, "Die andere wet", "Rechtssubject", null as any, null as any, [
+    //         { type: relationTypes[10], source: 1, target: 2 },
+    //     ]),
+    //     new Annotation(3, null as any, "Als Bamischijf het toelaat", "Voorwaarden", null as any, null as any, [
+    //         { type: relationTypes[6], source: 1, target: 3 }
+    //     ])
+    // ]);
 
     annotationStore.subscribe(e => annotations = e);
 
     function onDeleteRelation(relation) {
 
     annotationStore.update(annotations => {
-        const sourceAnnotation = annotations.find(a => a.id === relation.source);
-        const targetAnnotation = annotations.find(a => a.id === relation.target);
+            const sourceAnnotation = annotations.find(a => a.id === relation.source);
+            const targetAnnotation = annotations.find(a => a.id === relation.target);
 
-        if (sourceAnnotation && targetAnnotation) {
-            sourceAnnotation.relationships = sourceAnnotation.relationships.filter(r =>
-                !(r.source === relation.source && r.target === relation.target)
-            );
+            if (sourceAnnotation && targetAnnotation) {
+                sourceAnnotation.relationships = sourceAnnotation.relationships.filter(r =>
+                    !(r.source === relation.source && r.target === relation.target)
+                );
 
-            targetAnnotation.relationships = targetAnnotation.relationships.filter(r =>
-                !(r.source === relation.source && r.target === relation.target)
-            );
-        }
+                targetAnnotation.relationships = targetAnnotation.relationships.filter(r =>
+                    !(r.source === relation.source && r.target === relation.target)
+                );
+            }
 
-        return annotations;
-    });
-}
-
-
+            return annotations;
+        });
+    }
 </script>
 
 <div class="m-5">
