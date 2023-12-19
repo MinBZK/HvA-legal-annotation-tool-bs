@@ -8,16 +8,11 @@
 	import LabelRelations from "../components/LabelRelations.svelte";
 
     import { Drawer, getDrawerStore, initializeStores } from "@skeletonlabs/skeleton";
-	import Annotation from "../models/Annotation";
-	import { labelStore } from "../stores/LabelStore";
-	import Label from "../models/Label";
 
     initializeStores();
     const drawerStore = getDrawerStore();
 
 	let fileContent = '';
-
-    let relationTypes;
 </script>
 
 {#if !fileContent}
