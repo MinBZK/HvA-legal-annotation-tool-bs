@@ -1,16 +1,29 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import  objStore from '../stores/ObjStore.ts';
-	import { selectedColor, chipSelected, textSelection } from '../stores/LabelStore.ts';
+	import objStore from '../stores/ObjStore.ts';
+	import {
+		selectedColor,
+		chipSelected,
+		textSelection,
+		selectedLabels
+	} from '../stores/LabelStore.ts';
+	import Annotation from '../models/Annotation.ts';
+	import type Label from '../models/Label.ts';
+	import LegalDoc from '../models/LegalDoc.ts';
+	import Comment from '../models/Comment.ts';
+	import Definition from '../models/Definition.ts';
+	import { addAnnotation } from '../stores/AnnotationStore.ts';
 
 	export let fileContent: {} = '';
 	let selectedText: Selection | null;
 	let inputColor = '';
 	let selectChip = false;
+	let selectedAnnotation: Annotation | null = null;
+	let labelList: Label[] = [];
 
 	onMount(() => {
 		selectionLogic(null);
-		objStore.subscribe(value => {
+		objStore.subscribe((value) => {
 			fileContent = value;
 		});
 
@@ -24,6 +37,10 @@
 				chipSelected.set(false); // reset the trigger
 			}
 		});
+
+		selectedLabels.subscribe((value) => {
+			labelList = value;
+		});
 	});
 
 	// Add event listener to detect user selection
@@ -33,6 +50,7 @@
 
 	function selectionLogic(selectionInput: Selection | null) {
 		const selection = selectionInput;
+		const previousSelection = selection;
 		const inputChipsDiv = document.querySelector('.input-chips') as HTMLElement;
 
 		if (selectChip) {
@@ -58,6 +76,20 @@
 			}
 		} else {
 			inputChipsDiv.style.display = 'none';
+
+			if (previousSelection) {
+				selectedAnnotation = new Annotation(
+					Math.floor(Math.random() * 1000) + 1,
+					new LegalDoc(0, 'null', 'null', []),
+					previousSelection.toString(),
+					labelList,
+					new Comment(0, 'null'),
+					new Definition(0, 'null'),
+					[]
+				);
+				console.log(selectedAnnotation);
+				addAnnotation(selectedAnnotation);
+			}
 		}
 	}
 
@@ -87,18 +119,16 @@
 			selection?.getRangeAt(0).surroundContents(span);
 		}
 	}
-
 </script>
 
-<!-- svelte-ignore non-top-level-reactive-declaration -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <div class="border border-gray-200 p-4 rounded-lg" role="main" on:mouseup={handleSelection}>
 	<h2 class="text-xl font-bold mb-5">Annoteer:</h2>
 	<hr />
 	{#if fileContent}
 		<div class="text-xl leading-loose list-none relative m-10 overflow-scroll">
-			{ fileContent.document[0].title }
-			{ fileContent.document[0].text }
+			{fileContent.document[0].title}
+			{fileContent.document[0].text}
 		</div>
 	{:else}
 		<p>Upload een .xml bestand</p>
