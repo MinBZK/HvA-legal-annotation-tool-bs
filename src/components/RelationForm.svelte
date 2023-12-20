@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { getToastStore } from "@skeletonlabs/skeleton";
 	import { annotationStore } from "../stores/AnnotationStore";
     import { relationTypes } from "../stores/relationStore";
 
+    const toastStore = getToastStore();
     export let setShowForm: Function;
     export let selectedAnnotationId: number;
     let annotations;
@@ -13,31 +15,44 @@
         selectedAnnotation = e.find(a => a.id === selectedAnnotationId);
     });
 
-    // Create a function to add a relationship to the annotation
     function addRelationship() {
-        if(relation.target === 0) {
-            // Smerig, voor nu even een alert
-            alert("Please select a target annotation");
+        if(relation.target === 0 || relation.type === "") {
+            toastStore.trigger({
+                message: "Please select a relation type and annotation.",
+                timeout: 3000,
+            });
+
             return;
         }
 
-        console.log(relation);
-
         const sourceAnnotation = annotations.find(a => a.id === relation.source);
         const targetAnnotation = annotations.find(a => a.id === relation.target);
+
+        if (relationExists(sourceAnnotation, targetAnnotation, relation.type)) {
+            toastStore.trigger({
+                message: "This relationship already exists.",
+                timeout: 3000,
+            });
+
+            return;
+        }
 
         if (sourceAnnotation && targetAnnotation) {
             sourceAnnotation.relationships = [...sourceAnnotation.relationships, relation];
             targetAnnotation.relationships = [...targetAnnotation.relationships, relation];
         }
-
-        console.log(sourceAnnotation, targetAnnotation, annotations);
         
         annotationStore.set(annotations);
-
-        console.log(sourceAnnotation, targetAnnotation, annotations);
         
         setShowForm(false);
+    }
+
+    function relationExists(sourceAnnotation, targetAnnotation, relationType) {
+        return sourceAnnotation.relationships.some(r => 
+            r.target === targetAnnotation.id && r.type === relationType
+        ) || targetAnnotation.relationships.some(r => 
+            r.source === sourceAnnotation.id && r.type === relationType
+        );
     }
 </script>
 
