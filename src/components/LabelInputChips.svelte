@@ -10,23 +10,16 @@
 	import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
 	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 	import Label from '../models/Label';
-	import { annotationStore } from '../stores/AnnotationStore';
 
 	let labelList: Label[] = [];
 	let inputColor = '';
-	let labelName = '';
-	let labelID = 0;
 	let inputChip = '';
 
 	type completeOptions = AutocompleteOption<string>;
 	let autoCompleteOptions: completeOptions[] = [];
 
-	$: {
-		autoCompleteOptions = $labelStore.map(label => ({ label: label.name, value: label.name }));
-		console.log("labelstore: " + $labelStore)
-		console.log("annotationstore: " + $annotationStore)
-		console.log("options= " + autoCompleteOptions[0].label)
-	}
+	$: autoCompleteOptions = $labelStore.map(label => ({ label: label.name, value: label.name }));
+
 
 	// Necessary premade labels
 	let preMadeLabels: Label[] = [
@@ -55,16 +48,6 @@
 			});
 		});
 
-		labelStore.subscribe((labels) => {
-			labelList = labels;
-
-			labels.forEach((label) => {
-				inputColor = label.color;
-				labelID = label.labelId;
-				labelName = label.name;
-			});
-		});
-
 		textSelection.subscribe((selection) => {
 			let selectedText = selection.text;
 			if (!selectedText || selectedText === '') {
@@ -73,7 +56,6 @@
 		});
 
 		selectedLabels.update((labels) => {
-			labelList = labels;
 			return labels;
 		});
 	});
@@ -122,8 +104,7 @@
 		<Autocomplete
 			bind:input={inputChip}
 			options={autoCompleteOptions}
-			denylist={autoCompleteOptions.map((option) => option.label)}
 			on:selection={onInputChipSelect}
 		/>
-	</div>
+	</div>	
 </div>

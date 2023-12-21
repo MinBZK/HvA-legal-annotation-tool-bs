@@ -20,6 +20,7 @@
 	let selectChip = false;
 	let selectedAnnotation: Annotation | null = null;
 	let labelList: Label[] = [];
+	let previousSelection: string | null = null;
 
 	onMount(() => {
 		selectionLogic(null);
@@ -50,7 +51,6 @@
 
 	function selectionLogic(selectionInput: Selection | null) {
 		const selection = selectionInput;
-		const previousSelection = selection;
 		const inputChipsDiv = document.querySelector('.input-chips') as HTMLElement;
 
 		if (selectChip) {
@@ -74,6 +74,8 @@
 				inputChipsDiv.style.top = selectedTextTop + 'px';
 				inputChipsDiv.style.left = selectedTextLeft + 'px';
 			}
+
+			previousSelection = selectedText;
 		} else {
 			inputChipsDiv.style.display = 'none';
 
@@ -87,7 +89,6 @@
 					new Definition(0, 'null'),
 					[]
 				);
-				console.log(selectedAnnotation);
 				addAnnotation(selectedAnnotation);
 			}
 		}
@@ -110,7 +111,6 @@
 	function changeTextBackground() {
 		const selection = document.getSelection();
 		if (selection && selection.toString().length > 3) {
-			console.log('color= ' + inputColor);
 			const selectedText = selection.toString();
 
 			const span = document.createElement('span');
