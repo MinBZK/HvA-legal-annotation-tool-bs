@@ -55,9 +55,7 @@
 			}
 		});
 
-		selectedLabels.update((labels) => {
-			return labels;
-		});
+
 	});
 
 	function onInputChipSelect(event: CustomEvent<completeOptions>): void {
@@ -80,6 +78,11 @@
 			// Remove the chip from the list
 			labelList = labelList.filter((chip) => chip !== selectedLabel);
 		}
+
+		selectedLabels.update((labels) => {
+			labels = labelList;
+			return labels;
+		});
 
 		// Set chipSelected based on whether any chip is selected
 		chipSelected.set(labelList.length > 0);
