@@ -1,16 +1,30 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import  objStore from '../stores/ObjStore.ts';
-	import { selectedColor, chipSelected, textSelection } from '../stores/LabelStore.ts';
+	import objStore from '../stores/ObjStore.ts';
+	import {
+		selectedColor,
+		chipSelected,
+		textSelection,
+		selectedLabels
+	} from '../stores/LabelStore.ts';
+	import Annotation from '../models/Annotation.ts';
+	import type Label from '../models/Label.ts';
+	import LegalDoc from '../models/LegalDoc.ts';
+	import Comment from '../models/Comment.ts';
+	import Definition from '../models/Definition.ts';
+	import { addAnnotation } from '../stores/AnnotationStore.ts';
 
 	export let fileContent: {} = '';
 	let selectedText: Selection | null;
 	let inputColor = '';
 	let selectChip = false;
+	let selectedAnnotation: Annotation | null = null;
+	let labelList: Label[] = [];
+	let previousSelection: string | null = null;
 
 	onMount(() => {
 		selectionLogic(null);
-		objStore.subscribe(value => {
+		objStore.subscribe((value) => {
 			fileContent = value;
 		});
 
@@ -23,6 +37,10 @@
 				changeTextBackground();
 				chipSelected.set(false);
 			}
+		});
+
+		selectedLabels.subscribe((value) => {
+			labelList = value;
 		});
 	});
 
@@ -56,8 +74,23 @@
 				inputChipsDiv.style.top = selectedTextTop + 'px';
 				inputChipsDiv.style.left = selectedTextLeft + 'px';
 			}
+
+			previousSelection = selectedText;
 		} else {
 			inputChipsDiv.style.display = 'none';
+
+			if (previousSelection) {
+				selectedAnnotation = new Annotation(
+					Math.floor(Math.random() * 1000) + 1,
+					new LegalDoc(0, 'null', 'null', []),
+					previousSelection.toString(),
+					labelList,
+					new Comment(0, 'null'),
+					new Definition(0, 'null'),
+					[]
+				);
+				addAnnotation(selectedAnnotation);
+			}
 		}
 	}
 
@@ -78,7 +111,6 @@
 	function changeTextBackground() {
 		const selection = document.getSelection();
 		if (selection && selection.toString().length > 3) {
-			console.log('color= ' + inputColor);
 			const selectedText = selection.toString();
 
 			const span = document.createElement('span');
@@ -94,7 +126,6 @@
 
 </script>
 
-<!-- svelte-ignore non-top-level-reactive-declaration -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <div class="p-4" role="main" on:mouseup={handleSelection}>
 	{#if fileContent}
