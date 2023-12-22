@@ -33,12 +33,12 @@
             {/if}
         </Drawer>
 		<div
-			class="w-1/2 border dark:border-gray-200 border-gray-950 m-5 p-5 rounded-lg h-[90vh] overflow-auto"
+			class="w-1/4 p-5 bg-gray-300 dark:bg-slate-900"
 		>
 			<FilterFile />
 		</div>
 		<div
-			class="w-1/2 border dark:border-gray-200 border-gray-950 m-5 p-5 rounded-lg h-[90vh] overflow-auto"
+			class="w-3/4 overflow-auto"
 		>
 			<AnnotationView />
 			<AnnotationExport />

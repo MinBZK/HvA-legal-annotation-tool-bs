@@ -35,7 +35,7 @@
 		chipSelected.subscribe((value) => {
 			if (value) {
 				changeTextBackground();
-				chipSelected.set(false); // reset the trigger
+				chipSelected.set(false);
 			}
 		});
 
@@ -119,16 +119,25 @@
 			selection?.getRangeAt(0).surroundContents(span);
 		}
 	}
+
+	function splitIntoSentences(text) {
+		return text.split('\n'); // Splitting by full stop and space, adjust as needed
+	}
+
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<div class="border border-gray-200 p-4 rounded-lg" role="main" on:mouseup={handleSelection}>
-	<h2 class="text-xl font-bold mb-5">Annoteer:</h2>
-	<hr />
+<div class="p-4" role="main" on:mouseup={handleSelection}>
 	{#if fileContent}
-		<div class="text-xl leading-loose list-none relative m-10 overflow-scroll">
-			{fileContent.document[0].title}
-			{fileContent.document[0].text}
+		<div class="text-md leading-loose list-none relative m-10">
+			<h2 class="font-medium text-xl">
+				{ fileContent.document[0].title }
+			</h2>
+			<br>
+			{#each splitIntoSentences(fileContent.document[0].text) as sentence}
+				<p>{sentence}.</p> <!-- Rendering each sentence with a full stop -->
+				<br>
+			{/each}
 		</div>
 	{:else}
 		<p>Upload een .xml bestand</p>
