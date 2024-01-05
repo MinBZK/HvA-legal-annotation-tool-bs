@@ -5,7 +5,8 @@
 		selectedColor,
 		chipSelected,
 		textSelection,
-		selectedLabels
+		selectedLabels,
+		chipUnselected
 	} from '../stores/LabelStore.ts';
 	import Annotation from '../models/Annotation.ts';
 	import type Label from '../models/Label.ts';
@@ -48,13 +49,6 @@
 			inputColor = value.color;
 		});
 
-		chipSelected.subscribe((value) => {
-			if (value) {
-				changeTextBackground();
-				chipSelected.set(false);
-			}
-		});
-
 		selectedLabels.subscribe((value) => {
 			labelList = value;
 		});
@@ -68,10 +62,6 @@
 	function selectionLogic(selectionInput: Selection | null) {
 		const selection = selectionInput;
 		const inputChipsDiv = document.querySelector('.input-chips') as HTMLElement;
-
-		if (selectChip) {
-			changeTextBackground();
-		}
 
 		if (selection && selection.toString().length > 3) {
 			inputChipsDiv.style.display = 'block';
@@ -95,7 +85,7 @@
 		} else {
 			inputChipsDiv.style.display = 'none';
 
-			if (previousSelection) {
+			if (previousSelection && labelList.length > 0) {
 				selectedAnnotation = new Annotation(
 					Math.floor(Math.random() * 1000) + 1,
 					new LegalDoc(0, 'null', 'null', []),
@@ -106,6 +96,7 @@
 					[]
 				);
 				addAnnotation(selectedAnnotation);
+				console.log(selectedAnnotation);
 			}
 		}
 	}
@@ -154,20 +145,20 @@
 	function splitIntoSentences(text) {
 		return text.split('\n'); // Splitting by full stop and space, adjust as needed
 	}
-
 </script>
 
-<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<div class="p-4" role="main" on:mouseup={handleSelection}>
+<div class="p-4" role="main">
 	{#if fileContent}
-		<div class="text-md leading-loose list-none relative m-10">
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div class="text-md leading-loose list-none relative m-10" on:mouseup={handleSelection}>
 			<h2 class="font-medium text-xl">
-				{ fileContent.document[0].title }
+				{fileContent.document[0].title}
 			</h2>
-			<br>
+			<br />
 			{#each splitIntoSentences(fileContent.document[0].text) as sentence}
-				<p>{sentence}.</p> <!-- Rendering each sentence with a full stop -->
-				<br>
+				<p>{sentence}.</p>
+				<!-- Rendering each sentence with a full stop -->
+				<br />
 			{/each}
 		</div>
 	{:else}
