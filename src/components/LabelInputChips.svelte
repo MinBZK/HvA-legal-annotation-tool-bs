@@ -5,7 +5,8 @@
 		selectedColor,
 		chipSelected,
 		textSelection,
-		selectedLabels
+		selectedLabels,
+		chipUnselected,
 	} from '../stores/LabelStore';
 	import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
 	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
@@ -54,11 +55,9 @@
 				labelList = [];
 			}
 		});
-
-
 	});
 
-	function onInputChipSelect(event: CustomEvent<completeOptions>): void {
+	function onInputChipSelect(event: CustomEvent<completeOptions>): void {		
 		let selectedLabelName = event.detail;
 		let selectedLabel: Label = new Label('', '', 0);
 
@@ -88,6 +87,19 @@
 		chipSelected.set(labelList.length > 0);
 	}
 
+	function onInputChipDeselect({ detail }) {
+		let deselectedLabel = labelList[detail.chipIndex];
+
+		// Remove the deselected label from labelList
+		labelList = labelList.filter((_, index) => index !== detail.chipIndex);
+		selectedLabels.update(labelList => labelList.filter((_, index) => index !== detail.chipIndex));
+		
+		// Add the deselected label back to labelStore
+		$labelStore = [...$labelStore, deselectedLabel];
+
+		chipUnselected.set(true);
+	}
+
 	function createComment() {}
 </script>
 
@@ -102,12 +114,20 @@
 			>Comment</button
 		>
 	</div>
-	<InputChip bind:input={inputChip} bind:value={labelList} name="chips" allowUpperCase />
+	<!-- onclick call remove color in inputchip -->
+	<InputChip
+		bind:input={inputChip}
+		bind:value={labelNames}
+		name="chips"
+		chips="variant-filled-secondary"
+		allowUpperCase
+		on:remove={onInputChipDeselect}
+	/>
 	<div class="card max-h-48 p-4 overflow-y-auto" tabindex="-1">
 		<Autocomplete
 			bind:input={inputChip}
 			options={autoCompleteOptions}
 			on:selection={onInputChipSelect}
 		/>
-	</div>	
+	</div>
 </div>

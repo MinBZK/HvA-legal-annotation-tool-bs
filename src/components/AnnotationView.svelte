@@ -16,11 +16,27 @@
 
 	export let fileContent: {} = '';
 	let selectedText: Selection | null;
+	let previousSelection: string | null = null;
 	let inputColor = '';
-	let selectChip = false;
 	let selectedAnnotation: Annotation | null = null;
 	let labelList: Label[] = [];
-	let previousSelection: string | null = null;
+	let lastSpanId: string | null = null;
+
+	$: {
+		chipUnselected.subscribe((value) => {
+			if (value) {
+				removeTextColor();
+				chipUnselected.set(false); // reset the trigger
+			}
+		});
+
+		chipSelected.subscribe((value) => {
+			if (value) {
+				changeTextColor();
+				chipSelected.set(false); // reset the trigger
+			}
+		});
+	}
 
 	onMount(() => {
 		selectionLogic(null);
@@ -107,16 +123,31 @@
 		}
 	}
 
-	// Apply background color to the selected text
-	function changeTextBackground() {
+	// Apply color to the selected text
+	function changeTextColor() {
 		const selection = document.getSelection();
+
 		if (selection && selection.toString().length > 3) {
 			const selectedText = selection.toString();
 
 			const span = document.createElement('span');
 			span.style.color = inputColor;
 			span.appendChild(document.createTextNode(selectedText));
+			span.id = 'selected-text-' + Date.now();
 			selection?.getRangeAt(0).surroundContents(span);
+
+			lastSpanId = span.id;
+		}
+	}
+
+	function removeTextColor() {
+		if (lastSpanId) {
+			const span = document.getElementById(lastSpanId);
+			if (span) {
+				const textNode = document.createTextNode(span.textContent || '');
+				span.parentNode?.replaceChild(textNode, span);
+			}
+			lastSpanId = null;
 		}
 	}
 
