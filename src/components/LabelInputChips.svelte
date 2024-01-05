@@ -13,14 +13,17 @@
 	import Label from '../models/Label';
 
 	let labelList: Label[] = [];
+	let labelNames: string[] = [];
 	let inputColor = '';
 	let inputChip = '';
 
 	type completeOptions = AutocompleteOption<string>;
 	let autoCompleteOptions: completeOptions[] = [];
 
-	$: autoCompleteOptions = $labelStore.map(label => ({ label: label.name, value: label.name }));
-
+	$: {
+		autoCompleteOptions = $labelStore.map((label) => ({ label: label.name, value: label.name }));
+		labelNames = labelList.map((label) => label.name);
+	}
 
 	// Necessary premade labels
 	let preMadeLabels: Label[] = [
@@ -73,9 +76,8 @@
 			selectedColor.update((store) => {
 				return { ...store, color: inputColor };
 			});
-		} else {
-			// Remove the chip from the list
-			labelList = labelList.filter((chip) => chip !== selectedLabel);
+
+			$labelStore = $labelStore.filter(label => label.name !== selectedLabel.name)
 		}
 
 		selectedLabels.update((labels) => {
