@@ -4,30 +4,19 @@
 	import { onMount } from "svelte";
 	import RelationForm from "./RelationForm.svelte";
     import { relationTypes } from "../stores/relationStore";
+	import { labelStore } from "../stores/LabelStore";
 
     let annotations;
     let selectedAnnotation = null as any;
     let showForm = false;
-
-    // For testing purposes
-    // annotationStore.set([
-    //     new Annotation(1, null as any, "Deze wet", "Rechtssubject", null as any, null as any, [
-    //         { type: relationTypes[10], source: 1, target: 2 },
-    //         { type: relationTypes[6], source: 1, target: 3 }
-    //     ]),
-    //     new Annotation(2, null as any, "Die andere wet", "Rechtssubject", null as any, null as any, [
-    //         { type: relationTypes[10], source: 1, target: 2 },
-    //     ]),
-    //     new Annotation(3, null as any, "Als Bamischijf het toelaat", "Voorwaarden", null as any, null as any, [
-    //         { type: relationTypes[6], source: 1, target: 3 }
-    //     ])
-    // ]);
+    
+    let labels;
+    labelStore.subscribe(e => labels = e);
 
     annotationStore.subscribe(e => annotations = e);
 
     function onDeleteRelation(relation) {
-
-    annotationStore.update(annotations => {
+        annotationStore.update(annotations => {
             const sourceAnnotation = annotations.find(a => a.id === relation.source);
             const targetAnnotation = annotations.find(a => a.id === relation.target);
 
