@@ -87,7 +87,7 @@
         } else {
             for (let annotation of annotations) {
                 const annotationLabels = annotation.label.map(l => l.name.toLowerCase());
-
+                
                 for (let label of annotationLabels) {
                     switch (label) {
                         case 'rechtsbetrekking':
@@ -109,7 +109,7 @@
                                 message += `${annotation.text} misses a relationship of type "heeft als voorwerp" with a target of label "rechtsobject"\n`;
                                 valid = false;
                             }
-                            if (!annotation.relationships.some(r => r.type === 'vind plaats op' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('tijdsaanduiding'))) {
+                            if (!annotation.relationships.some(r => r.type === 'vindt plaats op' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('tijdsaanduiding'))) {
                                 message += `${annotation.text} misses a relationship of type "vind plaats op" with a target of label "tijdsaanduiding"\n`;
                                 valid = false;
                             }
