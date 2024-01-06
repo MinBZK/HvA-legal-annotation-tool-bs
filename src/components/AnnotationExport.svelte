@@ -137,10 +137,12 @@
 
 
 </script>
-
-<button
-	type="button"
-	class="btn btn-xl variant-filled sticky bottom-0"
-	on:click={() => handleClickExport('data.xml', data)}
+<div class="ml-10 absolute bottom-0 mx-10 my-5 right-0">
+	<button
+			type="button"
+			class="btn btn-lg variant-filled rounded-md"
+			on:click={() => handleClickExport('data.xml', data)}
 	>Export to XML
-</button>
+	</button>
+</div>
+
