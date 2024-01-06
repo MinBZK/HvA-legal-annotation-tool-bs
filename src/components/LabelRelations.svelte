@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Annotation from "../models/Annotation";
-    import { annotationStore, addAnnotation } from "../stores/AnnotationStore";
+    import { annotationStore, addAnnotation, removeAnnotation } from "../stores/AnnotationStore";
 	import { onMount } from "svelte";
 	import RelationForm from "./RelationForm.svelte";
     import { relationTypes } from "../stores/relationStore";
@@ -44,18 +44,38 @@
             return annotations;
         });
     }
+
+    function shortenText(text) {
+        const words = text.split(' ');
+        if (words.length <= 8) {
+            return text;
+        }
+        const start = words.slice(0, 5).join(' ');
+        const end = words.slice(-5).join(' ');
+        return `${start} .... ${end}`;
+    }
 </script>
 
-<div class="m-5">
+<div class="m-5 w-5/6 overflow-auto">
     {#if selectedAnnotation === null}
         <h1 class="font-bold">All Annotations</h1>
         {#each annotations as annotation}
-            <div class="gap-3 mt-5">
-                <button type="button" class="btn variant-filled"
-                on:click={() => selectedAnnotation = annotation}>
-                    <p class="align-middle">{annotation.text}</p>
-                </button>
+        <div class="gap-3 mt-5">
+            <button type="button" class="btn flex flex-col rounded-none bg-secondary-500"
+            on:click={() => selectedAnnotation = annotation}>
+            <button class="absolute ml-2 top-0 left-0 bg-transparent border-0 text-red-500 text-2xl"
+            on:click|stopPropagation={() => removeAnnotation(annotation)}>X</button>
+            <p class="text-xl">{shortenText(annotation.text)}</p>
+            <div class="flex space-x-1">
+                <p class="text-sm">Labels:</p>
+                {#each annotation.label as label}
+                    <p class="text-xs" style="color: {label.color};">{label.name}</p>
+                {/each}
             </div>
+            <p class="text-base">Definition: {annotation.definition.definition}</p>
+            <p class="text-base">Comment: {annotation.comment.comment}</p>        
+            </button>
+        </div>
         {/each}
         {:else}
         {#if !showForm}
@@ -93,5 +113,4 @@
             <RelationForm selectedAnnotationId={selectedAnnotation.id} setShowForm={(value) => showForm = value} />
         {/if}
     {/if}
-    
 </div>
