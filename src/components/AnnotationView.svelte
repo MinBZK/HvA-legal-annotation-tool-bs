@@ -85,22 +85,35 @@
 		} else {
 			inputChipsDiv.style.display = 'none';
 
-			if (previousSelection && labelList.length > 0) {
-				selectedAnnotation = new Annotation(
-					Math.floor(Math.random() * 1000) + 1,
-					new LegalDoc(0, 'null', 'null', []),
-					previousSelection.toString(),
-					labelList,
-					new Comment(0, 'null'),
-					new Definition(0, 'null'),
-					[]
+			annotationStore.subscribe((annotations) => {
+				// Check if the name of previousSelection is not already appointed to an annotation
+				const isNameAlreadyAppointed = annotations.some(
+					(annotation) => annotation.text === previousSelection?.toString()
 				);
-				addAnnotation(selectedAnnotation);
-				console.log(selectedAnnotation);
-			}
+
+				if (!isNameAlreadyAppointed && previousSelection && labelList.length > 0) {
+					selectedAnnotation = new Annotation(
+						Math.floor(Math.random() * 1000) + 1,
+						new LegalDoc(0, 'null', 'null', []),
+						previousSelection.toString(),
+						labelList,
+						new Comment(0, 'placeholder comment'),
+						new Definition(0, 'placeholder definition'),
+						[]
+					);
+					addAnnotation(selectedAnnotation);
+					console.log(selectedAnnotation);
+
+					// Update the labelStore with the contents of previously selectedLabels
+					labelStore.update((labels) => {
+						return [...labels, ...prevSelectedLabels];
+					});
+				}
+			});
 		}
 	}
 
+	// Detect if user has selected text
 	function detectSelection() {
 		const selection = document.getSelection();
 		if (selection && selection.toString().length > 3) {
