@@ -8,7 +8,6 @@
 	let data = $objStore;
 
 	function handleClickExport(fileName = '', data: Object) {
-        // Due to merge request this is not working anymore..
         if(!checkRelationships()) { 
             return;
         }

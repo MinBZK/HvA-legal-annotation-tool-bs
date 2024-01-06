@@ -47,17 +47,17 @@
 		<div class="max-w-48">
         <LabelInputChips />
     	</div>
-        <div>
+		<div class="w-1/4 h-1/4 flex justify-center items-center absolute right-0 top-20 transform -translate-y-1/2"> 
             <button class="mt-5 variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 mt-2 mr-2 rounded-full"
                     on:click={() => drawerStore.open({
                         id: "relationships",
                         position: 'right',
                         bgDrawer: 'bg-indigo-900 text-white',
-                        width: 'w-[50%]',
+                        width: 'w-[40%]',
                         padding: 'p-4',
                         rounded: 'rounded-xl',
                     })}>
-                Modify relationships
+                All Annotations
             </button>
         </div>
 	</div>

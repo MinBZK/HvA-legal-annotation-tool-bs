@@ -60,6 +60,7 @@
 		});
 	});
 
+	// Function to handle chip selection logic
 	function onInputChipSelect(event: CustomEvent<completeOptions>): void {		
 		let selectedLabelName = event.detail;
 		let selectedLabel: Label = new Label('', '', 0);
@@ -68,6 +69,7 @@
 			selectedLabel = labels.find((label) => label.name === selectedLabelName.label) as Label;
 		});
 
+		// Add the selected label to labelList
 		if (labelList.includes(selectedLabel) === false) {
 			labelList = [...labelList, selectedLabel];
 			inputChip = '';
@@ -80,6 +82,7 @@
 			$labelStore = $labelStore.filter(label => label.name !== selectedLabel.name)
 		}
 
+		// Update the selectedLabels store
 		selectedLabels.update((labels) => {
 			labels = labelList;
 			return labels;
@@ -89,6 +92,7 @@
 		chipSelected.set(labelList.length > 0);
 	}
 
+	// Function to handle chip deselection logic
 	function onInputChipDeselect({ detail }) {
 		let deselectedLabel = labelList[detail.chipIndex];
 
@@ -116,7 +120,6 @@
 			>Comment</button
 		>
 	</div>
-	<!-- onclick call remove color in inputchip -->
 	<InputChip
 		bind:input={inputChip}
 		bind:value={labelNames}
