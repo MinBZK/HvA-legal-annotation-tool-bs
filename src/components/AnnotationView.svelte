@@ -6,14 +6,15 @@
 		chipSelected,
 		textSelection,
 		selectedLabels,
-		chipUnselected
+		chipUnselected,
+		labelStore
 	} from '../stores/LabelStore.ts';
 	import Annotation from '../models/Annotation.ts';
 	import type Label from '../models/Label.ts';
 	import LegalDoc from '../models/LegalDoc.ts';
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
-	import { addAnnotation } from '../stores/AnnotationStore.ts';
+	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
 
 	export let fileContent: {} = '';
 	let selectedText: Selection | null;
@@ -22,8 +23,18 @@
 	let selectedAnnotation: Annotation | null = null;
 	let labelList: Label[] = [];
 	let lastSpanId: string | null = null;
+	let prevSelectedLabels: Label[] = [];
 
 	$: {
+		// When a chip is selected, change the color of the selected text
+		chipSelected.subscribe((value) => {
+			if (value) {
+				changeTextColor();
+				chipSelected.set(false); // reset the trigger
+			}
+		});
+
+		// When a chip is unselected, remove the color from the selected text
 		chipUnselected.subscribe((value) => {
 			if (value) {
 				removeTextColor();
@@ -31,10 +42,9 @@
 			}
 		});
 
-		chipSelected.subscribe((value) => {
+		selectedLabels.subscribe((value) => {
 			if (value) {
-				changeTextColor();
-				chipSelected.set(false); // reset the trigger
+				prevSelectedLabels = value;
 			}
 		});
 	}
@@ -59,6 +69,7 @@
 		(selectedText = document.getSelection()), selectionLogic(selectedText), detectSelection()
 	);
 
+	// Logic for handling user selection
 	function selectionLogic(selectionInput: Selection | null) {
 		const selection = selectionInput;
 		const inputChipsDiv = document.querySelector('.input-chips') as HTMLElement;
@@ -144,6 +155,7 @@
 		}
 	}
 
+	// Remove color from the selected text
 	function removeTextColor() {
 		if (lastSpanId) {
 			const span = document.getElementById(lastSpanId);
