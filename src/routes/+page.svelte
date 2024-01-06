@@ -1,21 +1,66 @@
-<script>
-    import UploadFile from "../components/UploadFile.svelte";
-    import AnnotationView from "../components/AnnotationView.svelte";
+<script lang="ts">
+	import AnnotationView from '../components/AnnotationView.svelte';
+	import AnnotationResults from '../components/AnnotationResults.svelte';
+	import AnnotationExport from '../components/AnnotationExport.svelte';
+	import ImportXml from '../components/ImportXML.svelte';
     import FilterFile from "../components/FilterFile.svelte";
-    import AnnotationResults from "../components/AnnotationResults.svelte";
-	import AnnotationComment from "../components/AnnotationComment.svelte";
+	import LabelInputChips from "../components/LabelInputChips.svelte";
+	import LabelRelations from "../components/LabelRelations.svelte";
 
-    let fileContent = "";
+    import { Drawer, Toast, getDrawerStore, initializeStores } from "@skeletonlabs/skeleton";
+
+    initializeStores();
+    const drawerStore = getDrawerStore();
+
+	let fileContent = '';
 </script>
 
-<div class="mx-10 mt-10 flex gap-10">
-    <div class="flex flex-col gap-10 border border-gray-200 rounded-lg p-4">
-        <UploadFile on:fileUploaded={e => fileContent = e.detail} />
-        <FilterFile />
-    </div>
-    <div>
-        <AnnotationView fileContent={fileContent} />
-        <AnnotationComment />
-    </div>
-    <AnnotationResults />
-</div>
+{#if !fileContent}
+	<div class="flex flex-col">
+		<div class="self-center">
+			<ImportXml
+				on:fileUploaded={(e) => {
+					fileContent = e.detail;
+				}}
+			/>
+		</div>
+	</div>
+{:else}
+	<div class="flex flex-row">
+        <Toast />
+        <Drawer>
+            {#if $drawerStore.id === 'relationships'}
+                <LabelRelations />
+            {/if}
+        </Drawer>
+		<div
+			class="w-1/4 p-5 bg-gray-300 dark:bg-slate-900"
+		>
+			<FilterFile />
+		</div>
+		<div
+			class="w-3/4 overflow-auto"
+		>
+			<AnnotationView />
+			<AnnotationExport />
+		</div>
+		<div class="max-w-48">
+        <LabelInputChips />
+    	</div>
+		<div class="w-1/4 h-1/4 flex justify-center items-center absolute right-0 top-20 transform -translate-y-1/2"> 
+            <button class="mt-5 variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 mt-2 mr-2 rounded-full"
+                    on:click={() => drawerStore.open({
+                        id: "relationships",
+                        position: 'right',
+                        bgDrawer: 'bg-indigo-900 text-white',
+                        width: 'w-[40%]',
+                        padding: 'p-4',
+                        rounded: 'rounded-xl',
+                    })}>
+                All Annotations
+            </button>
+        </div>
+	</div>
+{/if}
+
+<AnnotationResults />

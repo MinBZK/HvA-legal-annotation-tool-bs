@@ -3,7 +3,7 @@ export default class Label {
     name: string;
     color: string;
 
-    constructor(labelId: number, name: string, color: string) {
+    constructor(name: string, color: string, labelId: number) {
         this.labelId = labelId;
         this.name = name;
         this.color = color;

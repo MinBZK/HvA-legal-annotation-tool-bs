@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
 	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
-	import { labelStore } from '$lib/LabelStore';
+	import { labelStore } from '../stores/LabelStore';
 
 	let inputChip = '';
 	let inputChipList: string[] = [];
@@ -76,6 +76,3 @@
 		/>
 	</div>
 </div> -->
-
-<style>
-</style>

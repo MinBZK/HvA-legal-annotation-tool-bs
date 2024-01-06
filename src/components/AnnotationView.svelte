@@ -1,116 +1,81 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { labelStore } from '../lib/LabelStore.ts';
-	import type { PopupSettings, AutocompleteOption } from '@skeletonlabs/skeleton';
-	import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
+	import objStore from '../stores/ObjStore.ts';
+	import {
+		selectedColor,
+		chipSelected,
+		textSelection,
+		selectedLabels,
+		chipUnselected,
+		labelStore
+	} from '../stores/LabelStore.ts';
+	import Annotation from '../models/Annotation.ts';
+	import type Label from '../models/Label.ts';
+	import LegalDoc from '../models/LegalDoc.ts';
+	import Comment from '../models/Comment.ts';
+	import Definition from '../models/Definition.ts';
+	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
 
-	export let fileContent = '';
-	let formattedContent = '';
-	let selectedColor = '';
-	let labelID = '';
-	let visible = false;
+	export let fileContent: {} = '';
+	let selectedText: Selection | null;
+	let previousSelection: string | null = null;
+	let inputColor = '';
+	let selectedAnnotation: Annotation | null = null;
+	let labelList: Label[] = [];
+	let lastSpanId: string | null = null;
+	let prevSelectedLabels: Label[] = [];
 
-	const popupFocusClick: PopupSettings = {
-		event: 'focus-click',
-		target: 'popupFocusClick',
-		placement: 'bottom'
-	};
+	$: {
+		// When a chip is selected, change the color of the selected text
+		chipSelected.subscribe((value) => {
+			if (value) {
+				changeTextColor();
+				chipSelected.set(false); // reset the trigger
+			}
+		});
 
-	let inputChip = '';
-	let inputChipList: string[] = [];
+		// When a chip is unselected, remove the color from the selected text
+		chipUnselected.subscribe((value) => {
+			if (value) {
+				removeTextColor();
+				chipUnselected.set(false); // reset the trigger
+			}
+		});
 
-	type PreMadeLabels = AutocompleteOption<string, { colorCode: string }>;
-
-	// Created with hexadecimal codes that represent the RGB of the labels
-	let preMadeLabels: PreMadeLabels[] = [
-		{ label: 'Rechtssubject', value: 'Rechtssubject', meta: { colorCode: '#c2e7ff' } },
-		{ label: 'Rechtsbetrekking', value: 'Rechtsbetrekking', meta: { colorCode: '#70a4ff' } },
-		{ label: 'Rechtsobject', value: 'Rechtsobject', meta: { colorCode: '#98bee1' } },
-		{ label: 'Rechtsfeit', value: 'Rechtsfeit', meta: { colorCode: '#97d6fe' } },
-		{ label: 'Voorwaarde', value: 'Voorwaarde', meta: { colorCode: '#91e8d3' } },
-		{ label: 'Afleidingsregel', value: 'Afleidingsregel', meta: { colorCode: '#ff7a7a' } },
-		{ label: 'Variabele', value: 'Variabele', meta: { colorCode: '#ffd95d' } },
-		{ label: 'Variabelewaarde', value: 'Variabelewaarde', meta: { colorCode: '#fff380' } },
-		{ label: 'Parameter', value: 'Parameter', meta: { colorCode: '#ffb4b4' } },
-		{ label: 'Parameterwaarde', value: 'Parameterwaarde', meta: { colorCode: '#ffd8ef' } },
-		{ label: 'Operator', value: 'Operator', meta: { colorCode: '#c1ebe1' } },
-		{ label: 'Tijdsaanduiding', value: 'Tijdsaanduiding', meta: { colorCode: '#d8b0f9' } },
-		{ label: 'Plaatsaanduiding', value: 'Plaatsaanduiding', meta: { colorCode: '#efcaf6' } },
-		{ label: 'Delegatiebevoegdheid',value: 'Delegatiebevoegdheid',meta: { colorCode: '#cecece' }},
-		{ label: 'Delegatie-invulling', value: 'Delegatie-invulling', meta: { colorCode: '#e2e2e2' } },
-		{ label: 'Brondefinitie', value: 'Brondefinitie', meta: { colorCode: '#f6f6f6' } }
-	];
-
-	const colorLookup = {
-		Rechtssubject: '#c2e7ff',
-		Rechtsbetrekking: '#70a4ff',
-		Rechtsobject: '#98bee1',
-		Rechtsfeit: '#97d6fe',
-		Voorwaarde: '#91e8d3',
-		Afleidingsregel: '#ff7a7a',
-		Variabele: '#ffd95d',
-		Variabelewaarde: '#fff380',
-		Parameter: '#ffb4b4',
-		Parameterwaarde: '#ffd8ef',
-		Operator: '#c1ebe1',
-		Tijdsaanduiding: '#d8b0f9',
-		Plaatsaanduiding: '#efcaf6',
-		Delegatiebevoegdheid: '#cecece',
-		'Delegatie-invulling': '#e2e2e2',
-		Brondefinitie: '#f6f6f6'
-	};
+		selectedLabels.subscribe((value) => {
+			if (value) {
+				prevSelectedLabels = value;
+			}
+		});
+	}
 
 	onMount(() => {
-		let contentToDisplay = fileContent;
+		selectionLogic(null);
+		objStore.subscribe((value) => {
+			fileContent = value;
+		});
 
-		// If no file content is passed, check if there is a file in local storage
-		if (!contentToDisplay) {
-			const storedContent = localStorage.getItem('uploadedXML');
-			if (storedContent) {
-				contentToDisplay = storedContent;
-			}
-		}
-		// If there is content to display, format it
-		if (contentToDisplay) {
-			const parser = new DOMParser();
-			const xmlDoc = parser.parseFromString(contentToDisplay, 'text/xml');
-			convertXMLTagsToDiv(xmlDoc);
-			formattedContent = new XMLSerializer().serializeToString(xmlDoc);
-		}
+		selectedColor.subscribe((value) => {
+			inputColor = value.color;
+		});
 
-		labelStore.subscribe((value) => {
-			selectedColor = value.selectedColor;
-			labelID = value.labelID;
+		selectedLabels.subscribe((value) => {
+			labelList = value;
 		});
 	});
 
-	// Convert XML tags to divs
-	function convertXMLTagsToDiv(xmlDoc: Document) {
-		xmlDoc.querySelectorAll('kop').forEach((el: any) => {
-			const div = document.createElement('div');
-			div.className = 'kop flex gap-2 text-lg font-bold';
-			div.innerHTML = el.innerHTML;
-			el?.parentNode.replaceChild(div, el);
-		});
-		xmlDoc.querySelectorAll('meta-data').forEach((el: any) => {
-			const div = document.createElement('div');
-			div.className = 'meta-data opacity-0';
-			div.innerHTML = el.innerHTML;
-			el?.parentNode.replaceChild(div, el);
-		});
-		// Remove all tags that should not be displayed
-		//TODO: find a way to keep the content of these tags for exporting
-		xmlDoc
-			.querySelectorAll('intitule,aanhef,bwb-inputbestand,redactionele-correcties,citeertitel')
-			.forEach((el: Element) => {
-				el.remove();
-			});
-	}
-
 	// Add event listener to detect user selection
-	function handleSelection() {
-		const selection = window.getSelection();
-		if (selection && selection.toString().length > 0) {
+	const handleSelection = (e) => (
+		(selectedText = document.getSelection()), selectionLogic(selectedText), detectSelection()
+	);
+
+	// Logic for handling user selection
+	function selectionLogic(selectionInput: Selection | null) {
+		const selection = selectionInput;
+		const inputChipsDiv = document.querySelector('.input-chips') as HTMLElement;
+
+		if (selection && selection.toString().length > 3) {
+			inputChipsDiv.style.display = 'block';
 			const selectedText = selection.toString();
 			console.log(selectedText);
 
@@ -121,91 +86,107 @@
 			const selectedTextLeft = rect.left + window.scrollX;
 
 			// Set the position of the input-chips div
-			const inputChipsDiv = document.querySelector('.input-chips') as HTMLElement;
 			if (inputChipsDiv) {
 				inputChipsDiv.style.position = 'absolute';
 				inputChipsDiv.style.top = selectedTextTop + 'px';
 				inputChipsDiv.style.left = selectedTextLeft + 'px';
 			}
-		}
-	}
 
-	function onInputChipSelect(event: CustomEvent<PreMadeLabels>): void {
-		console.log('onInputChipSelect', event.detail);
-		if (inputChipList.includes(event.detail.value) === false) {
-			inputChipList = [...inputChipList, event.detail.value];
-			inputChip = '';
+			previousSelection = selectedText;
+		} else {
+			inputChipsDiv.style.display = 'none';
 
-			let inputColor: string = '';
-			inputColor = colorLookup[event.detail.value];
+			annotationStore.subscribe((annotations) => {
+				// Check if the name of previousSelection is not already appointed to an annotation
+				const isNameAlreadyAppointed = annotations.some(
+					(annotation) => annotation.text === previousSelection?.toString()
+				);
 
-			labelStore.update((store) => {
-				return { ...store, selectedColor: inputColor, labelID: event.detail.value };
+				if (!isNameAlreadyAppointed && previousSelection && labelList.length > 0) {
+					selectedAnnotation = new Annotation(
+						Math.floor(Math.random() * 1000) + 1,
+						new LegalDoc(0, 'null', 'null', []),
+						previousSelection.toString(),
+						labelList,
+						new Comment(0, 'placeholder comment'),
+						new Definition(0, 'placeholder definition'),
+						[]
+					);
+					addAnnotation(selectedAnnotation);
+					console.log(selectedAnnotation);
+
+					// Update the labelStore with the contents of previously selectedLabels
+					labelStore.update((labels) => {
+						return [...labels, ...prevSelectedLabels];
+					});
+				}
 			});
-
-			const selection = window.getSelection();
-			if(selection) {
-				const selectedText = selection.toString();
-				// Apply background color to the selected text
-				const span = document.createElement('span');
-				span.style.backgroundColor = selectedColor; // Apply the selected color
-				span.appendChild(document.createTextNode(selectedText));
-				selection?.getRangeAt(0).surroundContents(span);		
-			}
-
 		}
 	}
 
-	function startAnnotate(){
-		visible = true;
-		labelStore.update((store) => {
-			return { ...store, selectedColor: "#c2e7ff"}
-		})
+	// Detect if user has selected text
+	function detectSelection() {
+		const selection = document.getSelection();
+		if (selection && selection.toString().length > 3) {
+			textSelection.update((store) => {
+				return { ...store, text: selection.toString() };
+			});
+		} else {
+			textSelection.update((store) => {
+				return { ...store, text: '' };
+			});
+		}
 	}
 
-	function clearSelection() {
-		visible = false;
+	// Apply color to the selected text
+	function changeTextColor() {
+		const selection = document.getSelection();
+
+		if (selection && selection.toString().length > 3) {
+			const selectedText = selection.toString();
+
+			const span = document.createElement('span');
+			span.style.color = inputColor;
+			span.appendChild(document.createTextNode(selectedText));
+			span.id = 'selected-text-' + Date.now();
+			selection?.getRangeAt(0).surroundContents(span);
+
+			lastSpanId = span.id;
+		}
+	}
+
+	// Remove color from the selected text
+	function removeTextColor() {
+		if (lastSpanId) {
+			const span = document.getElementById(lastSpanId);
+			if (span) {
+				const textNode = document.createTextNode(span.textContent || '');
+				span.parentNode?.replaceChild(textNode, span);
+			}
+			lastSpanId = null;
+		}
+	}
+
+	function splitIntoSentences(text) {
+		return text.split('\n'); // Splitting by full stop and space, adjust as needed
 	}
 </script>
 
-<svelte:body on:dblclick={clearSelection} on:mouseup={handleSelection} />
-<div class="py-2">
-	<button class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full " on:click={startAnnotate}>Annotate</button>
-</div>
-<div class="border border-gray-200 p-4 rounded-lg">
-	<h2 class="text-xl font-bold mb-5">Annoteer:</h2>
-	<hr />
-	{#if formattedContent}
-		<div
-			class="annotation-view h-[80vh] w-[750px] relative mt-5 mb-10"
-			bind:innerHTML={formattedContent}
-			contenteditable="false"
-		></div>
+<div class="p-4" role="main">
+	{#if fileContent}
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<div class="text-md leading-loose list-none relative m-10" on:mouseup={handleSelection}>
+			<h2 class="font-medium text-xl">
+				{fileContent.document[0].title}
+			</h2>
+			<br />
+			{#each splitIntoSentences(fileContent.document[0].text) as sentence}
+				<p>{sentence}.</p>
+				<!-- Rendering each sentence with a full stop -->
+				<br />
+			{/each}
+		</div>
 	{:else}
 		<p>Upload een .xml bestand</p>
 	{/if}
-
-	{#if visible}
-		<div class="input-chips max-w-24 mt-5 bg-white">
-			<InputChip bind:input={inputChip} bind:value={inputChipList} name="chips" />
-			<div class="card w-full max-w-48 max-h-48 p-4 overflow-y-auto" tabindex="-1">
-				<Autocomplete
-					bind:input={inputChip}
-					options={preMadeLabels}
-					denylist={inputChipList}
-					on:selection={onInputChipSelect}
-				/>
-			</div>
-		</div>
-	{/if}
 </div>
-<style>
-	.annotation-view {
-		font-family: 'Inter', sans-serif;
-		white-space: pre-line;
-		overflow-x: auto;
-		padding: 1em;
-		border-radius: 8px;
-		list-style-type: none;
-	}
-</style>
