@@ -6,14 +6,15 @@
 		chipSelected,
 		textSelection,
 		selectedLabels,
-		chipUnselected
+		chipUnselected,
+		labelStore
 	} from '../stores/LabelStore.ts';
 	import Annotation from '../models/Annotation.ts';
 	import type Label from '../models/Label.ts';
 	import LegalDoc from '../models/LegalDoc.ts';
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
-	import { addAnnotation } from '../stores/AnnotationStore.ts';
+	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
 
 	export let fileContent: {} = '';
 	let selectedText: Selection | null;
@@ -22,8 +23,18 @@
 	let selectedAnnotation: Annotation | null = null;
 	let labelList: Label[] = [];
 	let lastSpanId: string | null = null;
+	let prevSelectedLabels: Label[] = [];
 
 	$: {
+		// When a chip is selected, change the color of the selected text
+		chipSelected.subscribe((value) => {
+			if (value) {
+				changeTextColor();
+				chipSelected.set(false); // reset the trigger
+			}
+		});
+
+		// When a chip is unselected, remove the color from the selected text
 		chipUnselected.subscribe((value) => {
 			if (value) {
 				removeTextColor();
@@ -31,10 +42,9 @@
 			}
 		});
 
-		chipSelected.subscribe((value) => {
+		selectedLabels.subscribe((value) => {
 			if (value) {
-				changeTextColor();
-				chipSelected.set(false); // reset the trigger
+				prevSelectedLabels = value;
 			}
 		});
 	}
@@ -59,6 +69,7 @@
 		(selectedText = document.getSelection()), selectionLogic(selectedText), detectSelection()
 	);
 
+	// Logic for handling user selection
 	function selectionLogic(selectionInput: Selection | null) {
 		const selection = selectionInput;
 		const inputChipsDiv = document.querySelector('.input-chips') as HTMLElement;
@@ -85,22 +96,35 @@
 		} else {
 			inputChipsDiv.style.display = 'none';
 
-			if (previousSelection && labelList.length > 0) {
-				selectedAnnotation = new Annotation(
-					Math.floor(Math.random() * 1000) + 1,
-					new LegalDoc(0, 'null', 'null', []),
-					previousSelection.toString(),
-					labelList,
-					new Comment(0, 'null'),
-					new Definition(0, 'null'),
-					[]
+			annotationStore.subscribe((annotations) => {
+				// Check if the name of previousSelection is not already appointed to an annotation
+				const isNameAlreadyAppointed = annotations.some(
+					(annotation) => annotation.text === previousSelection?.toString()
 				);
-				addAnnotation(selectedAnnotation);
-				console.log(selectedAnnotation);
-			}
+
+				if (!isNameAlreadyAppointed && previousSelection && labelList.length > 0) {
+					selectedAnnotation = new Annotation(
+						Math.floor(Math.random() * 1000) + 1,
+						new LegalDoc(0, 'null', 'null', []),
+						previousSelection.toString(),
+						labelList,
+						new Comment(0, 'placeholder comment'),
+						new Definition(0, 'placeholder definition'),
+						[]
+					);
+					addAnnotation(selectedAnnotation);
+					console.log(selectedAnnotation);
+
+					// Update the labelStore with the contents of previously selectedLabels
+					labelStore.update((labels) => {
+						return [...labels, ...prevSelectedLabels];
+					});
+				}
+			});
 		}
 	}
 
+	// Detect if user has selected text
 	function detectSelection() {
 		const selection = document.getSelection();
 		if (selection && selection.toString().length > 3) {
@@ -131,6 +155,7 @@
 		}
 	}
 
+	// Remove color from the selected text
 	function removeTextColor() {
 		if (lastSpanId) {
 			const span = document.getElementById(lastSpanId);
