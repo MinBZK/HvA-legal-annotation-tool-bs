@@ -38,7 +38,7 @@
 			<FilterFile />
 		</div>
 		<div
-			class="w-3/4 overflow-auto"
+			class="w-3/4 overflow-auto h-[100vh]"
 		>
 			<AnnotationView />
 			<AnnotationExport />
@@ -47,7 +47,7 @@
         <LabelInputChips />
     	</div>
         <div>
-            <button class="mt-5 variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 mt-2 mr-2 rounded-full"
+            <button class="mt-5 variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 mr-2 rounded-full"
                     on:click={() => drawerStore.open({
                         id: "relationships",
                         position: 'right',

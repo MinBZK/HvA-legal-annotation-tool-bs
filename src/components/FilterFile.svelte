@@ -2,7 +2,7 @@
     import objStore from '../stores/ObjStore.ts';
     import { onMount } from 'svelte';
     import { writable } from "svelte/store";
-    import {Accordion, AccordionItem, TreeView, TreeViewItem} from "@skeletonlabs/skeleton";
+    import {TreeView, TreeViewItem} from "@skeletonlabs/skeleton";
 
     export let fileContent: {} = "";
 

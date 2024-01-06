@@ -143,7 +143,7 @@
 	}
 
 	function splitIntoSentences(text) {
-		return text.split('\n'); // Splitting by full stop and space, adjust as needed
+		return text.split('\n').filter(sentence => sentence.trim().length > 0);
 	}
 </script>
 
@@ -154,11 +154,8 @@
 			<h2 class="font-medium text-xl">
 				{fileContent.document[0].title}
 			</h2>
-			<br />
 			{#each splitIntoSentences(fileContent.document[0].text) as sentence}
-				<p>{sentence}.</p>
-				<!-- Rendering each sentence with a full stop -->
-				<br />
+				<p>{sentence}</p>
 			{/each}
 		</div>
 	{:else}
