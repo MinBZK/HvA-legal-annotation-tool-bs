@@ -12,7 +12,7 @@
 	import { labelStore } from '../stores/LabelStore';
 	import { onMount } from 'svelte';
 
-	import { Drawer, Toast, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
+	import { Drawer, Modal, Toast, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
 
 	initializeStores();
 	const drawerStore = getDrawerStore();
@@ -42,6 +42,7 @@
 	</div>
 {:else}
 	<div class="flex flex-row">
+        <Modal />
 		<Toast />
 		<Drawer>
 			{#if $drawerStore.id === 'relationships'}

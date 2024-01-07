@@ -78,10 +78,10 @@
         annotationStore.subscribe(e => annotations = e);
 
         let valid = true;
-        let message = "";
+        let message = "Not all mandatory relationships are present!";
 
         if (!annotations.length) {
-            message = 'No annotations found';
+            message = "No annotations found";
             valid = false;
         } else {
             for (let annotation of annotations) {
@@ -91,31 +91,31 @@
                     switch (label) {
                         case 'rechtsbetrekking':
                             if (!annotation.relationships.some(r => r.type === 'wie heeft het recht' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('rechtssubject'))) {
-                                message += `${annotation.text} misses a relationship of type "wie heeft het recht" with a target of label "rechtssubject"\n`;
+                                // message += `${annotation.text} misses a relationship of type "wie heeft het recht" with a target of label "rechtssubject"\n`;
                                 valid = false;
                             }
                             if (!annotation.relationships.some(r => r.type === 'wie heeft de plicht' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('rechtssubject'))) {
-                                message += `${annotation.text} misses a relationship of type "wie heeft de plicht" with a target of label "rechtssubject"\n`;
+                                // message += `${annotation.text} misses a relationship of type "wie heeft de plicht" with a target of label "rechtssubject"\n`;
                                 valid = false;
                             }
                             if (!annotation.relationships.some(r => r.type === 'heeft als voorwerp' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('rechtsobject'))) {
-                                message += `${annotation.text} misses a relationship of type "heeft als voorwerp" with a target of label "rechtsobject"\n`;
+                                // message += `${annotation.text} misses a relationship of type "heeft als voorwerp" with a target of label "rechtsobject"\n`;
                                 valid = false;
                             }
                             break;
                         case 'rechtsfeit':
                             if (!annotation.relationships.some(r => r.type === 'heeft als voorwerp' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('rechtsobject'))) {
-                                message += `${annotation.text} misses a relationship of type "heeft als voorwerp" with a target of label "rechtsobject"\n`;
+                                // message += `${annotation.text} misses a relationship of type "heeft als voorwerp" with a target of label "rechtsobject"\n`;
                                 valid = false;
                             }
                             if (!annotation.relationships.some(r => r.type === 'vindt plaats op' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('tijdsaanduiding'))) {
-                                message += `${annotation.text} misses a relationship of type "vind plaats op" with a target of label "tijdsaanduiding"\n`;
+                                // message += `${annotation.text} misses a relationship of type "vind plaats op" with a target of label "tijdsaanduiding"\n`;
                                 valid = false;
                             }
                             break;
                         case 'afleidingsregel':
                             if (!annotation.relationships.some(r => r.type === 'heeft als uitvoer' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('variabele'))) {
-                                message += `${annotation.text} misses a relationship of type "heeft als uitvoer" with a target of label "variabele"\n`;
+                                // message += `${annotation.text} misses a relationship of type "heeft als uitvoer" with a target of label "variabele"\n`;
                                 valid = false;
                             }
                             break;
