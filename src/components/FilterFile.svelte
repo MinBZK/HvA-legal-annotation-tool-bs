@@ -5,7 +5,7 @@
 
 
     const chaptersStore = derived(objStore, $objStore =>
-        $objStore.document?.[0]?.chapters || []
+        $objStore.document?.[0]?.chapterTitles || []
     );
 
     function handleCheckboxChange(chapterIndex, event) {
@@ -23,8 +23,8 @@
 
 <div class="mt-10 ml-5">
     {#if $chaptersStore.length > 0}
-        {#each $chaptersStore as chapter, index (chapter)}
-            <div class="flex items-center mb-8 cursor-pointer">
+        {#each $chaptersStore as chapterTitle, index (chapterTitle)}
+            <div class="flex items-center mb-8">
                 <input
                         type="checkbox"
                         id={`chapter-${index}`}
@@ -32,7 +32,7 @@
                         class="checkbox mr-3 min-w-[1.3rem] min-h-[1.3rem]"
                         on:change={(e) => handleCheckboxChange(index.toString(), e)}
                 >
-                <label for={`chapter-${index}`} class="ml-2">{chapter}</label>
+                <label for={`chapter-${index}`} class="ml-2 cursor-pointer">{chapterTitle}</label>
             </div>
         {/each}
     {:else}

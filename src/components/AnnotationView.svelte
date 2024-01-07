@@ -178,7 +178,7 @@
 			[objStore, selectedChaptersStore],
 			([$objStore, $selectedChaptersStore]) => {
 				if ($selectedChaptersStore.size > 0) {
-					return $objStore.document[0].chapters
+					return $objStore.document[0].chapterTitles
 							.filter((_, index) => $selectedChaptersStore.has(index.toString()))
 							.map(chapter => chapter); // This only gets the chapter titles
 				}
@@ -186,10 +186,11 @@
 			}
 	);
 
-	function splitIntoSentences(text) {
+	function splitIntoSentences(text: any) {
 		const textWithBreaks = text.replace(/([;:])/g, "$1\n");
 		return textWithBreaks.split('\n').filter(sentence => sentence.trim().length > 0);
 	}
+
 
 </script>
 
@@ -202,7 +203,7 @@
 			</h2>
 			<br />
 			<div on:mouseup={handleSelection}>
-				{#each splitIntoSentences(fileContent.document[0].text) as sentence}
+				{#each fileContent.document[0].chapterContents as sentence}
 					<p>{sentence}.</p>
 					<!-- Rendering each sentence with a full stop -->
 					<br />

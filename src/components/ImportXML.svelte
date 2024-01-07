@@ -74,19 +74,19 @@
 		const title = result?.toestand?.wetgeving?.citeertitel?._text || 'No Title';
 		const chapterElements = result?.toestand?.wetgeving?.["wet-besluit"]?.wettekst?.hoofdstuk;
 
-		let textContent = '';
-
-		let chapters: string[] = [];
+		let chapterTitles: string[] = [];
+		let chapterContents: string[] = [];
 
 		if (chapterElements) {
 			if (Array.isArray(chapterElements)) {
 				chapterElements.forEach(hoofdstuk => {
-					textContent += collectText(hoofdstuk).join('') + '\n';
-
-					chapters.push(collectText(hoofdstuk.kop).join(' '));
+					chapterTitles.push(collectText(hoofdstuk.kop).join(' '));
+					chapterContents.push(collectText(hoofdstuk.paragraaf).join(' '));
 				});
-			} else {
-				textContent = collectText(chapterElements).join('');
+			}
+			else {
+				chapterTitles.push(collectText(chapterElements.kop).join(' '));
+				chapterContents.push(collectText(chapterElements.paragraaf).join(' '));
 			}
 		}
 
@@ -95,12 +95,14 @@
 				{
 					title: title,
 					filename: filename,
-					text: textContent,
-					chapters: chapters,
+					chapterTitles: chapterTitles,
+					chapterContents: chapterContents,
 					annotations: []
 				}
 			]
 		};
+
+		console.log(data.document[0].chapterContents);
 
 		objStore.set(data);
 		localStorage.setItem('data', JSON.stringify(data, null, 2));
