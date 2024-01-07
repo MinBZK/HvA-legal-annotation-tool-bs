@@ -19,6 +19,7 @@
 	import {derived} from "svelte/store";
 	import {comment} from "../stores/CommentStore.ts";
 	import {definition} from "../stores/DefinitionStores.ts";
+	import type LegalDocument from '../models/LegalDocument.ts';
 
 	export let activeDocument: LegalDocument;
 	let selectedText: Selection | null;
