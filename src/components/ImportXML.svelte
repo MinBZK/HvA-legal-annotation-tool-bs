@@ -69,22 +69,21 @@
 		return texts;
 	}
 
-
-
-
-
-
 	function convertXMLtoObj(xml: string, filename: string): void {
 		const result = xml2js(xml, { compact: true }) as any;
 		const title = result?.toestand?.wetgeving?.citeertitel?._text || 'No Title';
-
 		const chapterElements = result?.toestand?.wetgeving?.["wet-besluit"]?.wettekst?.hoofdstuk;
 
 		let textContent = '';
+
+		let chapters: string[] = [];
+
 		if (chapterElements) {
 			if (Array.isArray(chapterElements)) {
 				chapterElements.forEach(hoofdstuk => {
 					textContent += collectText(hoofdstuk).join('') + '\n';
+
+					chapters.push(collectText(hoofdstuk.kop).join(' '));
 				});
 			} else {
 				textContent = collectText(chapterElements).join('');
@@ -97,6 +96,7 @@
 					title: title,
 					filename: filename,
 					text: textContent,
+					chapters: chapters,
 					annotations: []
 				}
 			]

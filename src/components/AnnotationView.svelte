@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import objStore from '../stores/ObjStore.ts';
+	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
+
 	import {
 		selectedColor,
 		chipSelected,
@@ -142,6 +144,7 @@
 		}
 	}
 
+
 	function splitIntoSentences(text) {
 		return text.split('\n').filter(sentence => sentence.trim().length > 0);
 	}
@@ -157,6 +160,7 @@
 			{#each splitIntoSentences(fileContent.document[0].text) as sentence}
 				<p>{sentence}</p>
 			{/each}
+
 		</div>
 	{:else}
 		<p>Upload een .xml bestand</p>

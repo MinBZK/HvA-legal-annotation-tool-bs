@@ -33,7 +33,7 @@
             {/if}
         </Drawer>
 		<div
-			class="w-1/4 p-5 bg-gray-300 dark:bg-slate-900"
+			class="w-1/3 p-5 bg-gray-300 dark:bg-slate-900"
 		>
 			<FilterFile />
 		</div>

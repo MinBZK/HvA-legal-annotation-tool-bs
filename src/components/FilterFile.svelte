@@ -1,130 +1,70 @@
 <script lang="ts">
+    import { derived, writable } from 'svelte/store';
     import objStore from '../stores/ObjStore.ts';
-    import { onMount } from 'svelte';
-    import { writable } from "svelte/store";
-    import {TreeView, TreeViewItem} from "@skeletonlabs/skeleton";
+    import {selectedChaptersStore}  from '../stores/SelectedChapterStore.ts';
 
-    export let fileContent: {} = "";
 
-    onMount(() => {
-        objStore.subscribe(value => {
-            fileContent = value;
+    const chaptersStore = derived(objStore, $objStore =>
+        $objStore.document?.[0]?.chapters || []
+    );
+
+    let checkedChapters = writable(new Set());
+
+    const selectAll = derived([chaptersStore, checkedChapters], ([$chaptersStore, $checkedChapters]) =>
+        $chaptersStore.length > 0 && $chaptersStore.every(chapter => $checkedChapters.has(chapter))
+    );
+
+    function handleCheckboxChange(chapter, event) {
+        selectedChaptersStore.update($selectedChapters => {
+            const newCheckedChapters = new Set($selectedChapters);
+            if (event.target.checked) {
+                newCheckedChapters.add(chapter);
+            } else {
+                newCheckedChapters.delete(chapter);
+            }
+            return newCheckedChapters;
         });
-    });
-
-    const getSentence = () => {
-        return fileContent.document && fileContent.document[0].text
-            ? fileContent.document[0].text.split('\n').filter(sentence => sentence.trim() !== '')
-            : [];
-    };
-
-    let checkedSentences = new Set();
-    let selectAll = writable(false);
-
-    function handleCheckboxChange(sentence, event) {
-        if (event.target.checked) {
-            checkedSentences.add(sentence);
-        } else {
-            checkedSentences.delete(sentence);
-        }
-
-        selectAll.set(checkedSentences.size === getSentence().length);
-
-        console.log(checkedSentences);
     }
 
     function toggleCheckboxes() {
-        if ($selectAll) {
-            checkedSentences.clear();
-        } else {
-            getSentence().forEach(sentence => checkedSentences.add(sentence));
-        }
-        checkedSentences = new Set(checkedSentences);
-        selectAll.set(!$selectAll);
-        console.log(checkedSentences);
+        checkedChapters.update($checkedChapters => {
+            if ($selectAll) {
+                return new Set();
+            } else {
+                const newCheckedChapters = new Set();
+                $chaptersStore.forEach(chapter => newCheckedChapters.add(chapter));
+                return newCheckedChapters;
+            }
+        });
     }
-
-
-    let medums = ['Hoofdstuk 1', 'Hoofdstuk 2'];
-    let books = ['Artikel 1', 'Artikel 2', 'Artikel 3'];
 
 </script>
 
 <div class="mt-10 ml-5">
-    {#if fileContent}
+    {#if $chaptersStore.length > 0}
         <div class="flex mb-5">
             <input
-                type="checkbox" name="check_all" id="check_all"
-                class="checkbox mr-3"
-                bind:checked={$selectAll}
-                on:click={toggleCheckboxes}
+                    type="checkbox"
+                    class="checkbox mr-3"
+                    bind:checked={$selectAll}
+                    on:click={toggleCheckboxes}
             >
-            <label for="check_all" class="font-bold">Selecteer alles</label>
+            <label class="font-bold">Selecteer alles</label>
         </div>
 
-        <TreeView selection multiple relational nodes={checkedSentences}>
-            <TreeViewItem bind:group={medums} name="medium" value="books">
-                <p>Hoofdstuk 1</p>
-                <svelte:fragment slot="children">
-                    <TreeViewItem bind:group={books} name="books" value="Clean Code">
-                        <p>Artikel 1</p>
-                    </TreeViewItem>
-                    <TreeViewItem bind:group={books} name="books" value="The Clean Coder">
-                        <p>Artikel 2</p>
-                    </TreeViewItem>
-                    <TreeViewItem bind:group={books} name="books" value="The Art of Unix Programming">
-                        <p>Artikel 3</p>
-                    </TreeViewItem>
-                </svelte:fragment>
-            </TreeViewItem>
-            <TreeViewItem bind:group={medums} name="medium" value="movies">
-                <p>Hoofdstuk 2</p>
-                <svelte:fragment slot="children">
-                    <TreeViewItem bind:group={books} name="books" value="The Matrix">
-                        <p>Artikel 1</p>
-                    </TreeViewItem>
-                    <TreeViewItem bind:group={books} name="books" value="The Lord of the Rings">
-                        <p>Artikel 2</p>
-                    </TreeViewItem>
-                    <TreeViewItem bind:group={books} name="books" value="The Godfather">
-                        <p>Artikel 3</p>
-                    </TreeViewItem>
-                </svelte:fragment>
-            </TreeViewItem>
-        </TreeView>
-
-
-
-
-
-        <!--    <div class="flex flex-col">-->
-<!--        <div class="flex my-5">-->
-<!--            <input-->
-<!--                type="checkbox" name="check_all" id="check_all"-->
-<!--                class="checkbox mr-3"-->
-<!--                bind:checked={$selectAll}-->
-<!--                on:click={toggleCheckboxes}-->
-<!--            >-->
-<!--            <label for="check_all" class="font-bold">Selecteer alles</label>-->
-<!--        </div>-->
-<!--        {#each getSentence() as sentence}-->
-<!--        <Accordion>-->
-<!--            <AccordionItem closed>-->
-<!--                <svelte:fragment slot="lead">-->
-<!--                    <input-->
-<!--                        type="checkbox" name={sentence} id="id"-->
-<!--                        on:change={(event) => {handleCheckboxChange(sentence, event)}}-->
-<!--                        class="checkbox mr-3 sentence"-->
-<!--                        checked={checkedSentences.has(sentence)}-->
-<!--                    >-->
-<!--                </svelte:fragment>-->
-<!--                <svelte:fragment slot="summary">-->
-<!--                    <label for={sentence}>{sentence}</label>-->
-<!--                </svelte:fragment>-->
-<!--                <svelte:fragment slot="content"></svelte:fragment>-->
-<!--            </AccordionItem>-->
-<!--        </Accordion>-->
-<!--        {/each}-->
-<!--    </div>-->
+        {#each $chaptersStore as chapter}
+            <div class="flex items-center mb-8 cursor-pointer">
+                <input
+                        type="checkbox"
+                        id={chapter}
+                        class="checkbox mr-3 min-w-[1.3rem] min-h-[1.3rem]"
+                        on:change={(e) => handleCheckboxChange(chapter, e)}
+                >
+                <label for={chapter} class="ml-2">{chapter}</label>
+            </div>
+        {/each}
+    {:else}
+        <p>Geen hoofdstukken gevonden.</p>
     {/if}
 </div>
+
