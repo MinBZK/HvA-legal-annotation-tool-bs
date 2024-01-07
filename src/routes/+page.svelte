@@ -53,7 +53,7 @@
 		<div class="w-1/4 p-5 bg-gray-300 dark:bg-slate-900">
 			<FilterFile />
 		</div>
-		<div class="w-3/4 overflow-auto">
+		<div class="w-3/4 overflow-auto h-[100vh]">
 			<AnnotationView />
 			<AnnotationExport />
 		</div>

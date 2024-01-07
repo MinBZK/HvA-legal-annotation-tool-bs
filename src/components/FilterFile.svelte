@@ -28,6 +28,7 @@
                 <input
                         type="checkbox"
                         id={`chapter-${index}`}
+                        checked
                         class="checkbox mr-3 min-w-[1.3rem] min-h-[1.3rem]"
                         on:change={(e) => handleCheckboxChange(index.toString(), e)}
                 >

@@ -187,7 +187,7 @@
 	);
 
 	function splitIntoSentences(text) {
-		const textWithBreaks = text.replace(/([;:])/g, "$1\n\n");
+		const textWithBreaks = text.replace(/([;:])/g, "$1\n");
 		return textWithBreaks.split('\n').filter(sentence => sentence.trim().length > 0);
 	}
 
