@@ -1,4 +1,4 @@
-import type LegalDoc from "./LegalDoc";
+import type LegalDocument from "./LegalDocument";
 import type Comment from "./Comment";
 import type Definition from "./Definition";
 import type Label from "./Label";
@@ -11,7 +11,6 @@ interface Relation {
 
 export default class Annotation {
     id: number;
-    parent: LegalDoc;
     text: string;
     label: Label[];
     // metadata: MetaData;
@@ -19,11 +18,10 @@ export default class Annotation {
     definition: Definition;
     relationships: Relation[];
 
-    constructor(id: number, parent: LegalDoc, text: string, label: Label[], comment: Comment, definition: Definition, relationships: Relation[] = []
+    constructor(id: number, text: string, label: Label[], comment: Comment, definition: Definition, relationships: Relation[] = []
         // metadata: MetaData
         ) {
         this.id = id;
-        this.parent = parent;
         this.text = text;
         this.label = label;
         this.comment = comment;
