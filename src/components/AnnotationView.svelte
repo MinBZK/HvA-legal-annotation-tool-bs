@@ -177,18 +177,16 @@
 <div class="p-4" role="main">
 	{#if fileContent}
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<div class="text-md leading-loose list-none relative m-10" >
+		<div class="text-md leading-loose list-none relative m-10" on:mouseup={handleSelection}>
 			<h2 class="font-medium text-xl">
 				{fileContent.document[0].title}
 			</h2>
 			<br />
-			<div on:mouseup={handleSelection}>
-				{#each splitIntoSentences(fileContent.document[0].text) as sentence}
+			{#each splitIntoSentences(fileContent.document[0].text) as sentence}
 				<p>{sentence}.</p>
 				<!-- Rendering each sentence with a full stop -->
 				<br />
-				{/each}
-			</div>
+			{/each}
 		</div>
 	{:else}
 		<p>Upload een .xml bestand</p>
