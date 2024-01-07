@@ -15,7 +15,8 @@
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
 	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
-
+	import {comment} from "../stores/CommentStore.ts";
+	import {definition} from "../stores/DefinitionStores.ts";
 	export let fileContent: {} = '';
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
@@ -24,6 +25,8 @@
 	let labelList: Label[] = [];
 	let lastSpanId: string | null = null;
 	let prevSelectedLabels: Label[] = [];
+	let selectedComment :Comment;
+	let selectedDefinition: Definition;
 
 	$: {
 		// When a chip is selected, change the color of the selected text
@@ -62,6 +65,14 @@
 		selectedLabels.subscribe((value) => {
 			labelList = value;
 		});
+
+		comment.subscribe((value)=>{
+			selectedComment = value;
+		});
+
+		definition.subscribe((value)=>{
+			selectedDefinition = value;
+		})
 	});
 
 	// Add event listener to detect user selection
@@ -108,13 +119,14 @@
 						new LegalDoc(0, 'null', 'null', []),
 						previousSelection.toString(),
 						labelList,
-						new Comment(0, 'placeholder comment'),
-						new Definition(0, 'placeholder definition'),
+						selectedComment,
+						selectedDefinition,
 						[]
 					);
 					addAnnotation(selectedAnnotation);
 					console.log(selectedAnnotation);
-
+					selectedComment = new Comment(0,"");
+					selectedDefinition = new Definition(0, "");
 					// Update the labelStore with the contents of previously selectedLabels
 					labelStore.update((labels) => {
 						return [...labels, ...prevSelectedLabels];
