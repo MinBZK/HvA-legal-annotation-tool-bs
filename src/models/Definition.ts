@@ -8,4 +8,7 @@ export default class Definition {
         this.definition = definition;
         this.creationDate = new Date(Date.now());
     }
+    static createEmpty(): Definition{
+        return new Definition(0,"");
+    }
 }
