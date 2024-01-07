@@ -23,20 +23,20 @@ import Annotation from '../models/Annotation';
 // ];
 
 export const relationTypes: string[] = [
-    "Wie heeft het recht",
-    "Wie heeft de plicht",
-    "Heeft als voorwerp",
-    "Wordt gecreëerd door",
-    "Wordt gewijzigd door",
-    "Wordt beëindigd door",
-    "Is geldig indien voldaan aan",
-    "Wordt uitgevoerd door",
-    "Vindt plaats op",
-    "Vindt plaats in",
-    "Is specalisatie van",
-    "Heeft als invoer",
-    "Heeft als uitvoer",
-    "Gebruikt"
+    "wie heeft het recht",
+    "wie heeft de plicht",
+    "heeft als voorwerp",
+    "wordt gecreëerd door",
+    "wordt gewijzigd door",
+    "wordt beëindigd door",
+    "is geldig indien voldaan aan",
+    "wordt uitgevoerd door",
+    "vindt plaats op",
+    "vindt plaats in",
+    "is specalisatie van",
+    "heeft als invoer",
+    "heeft als uitvoer",
+    "gebruikt"
 ];
 
 // export let annotations: Annotation[] = [
