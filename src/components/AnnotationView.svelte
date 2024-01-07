@@ -119,6 +119,8 @@
 					labelStore.update((labels) => {
 						return [...labels, ...prevSelectedLabels];
 					});
+
+					labelList = [];
 				}
 			});
 		}
