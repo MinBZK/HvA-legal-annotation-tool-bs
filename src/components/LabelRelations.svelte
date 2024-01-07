@@ -5,6 +5,7 @@
 	import RelationForm from "./RelationForm.svelte";
     import { relationTypes } from "../stores/relationStore";
 	import { labelStore } from "../stores/LabelStore";
+	import { definition } from "../stores/DefinitionStores";
 
     let annotations;
     let selectedAnnotation = null as any;
@@ -61,8 +62,16 @@
                     <p class="text-xs" style="color: {label.color};">{label.name}</p>
                 {/each}
             </div>
+            {#if annotation.definition.definition == ""}
+            <p class="text-base">Definition: N.v.t.</p>
+            {:else}
             <p class="text-base">Definition: {annotation.definition.definition}</p>
+            {/if}
+            {#if annotation.comment.comment == ""}
+            <p class="text-base">Comment: N.v.t.</p>        
+            {:else}
             <p class="text-base">Comment: {annotation.comment.comment}</p>        
+            {/if}
             </button>
         </div>
         {/each}
