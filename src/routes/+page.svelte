@@ -1,6 +1,5 @@
 <script lang="ts">
 	import AnnotationView from '../components/AnnotationView.svelte';
-	import AnnotationResults from '../components/AnnotationResults.svelte';
 	import AnnotationExport from '../components/AnnotationExport.svelte';
 	import ImportXml from '../components/ImportXML.svelte';
 	import FilterFile from '../components/FilterFile.svelte';
@@ -93,5 +92,3 @@
 		</button>
 	</div>
 {/if}
-
-<AnnotationResults />
