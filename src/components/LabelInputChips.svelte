@@ -6,12 +6,12 @@
 		chipSelected,
 		textSelection,
 		selectedLabels,
-		chipUnselected,
+		chipUnselected
 	} from '../stores/LabelStore';
 	import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
 	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 	import Label from '../models/Label';
-
+	
 	let labelList: Label[] = [];
 	let labelNames: string[] = [];
 	let inputColor = '';
@@ -26,31 +26,31 @@
 	}
 
 	// Necessary premade labels
-	let preMadeLabels: Label[] = [
-		new Label('Rechtsbetrekking', '#70a4ff', 1),
-		new Label('Rechtsobject', '#98bee1', 2),
-		new Label('Rechtsfeit', '#97d6fe', 3),
-		new Label('Voorwaarde', '#91e8d3', 4),
-		new Label('Afleidingsregel', '#ff7a7a', 5),
-		new Label('Variabele', '#ffd95d', 6),
-		new Label('Variabelewaarde', '#fff380', 7),
-		new Label('Parameter', '#ffb4b4', 8),
-		new Label('Parameterwaarde', '#ffd8ef', 9),
-		new Label('Operator', '#c1ebe1', 10),
-		new Label('Tijdsaanduiding', '#d8b0f9', 11),
-		new Label('Plaatsaanduiding', '#efcaf6', 12),
-		new Label('Delegatiebevoegdheid', '#cecece', 13),
-		new Label('Delegatie-invulling', '#e2e2e2', 14),
-		new Label('Brondefinitie', '#f6f6f6', 15)
-	];
+	// let preMadeLabels: Label[] = [
+	// 	new Label('Rechtsbetrekking', '#70a4ff', 1),
+	// 	new Label('Rechtsobject', '#98bee1', 2),
+	// 	new Label('Rechtsfeit', '#97d6fe', 3),
+	// 	new Label('Voorwaarde', '#91e8d3', 4),
+	// 	new Label('Afleidingsregel', '#ff7a7a', 5),
+	// 	new Label('Variabele', '#ffd95d', 6),
+	// 	new Label('Variabelewaarde', '#fff380', 7),
+	// 	new Label('Parameter', '#ffb4b4', 8),
+	// 	new Label('Parameterwaarde', '#ffd8ef', 9),
+	// 	new Label('Operator', '#c1ebe1', 10),
+	// 	new Label('Tijdsaanduiding', '#d8b0f9', 11),
+	// 	new Label('Plaatsaanduiding', '#efcaf6', 12),
+	// 	new Label('Delegatiebevoegdheid', '#cecece', 13),
+	// 	new Label('Delegatie-invulling', '#e2e2e2', 14),
+	// 	new Label('Brondefinitie', '#f6f6f6', 15)
+	// ];
 
-	onMount(() => {
-		preMadeLabels.forEach((preMadeLabel) => {
-			labelStore.update((store) => {
-				store.push(new Label(preMadeLabel.name, preMadeLabel.color, preMadeLabel.labelId));
-				return store;
-			});
-		});
+	onMount(async () => {
+		// preMadeLabels.forEach((preMadeLabel) => {
+		// 	labelStore.update((store) => {
+		// 		store.push(new Label(preMadeLabel.name, preMadeLabel.color, preMadeLabel.labelId));
+		// 		return store;
+		// 	});
+		// });
 
 		textSelection.subscribe((selection) => {
 			let selectedText = selection.text;
@@ -60,14 +60,16 @@
 		});
 	});
 
-	function onInputChipSelect(event: CustomEvent<completeOptions>): void {		
+	// Function to handle chip selection logic
+	function onInputChipSelect(event: CustomEvent<completeOptions>): void {
 		let selectedLabelName = event.detail;
-		let selectedLabel: Label = new Label('', '', 0);
+		let selectedLabel: Label = new Label(0, '', '');
 
 		labelStore.subscribe((labels) => {
 			selectedLabel = labels.find((label) => label.name === selectedLabelName.label) as Label;
 		});
 
+		// Add the selected label to labelList
 		if (labelList.includes(selectedLabel) === false) {
 			labelList = [...labelList, selectedLabel];
 			inputChip = '';
@@ -77,9 +79,10 @@
 				return { ...store, color: inputColor };
 			});
 
-			$labelStore = $labelStore.filter(label => label.name !== selectedLabel.name)
+			$labelStore = $labelStore.filter((label) => label.name !== selectedLabel.name);
 		}
 
+		// Update the selectedLabels store
 		selectedLabels.update((labels) => {
 			labels = labelList;
 			return labels;
@@ -89,13 +92,16 @@
 		chipSelected.set(labelList.length > 0);
 	}
 
+	// Function to handle chip deselection logic
 	function onInputChipDeselect({ detail }) {
 		let deselectedLabel = labelList[detail.chipIndex];
 
 		// Remove the deselected label from labelList
 		labelList = labelList.filter((_, index) => index !== detail.chipIndex);
-		selectedLabels.update(labelList => labelList.filter((_, index) => index !== detail.chipIndex));
-		
+		selectedLabels.update((labelList) =>
+			labelList.filter((_, index) => index !== detail.chipIndex)
+		);
+
 		// Add the deselected label back to labelStore
 		$labelStore = [...$labelStore, deselectedLabel];
 
@@ -116,7 +122,6 @@
 			>Comment</button
 		>
 	</div>
-	<!-- onclick call remove color in inputchip -->
 	<InputChip
 		bind:input={inputChip}
 		bind:value={labelNames}

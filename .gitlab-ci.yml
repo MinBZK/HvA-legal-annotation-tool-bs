@@ -1,0 +1,55 @@
+image: node:latest
+
+stages:
+  - install
+  - build
+  - test
+  - deploy
+
+install:
+  tags:
+    - hva
+  stage: install
+  script:
+    - npm ci --omit dev
+    - npm install
+    - pwd
+    - ls -al
+  artifacts:
+    paths:
+      - node_modules
+  # only:
+  #   - main
+
+build:
+  tags:
+    - hva
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - build
+  # only:
+  #   - main
+
+test:
+  tags:
+    - hva
+  stage: test
+  script:
+    - npm ci
+    - npm run test
+  # only:
+  #   - main
+
+deploy-railway:
+  tags:
+    - hva
+  stage: deploy
+  script:
+    - apt-get update && apt-get install -y curl
+    - curl -fsSL https://railway.app/install.sh | sh
+    - railway up --service=legalannotationtool
+  only:
+    - main
