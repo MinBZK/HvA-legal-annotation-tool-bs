@@ -8,4 +8,9 @@ export default class Comment {
         this.comment = comment;
         this.creationDate = new Date(Date.now());
     }
+
+
+    static createEmpty(): Comment{
+        return new Comment(0,"");
+    }
 }
