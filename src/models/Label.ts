@@ -1,10 +1,10 @@
 export default class Label {
-    labelId: number;
+    id: number;
     name: string;
     color: string;
 
-    constructor(name: string, color: string, labelId: number) {
-        this.labelId = labelId;
+    constructor(id: number, name: string, color: string) {
+        this.id = id;
         this.name = name;
         this.color = color;
     }
