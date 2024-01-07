@@ -25,33 +25,7 @@
 		labelNames = labelList.map((label) => label.name);
 	}
 
-	// Necessary premade labels
-	// let preMadeLabels: Label[] = [
-	// 	new Label('Rechtsbetrekking', '#70a4ff', 1),
-	// 	new Label('Rechtsobject', '#98bee1', 2),
-	// 	new Label('Rechtsfeit', '#97d6fe', 3),
-	// 	new Label('Voorwaarde', '#91e8d3', 4),
-	// 	new Label('Afleidingsregel', '#ff7a7a', 5),
-	// 	new Label('Variabele', '#ffd95d', 6),
-	// 	new Label('Variabelewaarde', '#fff380', 7),
-	// 	new Label('Parameter', '#ffb4b4', 8),
-	// 	new Label('Parameterwaarde', '#ffd8ef', 9),
-	// 	new Label('Operator', '#c1ebe1', 10),
-	// 	new Label('Tijdsaanduiding', '#d8b0f9', 11),
-	// 	new Label('Plaatsaanduiding', '#efcaf6', 12),
-	// 	new Label('Delegatiebevoegdheid', '#cecece', 13),
-	// 	new Label('Delegatie-invulling', '#e2e2e2', 14),
-	// 	new Label('Brondefinitie', '#f6f6f6', 15)
-	// ];
-
 	onMount(async () => {
-		// preMadeLabels.forEach((preMadeLabel) => {
-		// 	labelStore.update((store) => {
-		// 		store.push(new Label(preMadeLabel.name, preMadeLabel.color, preMadeLabel.labelId));
-		// 		return store;
-		// 	});
-		// });
-
 		textSelection.subscribe((selection) => {
 			let selectedText = selection.text;
 			if (!selectedText || selectedText === '') {

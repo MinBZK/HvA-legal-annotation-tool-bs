@@ -1,17 +1,21 @@
 <script lang="ts">
 	import { getModalStore, getToastStore, type ModalSettings } from '@skeletonlabs/skeleton';
-	import objStore from '../stores/ObjStore';
+	import documentStore from '../stores/DocumentStore';
 	import { annotationStore } from '../stores/AnnotationStore';
+	import type LegalDocument from '../models/LegalDocument';
 	const modalStore = getModalStore();
-    const toastStore = getToastStore();
+	const toastStore = getToastStore();
 
-	let data = $objStore;
+	let data = $documentStore;
 
-	function handleClickExport(fileName = '', data: Object) {
-        if(!checkRelationships()) { 
-            return;
-        }
-        
+	function handleClickExport(fileName = '', data: LegalDocument) {
+		// TO-DO: Clarify required relationships, commented out for ease of demo...
+		// if(!checkRelationships()) {
+		//     return;
+		// }
+
+		console.log('TESTING123:  ' + JSON.stringify($annotationStore));
+
 		new Promise<boolean>((resolve) => {
 			const modal: ModalSettings = {
 				type: 'confirm',
@@ -22,7 +26,8 @@
 			modalStore.trigger(modal);
 		}).then((r) => {
 			if (r) {
-				fileName = (data as { document: { filename: string }[] }).document[0].filename;
+				data.annotations = $annotationStore;
+				fileName = data.filename;
 				fileName = 'LAT_' + fileName;
 				download(fileName, jsonToXML(data));
 			}
@@ -73,75 +78,127 @@
 		document.body.removeChild(element);
 	}
 
-    function checkRelationships() {
-        let annotations;
-        annotationStore.subscribe(e => annotations = e);
+	function checkRelationships() {
+		let annotations;
+		annotationStore.subscribe((e) => (annotations = e));
 
-        let valid = true;
-        let message = "Not all mandatory relationships are present!";
+		let valid = true;
+		let message = 'Not all mandatory relationships are present!';
 
-        if (!annotations.length) {
-            message = "No annotations found";
-            valid = false;
-        } else {
-            for (let annotation of annotations) {
-                const annotationLabels = annotation.label.map(l => l.name.toLowerCase());
-                
-                for (let label of annotationLabels) {
-                    switch (label) {
-                        case 'rechtsbetrekking':
-                            if (!annotation.relationships.some(r => r.type === 'wie heeft het recht' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('rechtssubject'))) {
-                                // message += `${annotation.text} misses a relationship of type "wie heeft het recht" with a target of label "rechtssubject"\n`;
-                                valid = false;
-                            }
-                            if (!annotation.relationships.some(r => r.type === 'wie heeft de plicht' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('rechtssubject'))) {
-                                // message += `${annotation.text} misses a relationship of type "wie heeft de plicht" with a target of label "rechtssubject"\n`;
-                                valid = false;
-                            }
-                            if (!annotation.relationships.some(r => r.type === 'heeft als voorwerp' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('rechtsobject'))) {
-                                // message += `${annotation.text} misses a relationship of type "heeft als voorwerp" with a target of label "rechtsobject"\n`;
-                                valid = false;
-                            }
-                            break;
-                        case 'rechtsfeit':
-                            if (!annotation.relationships.some(r => r.type === 'heeft als voorwerp' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('rechtsobject'))) {
-                                // message += `${annotation.text} misses a relationship of type "heeft als voorwerp" with a target of label "rechtsobject"\n`;
-                                valid = false;
-                            }
-                            if (!annotation.relationships.some(r => r.type === 'vindt plaats op' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('tijdsaanduiding'))) {
-                                // message += `${annotation.text} misses a relationship of type "vind plaats op" with a target of label "tijdsaanduiding"\n`;
-                                valid = false;
-                            }
-                            break;
-                        case 'afleidingsregel':
-                            if (!annotation.relationships.some(r => r.type === 'heeft als uitvoer' && annotations.find(a => a.id === r.target)?.label.map(l => l.name.toLowerCase()).includes('variabele'))) {
-                                // message += `${annotation.text} misses a relationship of type "heeft als uitvoer" with a target of label "variabele"\n`;
-                                valid = false;
-                            }
-                            break;
-                    }
-                }
-            }
-        }
+		if (!annotations.length) {
+			message = 'No annotations found';
+			valid = false;
+		} else {
+			for (let annotation of annotations) {
+				const annotationLabels = annotation.label.map((l) => l.name.toLowerCase());
 
-        if (!valid) {
-            toastStore.trigger({
-                message: message.trim(),
-                timeout: 8000,
-            });
-        }
+				for (let label of annotationLabels) {
+					switch (label) {
+						case 'rechtsbetrekking':
+							if (
+								!annotation.relationships.some(
+									(r) =>
+										r.type === 'wie heeft het recht' &&
+										annotations
+											.find((a) => a.id === r.target)
+											?.label.map((l) => l.name.toLowerCase())
+											.includes('rechtssubject')
+								)
+							) {
+								// message += `${annotation.text} misses a relationship of type "wie heeft het recht" with a target of label "rechtssubject"\n`;
+								valid = false;
+							}
+							if (
+								!annotation.relationships.some(
+									(r) =>
+										r.type === 'wie heeft de plicht' &&
+										annotations
+											.find((a) => a.id === r.target)
+											?.label.map((l) => l.name.toLowerCase())
+											.includes('rechtssubject')
+								)
+							) {
+								// message += `${annotation.text} misses a relationship of type "wie heeft de plicht" with a target of label "rechtssubject"\n`;
+								valid = false;
+							}
+							if (
+								!annotation.relationships.some(
+									(r) =>
+										r.type === 'heeft als voorwerp' &&
+										annotations
+											.find((a) => a.id === r.target)
+											?.label.map((l) => l.name.toLowerCase())
+											.includes('rechtsobject')
+								)
+							) {
+								// message += `${annotation.text} misses a relationship of type "heeft als voorwerp" with a target of label "rechtsobject"\n`;
+								valid = false;
+							}
+							break;
+						case 'rechtsfeit':
+							if (
+								!annotation.relationships.some(
+									(r) =>
+										r.type === 'heeft als voorwerp' &&
+										annotations
+											.find((a) => a.id === r.target)
+											?.label.map((l) => l.name.toLowerCase())
+											.includes('rechtsobject')
+								)
+							) {
+								// message += `${annotation.text} misses a relationship of type "heeft als voorwerp" with a target of label "rechtsobject"\n`;
+								valid = false;
+							}
+							if (
+								!annotation.relationships.some(
+									(r) =>
+										r.type === 'vindt plaats op' &&
+										annotations
+											.find((a) => a.id === r.target)
+											?.label.map((l) => l.name.toLowerCase())
+											.includes('tijdsaanduiding')
+								)
+							) {
+								// message += `${annotation.text} misses a relationship of type "vind plaats op" with a target of label "tijdsaanduiding"\n`;
+								valid = false;
+							}
+							break;
+						case 'afleidingsregel':
+							if (
+								!annotation.relationships.some(
+									(r) =>
+										r.type === 'heeft als uitvoer' &&
+										annotations
+											.find((a) => a.id === r.target)
+											?.label.map((l) => l.name.toLowerCase())
+											.includes('variabele')
+								)
+							) {
+								// message += `${annotation.text} misses a relationship of type "heeft als uitvoer" with a target of label "variabele"\n`;
+								valid = false;
+							}
+							break;
+					}
+				}
+			}
+		}
 
-        return valid;
-    }
+		if (!valid) {
+			toastStore.trigger({
+				message: message.trim(),
+				timeout: 8000
+			});
+		}
 
-
+		return valid;
+	}
 </script>
+
 <div class="ml-10 absolute bottom-0 mx-10 my-5 right-0">
 	<button
-			type="button"
-			class="btn btn-lg variant-filled rounded-md"
-			on:click={() => handleClickExport('data.xml', data)}
-	>Export to XML
+		type="button"
+		class="btn btn-lg variant-filled rounded-md"
+		on:click={() => handleClickExport('data.xml', data)}
+		>Export to XML
 	</button>
 </div>
-

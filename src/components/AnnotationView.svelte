@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import objStore from '../stores/ObjStore.ts';
+	import documentStore from '../stores/DocumentStore.ts';
 	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
 
 	import {
@@ -13,14 +13,12 @@
 	} from '../stores/LabelStore.ts';
 	import Annotation from '../models/Annotation.ts';
 	import type Label from '../models/Label.ts';
-	import LegalDoc from '../models/LegalDoc.ts';
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
 	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
-	import {derived} from "svelte/store";
+	import type LegalDocument from '../models/LegalDocument.ts';
 
-	export let fileContent: {} = '';
-	let visibleContent = [];
+	export let activeDocument: LegalDocument;
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
 	let inputColor = '';
@@ -55,8 +53,8 @@
 
 	onMount(() => {
 		selectionLogic(null);
-		objStore.subscribe((value) => {
-			fileContent = value;
+		documentStore.subscribe((value) => {
+			activeDocument = value;
 		});
 
 		selectedColor.subscribe((value) => {
@@ -69,7 +67,7 @@
 	});
 
 	// Add event listener to detect user selection
-	const handleSelection = (e) => (
+	const handleSelection = () => (
 		(selectedText = document.getSelection()), selectionLogic(selectedText), detectSelection()
 	);
 
@@ -109,7 +107,6 @@
 				if (!isNameAlreadyAppointed && previousSelection && labelList.length > 0) {
 					selectedAnnotation = new Annotation(
 						Math.floor(Math.random() * 1000) + 1,
-						new LegalDoc(0, 'null', 'null', []),
 						previousSelection.toString(),
 						labelList,
 						new Comment(0, 'placeholder comment'),
@@ -174,35 +171,23 @@
 	}
 
 	$: $selectedChaptersStore;
-	$: filteredContent = derived(
-			[objStore, selectedChaptersStore],
-			([$objStore, $selectedChaptersStore]) => {
-				if ($selectedChaptersStore.size > 0) {
-					return $objStore.document[0].chapters
-							.filter((_, index) => $selectedChaptersStore.has(index.toString()))
-							.map(chapter => chapter); // This only gets the chapter titles
-				}
-				return [];
-			}
-	);
 
 	function splitIntoSentences(text) {
-		const textWithBreaks = text.replace(/([;:])/g, "$1\n");
-		return textWithBreaks.split('\n').filter(sentence => sentence.trim().length > 0);
+		const textWithBreaks = text.replace(/([;:])/g, '$1\n');
+		return textWithBreaks.split('\n').filter((sentence) => sentence.trim().length > 0);
 	}
-
 </script>
 
 <div class="p-4" role="main">
-	{#if fileContent}
+	{#if activeDocument}
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div class="text-md leading-loose list-none relative m-10">
 			<h2 class="font-medium text-xl">
-				{fileContent.document[0].title}
+				{activeDocument.title}
 			</h2>
 			<br />
 			<div on:mouseup={handleSelection}>
-				{#each splitIntoSentences(fileContent.document[0].text) as sentence}
+				{#each splitIntoSentences(activeDocument.text) as sentence}
 					<p>{sentence}.</p>
 					<!-- Rendering each sentence with a full stop -->
 					<br />
