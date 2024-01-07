@@ -12,6 +12,11 @@
 	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 	import Label from '../models/Label';
 
+	import Comment from "../models/Comment";
+	import {comment} from "../stores/CommentStore";
+	import Definition from "../models/Definition";
+	import {definition} from  "../stores/DefinitionStores";
+
 	let labelList: Label[] = [];
 	let labelNames: string[] = [];
 	let inputColor = '';
@@ -20,11 +25,13 @@
 	type completeOptions = AutocompleteOption<string>;
 	let autoCompleteOptions: completeOptions[] = [];
 
+	let additionalComment: string = "";
+	let additionalDefinition: string = "";
+
 	$: {
 		autoCompleteOptions = $labelStore.map((label) => ({ label: label.name, value: label.name }));
 		labelNames = labelList.map((label) => label.name);
 	}
-
 	// Necessary premade labels
 	let preMadeLabels: Label[] = [
 		new Label('Rechtsbetrekking', '#70a4ff', 1),
@@ -106,19 +113,58 @@
 		chipUnselected.set(true);
 	}
 
-	function createComment() {}
+	function createAdditional() {
+
+		// Generate new number for commentId
+		let newId: number = Math.floor(Math.random()*1_000) +1
+
+		// Initiate Comment
+		const newComment: Comment = new Comment(
+			newId,
+			additionalComment
+		);
+		const newDefinition: Definition = new Definition(
+			newId,
+			additionalDefinition
+		)
+		// add/update Store array
+		comment.set(newComment);
+		definition.set(newDefinition);
+		}
+	
+	function clearComInput(){
+		additionalComment = "";
+	}
+
+	function clearDefInput(){
+		additionalDefinition= ""
+	}
 </script>
 
-<div class="input-chips max-w-sm mt-5 bg-primary-900">
-	<div class="m-3">
-		<input
+<div class="input-chips max-w-sm mt-5 bg-secondary-900">
+	<div class="m-3" on:change={createAdditional}>
+		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto] mb-2">
+			<input
+			bind:value={additionalComment}
 			type="text"
-			placeholder="Add Comment"
-			class="border p-2 mr-2 placeholder-white bg-primary-700"
+			placeholder="Enter your Comment..."
+			class="input variant-form-material p-2  placeholder-white bg-surface-700"
 		/>
-		<button on:click={createComment} class="bg-primary-700 text-white px-4 py-2 rounded-md"
-			>Comment</button
-		>
+		<button class="variant-form-secondary" on:click={clearComInput}>Clear</button>
+		</div>
+
+		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto] mb-2">
+		<input
+			bind:value={additionalDefinition}
+			type="text"
+			placeholder="Enter your definition..."
+			class="input variant-form-material p-2 placeholder-white bg-primary-700"
+		/>
+		<button class="variant-form-secondary" on:click={clearDefInput}>Clear</button>
+		</div>
+		
+		
+		
 	</div>
 	<InputChip
 		bind:input={inputChip}
