@@ -125,7 +125,7 @@
 
 <div>
     <button type="button" class="btn variant-filled float-right mb-5" on:click={() => setShowForm(false)}>Return</button>
-    <h1 class="h5 font-bold mb-5">Add relationship for de annotatie: "{selectedAnnotation.text}"</h1>
+    <h1 class="h5 font-bold mb-5">Add relationship for the annotation: "{selectedAnnotation.text}"</h1>
 
     <label for="relationTypesSelect" class="label mb-1">Select a relation type</label>
     <select bind:value={relation.type} id="relationTypesSelect" class="border border-gray-400 rounded-lg p-2 mb-2 text-black">

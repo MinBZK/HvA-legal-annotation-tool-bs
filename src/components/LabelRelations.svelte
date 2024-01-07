@@ -83,7 +83,7 @@
 				<!-- add an id to each popup div -->
 				<div
 					id="popup-{annotation.id}"
-					class={`card p-4 variant-filled-secondary absolute ${
+					class={`card hoverPop p-4 variant-filled-secondary absolute ${
 						showPopup === annotation.id ? 'block' : 'hidden'
 					}`}
 					style="position: fixed; top: 10%; left: 48%; transform: translate(-50%, 0); width: 320px;"
@@ -128,9 +128,9 @@
 				<table class="table table-hover">
 					<thead>
 						<tr>
-							<th>Annotatie 1</th>
+							<th>Annotation 1</th>
 							<th>Relationship</th>
-							<th>Annotatie 2</th>
+							<th>Annotation 2</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -166,7 +166,7 @@
 
 <style>
 	/** logic for showing arrow next to shown popup*/
-	.card::after {
+	.hoverPop::after {
 		content: '';
 		position: absolute;
 		top: 50%;
