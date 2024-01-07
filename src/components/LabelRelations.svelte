@@ -5,6 +5,7 @@
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import { popup } from '@skeletonlabs/skeleton';
 	import { onMount, tick } from 'svelte';
+    import {definition } from "../stores/DefinitionStores";
 
 	let annotations;
 	let labels;
@@ -108,8 +109,16 @@
 						<p class="text-xs ml-2" style="color: {label.color};">{label.name}</p>
 					{/each}
 				</div>
-				<p class="text-base ml-2">Definition: {annotation.definition.definition}</p>
-				<p class="text-base ml-2">Comment: {annotation.comment.comment}</p>
+				{#if annotation.definition.definition == ""}
+                <p class="text-base">Definition: N.v.t.</p>
+                {:else}
+                <p class="text-base">Definition: {annotation.definition.definition}</p>
+                {/if}
+                {#if annotation.comment.comment == ""}
+                <p class="text-base">Comment: N.v.t.</p>        
+                {:else}
+                <p class="text-base">Comment: {annotation.comment.comment}</p>        
+                {/if}
 				<button
 					type="button"
 					class="btn flex flex-col rounded-none bg-secondary-500 m-2"
