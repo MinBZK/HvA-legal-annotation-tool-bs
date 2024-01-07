@@ -7,7 +7,7 @@
 	import LabelInputChips from "../components/LabelInputChips.svelte";
 	import LabelRelations from "../components/LabelRelations.svelte";
 
-    import { Drawer, Toast, getDrawerStore, initializeStores } from "@skeletonlabs/skeleton";
+    import { Drawer, Modal, Toast, getDrawerStore, initializeStores } from "@skeletonlabs/skeleton";
 
     initializeStores();
     const drawerStore = getDrawerStore();
@@ -27,6 +27,7 @@
 	</div>
 {:else}
 	<div class="flex flex-row">
+        <Modal />
         <Toast />
         <Drawer>
             {#if $drawerStore.id === 'relationships'}
