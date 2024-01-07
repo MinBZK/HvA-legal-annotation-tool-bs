@@ -35,24 +35,60 @@
 		}
 	}
 
-	function collectText(obj: any, prevKey: string = ''): string[] {
+	function collectText(obj: any, prevKey: string = '', excludeTags = ['meta-data']): string[] {
 		let texts: string[] = [];
+		let isKopTag = prevKey === 'kop';
+
 		for (let key in obj) {
-			if (key === '_text') {
-				const shouldNotAppendNewline = ['lidnr', 'li.nr'].includes(prevKey) || obj[key].trim().match(/^[0-9]+\.$/);
-				texts.push(obj[key] + (shouldNotAppendNewline ? '' : '\n'));
-			} else if (typeof obj[key] === 'object') {
-				texts = texts.concat(collectText(obj[key], key));
+			if (obj.hasOwnProperty(key)) {
+				if (excludeTags.includes(prevKey)) {
+					continue;
+				}
+
+				if (key === '_text' && typeof obj[key] === 'string') {
+					let text = obj[key];
+					if (isKopTag) {
+						text = text.trim() + ' ';
+					}
+					texts.push(text);
+				} else if (typeof obj[key] === 'object') {
+					const childTexts = collectText(obj[key], key, excludeTags);
+					if (isKopTag && childTexts.length > 0) {
+						childTexts[childTexts.length - 1] = childTexts[childTexts.length - 1].trim() + ' ';
+					}
+					texts = texts.concat(childTexts);
+				}
 			}
 		}
+
+		if (isKopTag && texts.length > 0) {
+			texts[texts.length - 1] = texts[texts.length - 1].trim();
+			texts.push('\n');
+		}
+
 		return texts;
 	}
 
-
 	function convertXMLtoObj(xml: string, filename: string): void {
 		const result = xml2js(xml, { compact: true }) as any;
-		const title = result.artikel.kop._text;
-		const textContent = collectText(result.artikel).join('');
+		const title = result?.toestand?.wetgeving?.citeertitel?._text || 'No Title';
+		const chapterElements = result?.toestand?.wetgeving?.["wet-besluit"]?.wettekst?.hoofdstuk;
+
+		let textContent = '';
+
+		let chapters: string[] = [];
+
+		if (chapterElements) {
+			if (Array.isArray(chapterElements)) {
+				chapterElements.forEach(hoofdstuk => {
+					textContent += collectText(hoofdstuk).join('') + '\n';
+
+					chapters.push(collectText(hoofdstuk.kop).join(' '));
+				});
+			} else {
+				textContent = collectText(chapterElements).join('');
+			}
+		}
 
 		const data = {
 			document: [
@@ -60,6 +96,7 @@
 					title: title,
 					filename: filename,
 					text: textContent,
+					chapters: chapters,
 					annotations: []
 				}
 			]
@@ -70,6 +107,7 @@
 		fileContent = $objStore;
 		dispatch('fileUploaded', fileContent);
 	}
+
 </script>
 
 <FileDropzone class="m-5 w-[50vh] h-[25vh]" name="file" on:change={onChangeHandler}>
