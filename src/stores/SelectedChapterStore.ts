@@ -1,3 +1,3 @@
 import { writable } from 'svelte/store';
 
-export const selectedChaptersStore = writable(new Set());
+export const selectedChaptersStore = writable(new Set<string>());

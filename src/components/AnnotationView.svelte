@@ -16,8 +16,10 @@
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
 	import { addAnnotation } from '../stores/AnnotationStore.ts';
+	import {derived} from "svelte/store";
 
 	export let fileContent: {} = '';
+	let visibleContent = [];
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
 	let inputColor = '';
@@ -144,19 +146,39 @@
 		}
 	}
 
+	$: $selectedChaptersStore;
+	$: filteredContent = derived(
+			[objStore, selectedChaptersStore],
+			([$objStore, $selectedChaptersStore]) => {
+				if ($selectedChaptersStore.size > 0) {
+					return $objStore.document[0].chapters
+							.filter((_, index) => $selectedChaptersStore.has(index.toString()))
+							.map(chapter => chapter); // This only gets the chapter titles
+				}
+				return [];
+			}
+	);
 
 	function splitIntoSentences(text) {
-		return text.split('\n').filter(sentence => sentence.trim().length > 0);
+		const textWithBreaks = text.replace(/([;:])/g, "$1\n\n");
+		return textWithBreaks.split('\n').filter(sentence => sentence.trim().length > 0);
 	}
+
 </script>
 
 <div class="p-4" role="main">
 	{#if fileContent}
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div class="text-md leading-loose list-none relative m-10" on:mouseup={handleSelection}>
-			<h2 class="font-medium text-xl">
+			<h2 class="font-medium text-xl mb-5">
 				{fileContent.document[0].title}
 			</h2>
+
+
+			{#each $filteredContent as content}
+				<p>{content}</p>
+			{/each}
+
 			{#each splitIntoSentences(fileContent.document[0].text) as sentence}
 				<p>{sentence}</p>
 			{/each}
