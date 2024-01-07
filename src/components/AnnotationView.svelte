@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import objStore from '../stores/ObjStore.ts';
+	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
+
 	import {
 		selectedColor,
 		chipSelected,
@@ -15,9 +17,12 @@
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
 	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
+	import {derived} from "svelte/store";
 	import {comment} from "../stores/CommentStore.ts";
 	import {definition} from "../stores/DefinitionStores.ts";
+
 	export let fileContent: {} = '';
+	let visibleContent = [];
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
 	let inputColor = '';
@@ -131,6 +136,8 @@
 					labelStore.update((labels) => {
 						return [...labels, ...prevSelectedLabels];
 					});
+
+					labelList = [];
 				}
 			});
 		}
@@ -179,24 +186,41 @@
 		}
 	}
 
+	$: $selectedChaptersStore;
+	$: filteredContent = derived(
+			[objStore, selectedChaptersStore],
+			([$objStore, $selectedChaptersStore]) => {
+				if ($selectedChaptersStore.size > 0) {
+					return $objStore.document[0].chapters
+							.filter((_, index) => $selectedChaptersStore.has(index.toString()))
+							.map(chapter => chapter); // This only gets the chapter titles
+				}
+				return [];
+			}
+	);
+
 	function splitIntoSentences(text) {
-		return text.split('\n'); // Splitting by full stop and space, adjust as needed
+		const textWithBreaks = text.replace(/([;:])/g, "$1\n");
+		return textWithBreaks.split('\n').filter(sentence => sentence.trim().length > 0);
 	}
+
 </script>
 
 <div class="p-4" role="main">
 	{#if fileContent}
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<div class="text-md leading-loose list-none relative m-10" on:mouseup={handleSelection}>
+		<div class="text-md leading-loose list-none relative m-10">
 			<h2 class="font-medium text-xl">
 				{fileContent.document[0].title}
 			</h2>
 			<br />
-			{#each splitIntoSentences(fileContent.document[0].text) as sentence}
-				<p>{sentence}.</p>
-				<!-- Rendering each sentence with a full stop -->
-				<br />
-			{/each}
+			<div on:mouseup={handleSelection}>
+				{#each splitIntoSentences(fileContent.document[0].text) as sentence}
+					<p>{sentence}.</p>
+					<!-- Rendering each sentence with a full stop -->
+					<br />
+				{/each}
+			</div>
 		</div>
 	{:else}
 		<p>Upload een .xml bestand</p>
