@@ -10,8 +10,13 @@
 
 	import { labelStore } from '../stores/LabelStore';
 	import { onMount } from 'svelte';
+<<<<<<< src/routes/+page.svelte
 	import { fade } from 'svelte/transition';
-	import { Drawer, Toast, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
+	import { Drawer, Modal, Toast, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
+=======
+
+	import { Drawer, Modal, Toast, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
+>>>>>>> src/routes/+page.svelte
 
 	let showAnnotations = false;
 	initializeStores();
@@ -42,6 +47,7 @@
 	</div>
 {:else}
 	<div class="flex flex-row">
+        <Modal />
 		<Toast />
 		<Drawer>
 			{#if $drawerStore.id === 'relationships'}
