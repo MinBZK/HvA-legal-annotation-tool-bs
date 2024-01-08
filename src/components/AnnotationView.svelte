@@ -29,7 +29,7 @@
 	let labelList: Label[] = [];
 	let lastSpanId: string | null = null;
 	let prevSelectedLabels: Label[] = [];
-	let selectedComment :Comment;
+	let selectedComment: Comment;
 	let selectedDefinition: Definition;
 
 	$: {
@@ -70,13 +70,13 @@
 			labelList = value;
 		});
 
-		comment.subscribe((value)=>{
+		comment.subscribe((value) => {
 			selectedComment = value;
 		});
 
-		definition.subscribe((value)=>{
+		definition.subscribe((value) => {
 			selectedDefinition = value;
-		})
+		});
 	});
 
 	// Add event listener to detect user selection
@@ -100,6 +100,14 @@
 			const selectedTextTop = rect.top + window.scrollY;
 			const selectedTextLeft = rect.left + window.scrollX;
 
+			let textSelected = range.cloneContents();
+			let span = document.createElement('span');
+			span.classList.add('selected-text');
+			span.style.backgroundColor = 'darkgoldenrod';
+			span.appendChild(textSelected);
+			range.deleteContents();
+			range.insertNode(span);
+
 			// Set the position of the input-chips div
 			if (inputChipsDiv) {
 				inputChipsDiv.style.position = 'absolute';
@@ -110,6 +118,16 @@
 			previousSelection = selectedText;
 		} else {
 			inputChipsDiv.style.display = 'none';
+
+			// Remove the applied span
+			let selectedTextSpans = document.querySelectorAll('.selected-text');
+			selectedTextSpans.forEach((span) => {
+				let parent = span.parentNode;
+				while (span.firstChild) {
+					parent?.insertBefore(span.firstChild, span);
+				}
+				parent?.removeChild(span);
+			});
 
 			annotationStore.subscribe((annotations) => {
 				// Check if the name of previousSelection is not already appointed to an annotation
@@ -128,8 +146,8 @@
 					);
 					addAnnotation(selectedAnnotation);
 					console.log(selectedAnnotation);
-					selectedComment = new Comment(0,"");
-					selectedDefinition = new Definition(0, "");
+
+
 					// Update the labelStore with the contents of previously selectedLabels
 					labelStore.update((labels) => {
 						return [...labels, ...prevSelectedLabels];
@@ -138,7 +156,11 @@
 					labelList = [];
 				}
 			});
+		
 		}
+
+		comment.set(new Comment(0, ''));
+		definition.set(new Definition(0, ''));
 	}
 
 	// Detect if user has selected text
