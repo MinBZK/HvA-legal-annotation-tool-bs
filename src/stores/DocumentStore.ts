@@ -4,8 +4,8 @@ import type LegalDocument from '../models/LegalDocument';
 const documentStore = writable<LegalDocument>({
     title: '',
     filename: '',
-    text: '',
-    chapters: [],
+    chapterTitles: [],
+    chapterContents: [],
     annotations: []
 });
 

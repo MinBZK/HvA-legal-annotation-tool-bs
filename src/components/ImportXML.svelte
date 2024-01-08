@@ -75,23 +75,24 @@
 		const title = result?.toestand?.wetgeving?.citeertitel?._text || 'No Title';
 		const chapterElements = result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.hoofdstuk;
 
-		let textContent = '';
+		let chapterTitles: string[] = [];
+		let chapterContents: string[] = [];
 
-		let chapters: string[] = [];
 
 		if (chapterElements) {
 			if (Array.isArray(chapterElements)) {
-				chapterElements.forEach((hoofdstuk) => {
-					textContent += collectText(hoofdstuk).join('') + '\n';
-
-					chapters.push(collectText(hoofdstuk.kop).join(' '));
+				chapterElements.forEach(hoofdstuk => {
+					chapterTitles.push(collectText(hoofdstuk.kop).join(' '));
+					chapterContents.push(collectText(hoofdstuk.paragraaf).join(' '));
 				});
-			} else {
-				textContent = collectText(chapterElements).join('');
+			}
+			else {
+				chapterTitles.push(collectText(chapterElements.kop).join(' '));
+				chapterContents.push(collectText(chapterElements.paragraaf).join(' '));
 			}
 		}
 
-		const data = new LegalDocument(title, filename, textContent, chapters, []);
+		const data = new LegalDocument(title, filename, chapterTitles, chapterContents, []);
 
 		documentStore.set(data);
 		localStorage.setItem('data', JSON.stringify(data, null, 2));

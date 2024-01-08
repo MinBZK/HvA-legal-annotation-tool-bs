@@ -5,7 +5,7 @@
 
 
     const chaptersStore = derived(documentStore, $documentStore =>
-        $documentStore.chapters || []
+        $documentStore.chapterTitles || []
     );
 
     function handleCheckboxChange(chapterIndex, event) {
@@ -22,17 +22,19 @@
 </script>
 
 <div class="mt-10 ml-5">
+    <div class="mb-5">
+        <p class="text-gray-500">Selecteer de hoofdstukken die je wilt annoteren.</p>
+    </div>
     {#if $chaptersStore.length > 0}
-        {#each $chaptersStore as chapter, index (chapter)}
-            <div class="flex items-center mb-8 cursor-pointer">
+        {#each $chaptersStore as chapterTitle, index (chapterTitle)}
+            <div class="flex items-center mb-8">
                 <input
                         type="checkbox"
                         id={`chapter-${index}`}
-                        checked
                         class="checkbox mr-3 min-w-[1.3rem] min-h-[1.3rem]"
-                        on:change={(e) => handleCheckboxChange(index.toString(), e)}
+                        on:change={(e) => handleCheckboxChange(index, e)}
                 >
-                <label for={`chapter-${index}`} class="ml-2">{chapter}</label>
+                <label for={`chapter-${index}`} class="ml-2 cursor-pointer">{chapterTitle}</label>
             </div>
         {/each}
     {:else}
