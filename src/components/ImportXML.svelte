@@ -92,7 +92,7 @@
 			}
 		}
 
-		const data = new LegalDocument(title, filename, textContent, chapterTitles, chapterContents, []);
+		const data = new LegalDocument(title, filename, chapterTitles, chapterContents, []);
 
 		documentStore.set(data);
 		localStorage.setItem('data', JSON.stringify(data, null, 2));
