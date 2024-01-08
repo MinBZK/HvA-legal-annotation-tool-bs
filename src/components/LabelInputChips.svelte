@@ -31,6 +31,7 @@
 	$: {
 		autoCompleteOptions = $labelStore.map((label) => ({ label: label.name, value: label.name })).sort((a, b) => a.label.localeCompare(b.label));	
 		labelNames = labelList.map((label) => label.name);
+
 	}
 
 	onMount(async () => {
@@ -39,6 +40,14 @@
 			if (!selectedText || selectedText === '') {
 				labelList = [];
 			}
+		});
+
+		comment.subscribe((comment) => {
+			additionalComment = comment.comment;
+		});
+
+		definition.subscribe((definition) => {
+			additionalDefinition = definition.definition;
 		});
 	});
 
