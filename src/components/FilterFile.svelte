@@ -23,7 +23,6 @@
 
 <div class="mt-10 ml-5">
     <div class="mb-5">
-<!--        <h2 class="text-2xl font-bold mb-2">Hoofdstukken</h2>-->
         <p class="text-gray-500">Selecteer de hoofdstukken die je wilt annoteren.</p>
     </div>
     {#if $chaptersStore.length > 0}
