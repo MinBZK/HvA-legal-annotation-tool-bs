@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import objStore from '../stores/ObjStore.ts';
-	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
-
+	import {selectedChaptersStore} from "../stores/SelectedChapterStore.ts";
 	import {
 		selectedColor,
 		chipSelected,
@@ -17,10 +16,14 @@
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
 	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
-	import {derived} from "svelte/store";
 
 	export let fileContent: {} = '';
-	let visibleContent = [];
+
+	let selectedChapters: any;
+	selectedChaptersStore.subscribe(value => {
+		selectedChapters = value;
+	});
+
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
 	let inputColor = '';
@@ -172,26 +175,6 @@
 			lastSpanId = null;
 		}
 	}
-
-	$: $selectedChaptersStore;
-	$: filteredContent = derived(
-			[objStore, selectedChaptersStore],
-			([$objStore, $selectedChaptersStore]) => {
-				if ($selectedChaptersStore.size > 0) {
-					return $objStore.document[0].chapterTitles
-							.filter((_, index) => $selectedChaptersStore.has(index.toString()))
-							.map(chapter => chapter); // This only gets the chapter titles
-				}
-				return [];
-			}
-	);
-
-	function splitIntoSentences(text: any) {
-		const textWithBreaks = text.replace(/([;:])/g, "$1\n");
-		return textWithBreaks.split('\n').filter(sentence => sentence.trim().length > 0);
-	}
-
-
 </script>
 
 <div class="p-4" role="main">
@@ -203,10 +186,15 @@
 			</h2>
 			<br />
 			<div on:mouseup={handleSelection}>
-				{#each fileContent.document[0].chapterContents as sentence}
-					<p>{sentence}.</p>
-					<!-- Rendering each sentence with a full stop -->
-					<br />
+				{#each fileContent.document[0].chapterContents as chapter, index}
+
+					{#if selectedChapters.has(index)}
+						<div>
+							<p>{chapter}</p>
+							<p class="bg-red-500 py-10">Test break between chapter</p>
+						</div>
+					{/if}
+
 				{/each}
 			</div>
 		</div>

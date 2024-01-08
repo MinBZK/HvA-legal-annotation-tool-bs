@@ -77,6 +77,7 @@
 		let chapterTitles: string[] = [];
 		let chapterContents: string[] = [];
 
+
 		if (chapterElements) {
 			if (Array.isArray(chapterElements)) {
 				chapterElements.forEach(hoofdstuk => {
@@ -101,8 +102,6 @@
 				}
 			]
 		};
-
-		console.log(data.document[0].chapterContents);
 
 		objStore.set(data);
 		localStorage.setItem('data', JSON.stringify(data, null, 2));
