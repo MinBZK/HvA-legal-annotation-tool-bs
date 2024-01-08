@@ -1,11 +1,11 @@
 <script lang="ts">
     import { derived } from 'svelte/store';
-    import objStore from '../stores/ObjStore.ts';
+    import documentStore from '../stores/DocumentStore.ts';
     import { selectedChaptersStore }  from '../stores/SelectedChapterStore.ts';
 
 
-    const chaptersStore = derived(objStore, $objStore =>
-        $objStore.document?.[0]?.chapterTitles || []
+    const chaptersStore = derived(documentStore, $documentStore =>
+        $documentStore.chapterTitles || []
     );
 
     function handleCheckboxChange(chapterIndex, event) {

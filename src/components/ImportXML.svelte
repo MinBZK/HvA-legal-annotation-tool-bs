@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { FileDropzone } from '@skeletonlabs/skeleton';
 	import { fileContentStore } from '../stores/fileStore';
-	import objStore from '../stores/ObjStore';
+	import documentStore from '../stores/DocumentStore';
 	import Fa from 'svelte-fa';
 	import { faFileUpload } from '@fortawesome/free-solid-svg-icons';
 	import { xml2js } from 'xml-js';
 	import { createEventDispatcher } from 'svelte';
+	import LegalDocument from '../models/LegalDocument';
 
 	let fileContent: {};
 
@@ -72,7 +73,7 @@
 	function convertXMLtoObj(xml: string, filename: string): void {
 		const result = xml2js(xml, { compact: true }) as any;
 		const title = result?.toestand?.wetgeving?.citeertitel?._text || 'No Title';
-		const chapterElements = result?.toestand?.wetgeving?.["wet-besluit"]?.wettekst?.hoofdstuk;
+		const chapterElements = result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.hoofdstuk;
 
 		let chapterTitles: string[] = [];
 		let chapterContents: string[] = [];
@@ -91,24 +92,13 @@
 			}
 		}
 
-		const data = {
-			document: [
-				{
-					title: title,
-					filename: filename,
-					chapterTitles: chapterTitles,
-					chapterContents: chapterContents,
-					annotations: []
-				}
-			]
-		};
+		const data = new LegalDocument(title, filename, textContent, chapterTitles, chapterContents, []);
 
-		objStore.set(data);
+		documentStore.set(data);
 		localStorage.setItem('data', JSON.stringify(data, null, 2));
-		fileContent = $objStore;
+		fileContent = $documentStore;
 		dispatch('fileUploaded', fileContent);
 	}
-
 </script>
 
 <FileDropzone class="m-5 w-[50vh] h-[25vh]" name="file" on:change={onChangeHandler}>

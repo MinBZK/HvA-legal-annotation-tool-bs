@@ -5,6 +5,7 @@
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import { popup } from '@skeletonlabs/skeleton';
 	import { onMount, tick } from 'svelte';
+    import {definition } from "../stores/DefinitionStores";
 
 	let annotations;
 	let labels;
@@ -83,7 +84,7 @@
 				<!-- add an id to each popup div -->
 				<div
 					id="popup-{annotation.id}"
-					class={`card p-4 variant-filled-secondary absolute ${
+					class={`card hoverPop p-4 variant-filled-secondary absolute ${
 						showPopup === annotation.id ? 'block' : 'hidden'
 					}`}
 					style="position: fixed; top: 10%; left: 48%; transform: translate(-50%, 0); width: 320px;"
@@ -108,8 +109,16 @@
 						<p class="text-xs ml-2" style="color: {label.color};">{label.name}</p>
 					{/each}
 				</div>
-				<p class="text-base ml-2">Definition: {annotation.definition.definition}</p>
-				<p class="text-base ml-2">Comment: {annotation.comment.comment}</p>
+				{#if annotation.definition.definition == ""}
+                <p class="text-base">Definition: N.v.t.</p>
+                {:else}
+                <p class="text-base">Definition: {annotation.definition.definition}</p>
+                {/if}
+                {#if annotation.comment.comment == ""}
+                <p class="text-base">Comment: N.v.t.</p>        
+                {:else}
+                <p class="text-base">Comment: {annotation.comment.comment}</p>        
+                {/if}
 				<button
 					type="button"
 					class="btn flex flex-col rounded-none bg-secondary-500 m-2"
@@ -128,9 +137,9 @@
 				<table class="table table-hover">
 					<thead>
 						<tr>
-							<th>Annotatie 1</th>
+							<th>Annotation 1</th>
 							<th>Relationship</th>
-							<th>Annotatie 2</th>
+							<th>Annotation 2</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -166,7 +175,7 @@
 
 <style>
 	/** logic for showing arrow next to shown popup*/
-	.card::after {
+	.hoverPop::after {
 		content: '';
 		position: absolute;
 		top: 50%;

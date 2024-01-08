@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import objStore from '../stores/ObjStore.ts';
-	import {selectedChaptersStore} from "../stores/SelectedChapterStore.ts";
+
+	import documentStore from '../stores/DocumentStore.ts';
+	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
+
 	import {
 		selectedColor,
 		chipSelected,
@@ -12,17 +14,21 @@
 	} from '../stores/LabelStore.ts';
 	import Annotation from '../models/Annotation.ts';
 	import type Label from '../models/Label.ts';
-	import LegalDoc from '../models/LegalDoc.ts';
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
 	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
-
-	export let fileContent: {} = '';
 
 	let selectedChapters: any;
 	selectedChaptersStore.subscribe(value => {
 		selectedChapters = value;
 	});
+
+	import {derived} from "svelte/store";
+	import {comment} from "../stores/CommentStore.ts";
+	import {definition} from "../stores/DefinitionStores.ts";
+	import type LegalDocument from '../models/LegalDocument.ts';
+
+	export let activeDocument: LegalDocument;
 
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
@@ -31,6 +37,8 @@
 	let labelList: Label[] = [];
 	let lastSpanId: string | null = null;
 	let prevSelectedLabels: Label[] = [];
+	let selectedComment :Comment;
+	let selectedDefinition: Definition;
 
 	$: {
 		// When a chip is selected, change the color of the selected text
@@ -58,8 +66,8 @@
 
 	onMount(() => {
 		selectionLogic(null);
-		objStore.subscribe((value) => {
-			fileContent = value;
+		documentStore.subscribe((value) => {
+			activeDocument = value;
 		});
 
 		selectedColor.subscribe((value) => {
@@ -69,10 +77,18 @@
 		selectedLabels.subscribe((value) => {
 			labelList = value;
 		});
+
+		comment.subscribe((value)=>{
+			selectedComment = value;
+		});
+
+		definition.subscribe((value)=>{
+			selectedDefinition = value;
+		})
 	});
 
 	// Add event listener to detect user selection
-	const handleSelection = (e) => (
+	const handleSelection = () => (
 		(selectedText = document.getSelection()), selectionLogic(selectedText), detectSelection()
 	);
 
@@ -112,16 +128,16 @@
 				if (!isNameAlreadyAppointed && previousSelection && labelList.length > 0) {
 					selectedAnnotation = new Annotation(
 						Math.floor(Math.random() * 1000) + 1,
-						new LegalDoc(0, 'null', 'null', []),
 						previousSelection.toString(),
 						labelList,
-						new Comment(0, 'placeholder comment'),
-						new Definition(0, 'placeholder definition'),
+						selectedComment,
+						selectedDefinition,
 						[]
 					);
 					addAnnotation(selectedAnnotation);
 					console.log(selectedAnnotation);
-
+					selectedComment = new Comment(0,"");
+					selectedDefinition = new Definition(0, "");
 					// Update the labelStore with the contents of previously selectedLabels
 					labelStore.update((labels) => {
 						return [...labels, ...prevSelectedLabels];
@@ -175,18 +191,19 @@
 			lastSpanId = null;
 		}
 	}
+
 </script>
 
 <div class="p-4" role="main">
-	{#if fileContent}
+	{#if activeDocument}
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div class="text-md leading-loose list-none relative m-10">
 			<h2 class="font-medium text-xl">
-				{fileContent.document[0].title}
+				{activeDocument.title}
 			</h2>
 			<br />
 			<div on:mouseup={handleSelection}>
-				{#each fileContent.document[0].chapterContents as chapter, index}
+				{#each activeDocument.chapterContents as chapter, index}
 
 					{#if selectedChapters.has(index)}
 						<div>
@@ -194,7 +211,6 @@
 							<p class="bg-red-500 py-10">Test break between chapter</p>
 						</div>
 					{/if}
-
 				{/each}
 			</div>
 		</div>
