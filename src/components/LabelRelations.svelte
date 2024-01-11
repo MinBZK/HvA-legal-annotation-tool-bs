@@ -3,9 +3,11 @@
 	import RelationForm from './RelationForm.svelte';
 	import { labelStore } from '../stores/LabelStore';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
-	import { popup } from '@skeletonlabs/skeleton';
+	import { getDrawerStore, popup } from '@skeletonlabs/skeleton';
 	import { onMount, tick } from 'svelte';
     import {definition } from "../stores/DefinitionStores";
+    
+    const drawerStore = getDrawerStore();
 
 	let annotations;
 	let labels;
@@ -62,7 +64,24 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div class="m-5 overflow-auto">
 	{#if selectedAnnotation === null}
-		<h1 class="font-bold">All Annotations</h1>
+		<h1 class="font-bold inline">All Annotations</h1>
+        <div class="float-right">
+            <button
+                type="button"
+                class="btn btn-lg variant-filled rounded-md"
+                on:click={() => {
+                    drawerStore.open({
+                        id: 'labelsModify',
+                        position: 'right',
+                        bgDrawer: 'bg-indigo-900 text-white',
+                        width: 'w-[40%]',
+                        padding: 'p-4',
+                        rounded: 'rounded-xl'
+                    });
+                }}
+                >Modify Labels
+            </button>
+        </div>
 		{#each annotations as annotation}
 			<div class="gap-3 mt-5 border-2 border-primary-400 ml-2">
 				<!-- confirmation popup for annotation deletion -->
