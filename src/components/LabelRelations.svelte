@@ -130,7 +130,7 @@
 		<div>
 			<button
 				type="button"
-				class="btn variant-filled float-right mb-5"
+				class="btn variant-filled float-right mb-5 hover:variant-filled-secondary text-white font-bold"
 				on:click={() => (selectedAnnotation = null)}>Return</button
 			>
 			<div class="table-container">
@@ -152,7 +152,7 @@
 								<th
 									><button
 										type="button"
-										class="btn variant-filled"
+										class="btn variant-filled hover:variant-filled-secondary text-white font-bold"
 										on:click={() => onDeleteRelation(relationship)}>Delete</button
 									></th
 								>
@@ -161,7 +161,7 @@
 					</tbody>
 				</table>
 			</div>
-			<button type="button" class="btn variant-filled mt-5" on:click={() => (showForm = true)}
+			<button type="button" class="btn variant-filled mt-5 hover:variant-filled-secondary text-white font-bold" on:click={() => (showForm = true)}
 				>Add relationship</button
 			>
 		</div>
