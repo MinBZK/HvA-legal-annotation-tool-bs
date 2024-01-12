@@ -3,6 +3,7 @@
 	import documentStore from '../stores/DocumentStore';
 	import { annotationStore } from '../stores/AnnotationStore';
 	import type LegalDocument from '../models/LegalDocument';
+	import { js2xml } from 'xml-js';
 	const modalStore = getModalStore();
 	const toastStore = getToastStore();
 
@@ -35,29 +36,31 @@
 	}
 
 	/**
-	 * @param {Object} json
+	 * @param {LegalDocument} data
 	 */
 
-	function jsonToXML(json: Object, indent = 0) {
-		let xml = '';
-		const indentation = ' '.repeat(indent * 2);
-
-		for (let prop in json) {
-			xml += json[prop] instanceof Array ? '' : '\n' + indentation + '<' + prop + '>';
-			if (json[prop] instanceof Array) {
-				for (let array in json[prop]) {
-					xml += '\n' + indentation + '<' + prop + '>';
-					xml += jsonToXML(new Object(json[prop][array]), indent + 2);
-					xml += '\n' + indentation + '</' + prop + '>';
-				}
-			} else if (typeof json[prop] == 'object') {
-				xml += jsonToXML(new Object(json[prop]), indent + 1);
-			} else {
-				xml += json[prop];
-			}
-			xml += json[prop] instanceof Array ? '' : '</' + prop + '>';
-		}
+	function jsonToXML(data: LegalDocument) {
+		let xml = js2xml(data, { compact: true, spaces: 4 });
 		return xml;
+
+
+		// for (let prop in json) {
+		// 	xml += json[prop] instanceof Array ? '' : '\n' + indentation + '<' + prop + '>';
+		// 	if (json[prop] instanceof Array) {
+		// 		for (let array in json[prop]) {
+		// 			xml += '\n' + indentation + '<' + prop + '>';
+		// 			xml += jsonToXML(new Object(json[prop][array]), indent + 2);
+		// 			xml += '\n' + indentation + '</' + prop + '>';
+		// 		}
+		// 	} else if (typeof json[prop] == 'object') {
+		// 		xml += jsonToXML(new Object(json[prop]), indent + 1);
+		// 	} else {
+		// 		xml += json[prop];
+		// 	}
+		// 	xml += json[prop] instanceof Array ? '' : '</' + prop + '>';
+		// }
+		// console.log("exported DATA: " + JSON.stringify(json))
+		// return xml;
 	}
 
 	/**
