@@ -40,7 +40,17 @@
 	 */
 
 	function jsonToXML(data: LegalDocument) {
-		let xml = js2xml(data, { compact: true, spaces: 4 });
+		let obj = {
+			xml: {
+				title: data.title,
+				filename: data.filename,
+				chapterTitles: data.chapterTitles,
+				chapterContents: data.chapterContents,
+				annotations: data.annotations
+			}
+		}
+
+		let xml = js2xml(obj, { compact: true, spaces: 4 });
 		return xml;
 
 
