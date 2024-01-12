@@ -116,7 +116,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th class="text-center">Label name</th>
+                        <th class="text-center">Label naam</th>
                         <th />
                     </tr>
                 </thead>
@@ -127,10 +127,10 @@
                             <th>
                                 <button
                                     type="button"
-                                    class="btn variant-filled"
+                                    class="btn variant-filled hover:variant-filled-secondary"
                                     disabled={immutableLabels.includes(label.name)}
                                     on:click={() => confirmationPopup(label.id)}>
-                                    Delete
+                                    Wissen
                                 </button>
                             </th>
                         </tr>
@@ -141,28 +141,31 @@
     {/if}
 
     {#if showForm}
-        <label for="labelNameInput" class="label mb-1">Label Name</label>
+        <label for="labelNameInput" class="label mb-1 font-bold">Label naam</label>
         <input id="labelNameInput" class="input mb-4" type="text" bind:value={newLabel.name}/>
 
-        <div class="grid grid-cols-[auto_1fr] gap-2 mb-4">
+        <label for="labelColorInput" class="label mb-1 font-bold">Label kleur</label>
+        <div id="labelColorInput" class="grid grid-cols-[auto_1fr] gap-2 mb-4">
             <input class="input" type="color" bind:value={newLabel.color} />
             <input class="input" type="text" bind:value={newLabel.color} readonly tabindex="-1" />
         </div>
 
-        <button on:click={() => onCreateLabel()}
-            class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full">
-            Submit
-        </button>
-
-        <button on:click={() => showForm = false}
-            class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full">
-            Cancel
-        </button>
+        <div class="float-right">
+            <button on:click={() => onCreateLabel()}
+                class="btn variant-filled hover:variant-filled-secondary text-white font-bold py-2 px-4 rounded-full">
+                Verzenden
+            </button>
+    
+            <button on:click={() => showForm = false}
+                class="btn variant-filled hover:variant-filled-secondary text-white font-bold py-2 px-4 rounded-full">
+                Annuleren
+            </button>
+        </div>
     {/if}
     {#if !showForm}
         <button on:click={() => showForm = true}
-            class="variant-glass-primary hover:variant-glass-secondary text-white font-bold py-2 px-4 rounded-full float-right m-5">
-            Add Label
+            class="btn variant-filled hover:variant-filled-secondary text-white font-bold py-2 px-4 rounded-full float-right m-5">
+            Label toevoegen
         </button>
     {/if}
 </div>
