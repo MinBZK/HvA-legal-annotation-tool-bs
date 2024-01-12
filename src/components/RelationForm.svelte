@@ -121,16 +121,13 @@
             r.source === sourceAnnotation.id && r.type === relationType
         );
     }
-
-    $: if(relation) console.log(relation);
-    $: console.log(filteredTypes);
 </script>
 
 <div>
-    <button type="button" class="btn variant-filled float-right mb-5 hover:variant-filled-secondary text-white font-bold" on:click={() => setShowForm(false)}>Return</button>
-    <h1 class="h5 font-bold mb-5">Add relationship for the annotation: "{selectedAnnotation.text}"</h1>
+    <button type="button" class="btn variant-filled float-right mb-5 hover:variant-filled-secondary text-white font-bold" on:click={() => setShowForm(false)}>Terugkeren</button>
+    <h1 class="h5 font-bold mb-5">Relatie toevoegen voor de annotatie: "{selectedAnnotation.text}"</h1>
 
-    <label for="annotationsSelect" class="label mb-1">Select other annotation</label>
+    <label for="annotationsSelect" class="label mb-1">Selecteer een andere annotatie</label>
     <select bind:value={relation.target} id="annotationsSelect" class="border border-gray-400 rounded-lg p-2 mb-2 text-black select text-white">
         {#each annotations.filter(a => a.id !== selectedAnnotationId) as annotation}
             <option value={annotation.id} class="text-white">{annotation.text}</option>
@@ -139,7 +136,7 @@
 
     {#if relation.target !== 0}
         {#if filteredTypes.length}
-            <label for="relationTypesSelect" class="label mb-1">Select a relation type</label>
+            <label for="relationTypesSelect" class="label mb-1">Selecteer een relatietype</label>
             <select bind:value={relation.type} id="relationTypesSelect" class="border border-gray-400 rounded-lg p-2 mb-2 text-black select text-white">
                 {#each filteredTypes as val}
                     <option value={val} class="text-white">{val}</option>
@@ -147,10 +144,10 @@
             </select>
             <button on:click={() => addRelationship()} disabled={!relation.type} type="button"
                     class="btn block variant-filled hover:variant-filled-secondary text-white font-bold py-2 px-4 mt-2 rounded-full">
-                Submit
+                Indienen
             </button>
             {:else}
-            <p>No relation types available</p>
+            <p>Geen relatietypen beschikbaar</p>
         {/if}
     {/if}
 </div>

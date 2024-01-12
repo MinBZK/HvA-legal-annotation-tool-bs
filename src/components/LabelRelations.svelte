@@ -36,11 +36,11 @@
 
 			if (sourceAnnotation && targetAnnotation) {
 				sourceAnnotation.relationships = sourceAnnotation.relationships.filter(
-					(r) => !(r.source === relation.source && r.target === relation.target)
+					(r) => !(r.source === relation.source && r.target === relation.target  && r.type === relation.type)
 				);
 
 				targetAnnotation.relationships = targetAnnotation.relationships.filter(
-					(r) => !(r.source === relation.source && r.target === relation.target)
+					(r) => !(r.source === relation.source && r.target === relation.target  && r.type === relation.type)
 				);
 			}
 
@@ -62,7 +62,7 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div class="m-5 overflow-auto">
 	{#if selectedAnnotation === null}
-		<h1 class="font-bold">All Annotations</h1>
+		<h1 class="font-bold">Alle Annotaties</h1>
 		{#each annotations as annotation}
 			<div class="gap-3 mt-5 border-2 border-primary-400 ml-2">
 				<!-- confirmation popup for annotation deletion -->
@@ -122,7 +122,7 @@
 				<button
 					type="button"
 					class="btn flex flex-col rounded-none bg-secondary-500 m-2"
-					on:click={() => (selectedAnnotation = annotation)}>Edit Relationships</button
+					on:click={() => (selectedAnnotation = annotation)}>Relaties Bewerken</button
 				>
 			</div>
 		{/each}
@@ -131,15 +131,15 @@
 			<button
 				type="button"
 				class="btn variant-filled float-right mb-5 hover:variant-filled-secondary text-white font-bold"
-				on:click={() => (selectedAnnotation = null)}>Return</button
+				on:click={() => (selectedAnnotation = null)}>Terugkeren</button
 			>
 			<div class="table-container">
 				<table class="table table-hover">
 					<thead>
 						<tr>
-							<th>Annotation 1</th>
-							<th>Relationship</th>
-							<th>Annotation 2</th>
+							<th>Annotatie 1</th>
+							<th>Relatie</th>
+							<th>Annotatie 2</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -152,8 +152,8 @@
 								<th
 									><button
 										type="button"
-										class="btn variant-filled hover:variant-filled-secondary text-white font-bold"
-										on:click={() => onDeleteRelation(relationship)}>Delete</button
+										class="btn variant-filled-error hover:variant-filled-error-secondary text-white font-bold my-2"
+										on:click={() => onDeleteRelation(relationship)}>Wissen</button
 									></th
 								>
 							</tr>
@@ -162,7 +162,7 @@
 				</table>
 			</div>
 			<button type="button" class="btn variant-filled mt-5 hover:variant-filled-secondary text-white font-bold" on:click={() => (showForm = true)}
-				>Add relationship</button
+				>Relatie toevoegen</button
 			>
 		</div>
 	{:else}
