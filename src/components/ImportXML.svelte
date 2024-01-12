@@ -88,35 +88,38 @@
 				? result.xml.chapterContents.map((item: any) => item._text)
 				: [];
 
-
 			const annotations = result.xml.annotations
 				? result.xml.annotations.map((item: any) => {
 						return {
 							id: item.id._text,
 							text: item.text._text,
-							label: {
-								id: item.label.id._text,
-								name: item.label.name._text,
-								color: item.label.color._text
-							},
+							label: item.label
+								? [
+										{
+											id: item.label.id._text,
+											name: item.label.name._text,
+											color: item.label.color._text
+										}
+								  ]
+								: [],
 							comment: {
-								id: item.comment.commentId._text,
+								commentId: item.comment.commentId._text,
 								comment: item.comment.comment._text,
-								creationDate: item.comment.creationDate._text
+								creationDate: new Date(item.comment.creationDate._text)
 							},
 							definition: {
-								id: item.definition.definitionId._text,
+								definitionId: item.definition.definitionId._text,
 								definition: item.definition.definition._text,
-								creationDate: item.definition.creationDate._text
+								creationDate: new Date(item.definition.creationDate._text)
 							},
 							relationships: item.relationships
-								? item.relationships.map((relation: any) => {
-										return {
-											type: relation.type._text,
-											source: relation.source._text,
-											target: relation.target._text
-										};
-								  })
+								? [
+										{
+											type: item.relationships.type._text,
+											source: item.relationships.source._text,
+											target: item.relationships.target._text
+										}
+								  ]
 								: []
 						};
 				  })
@@ -133,7 +136,7 @@
 			documentStore.set(reimport);
 			annotationStore.set(annotations);
 
-			console.dir($annotationStore)
+			console.dir($annotationStore);
 			localStorage.setItem('data', JSON.stringify(reimport, null, 2));
 			fileContent = $documentStore;
 			dispatch('fileUploaded', fileContent);

@@ -15,8 +15,6 @@
 		//     return;
 		// }
 
-		console.log('TESTING123:  ' + JSON.stringify($annotationStore));
-
 		new Promise<boolean>((resolve) => {
 			const modal: ModalSettings = {
 				type: 'confirm',
@@ -40,6 +38,7 @@
 	 */
 
 	function jsonToXML(data: LegalDocument) {
+		console.dir($annotationStore)
 		let obj = {
 			xml: {
 				title: data.title,
