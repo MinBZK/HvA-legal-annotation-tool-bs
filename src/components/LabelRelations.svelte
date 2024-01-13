@@ -5,17 +5,20 @@
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import { getDrawerStore, popup } from '@skeletonlabs/skeleton';
 	import { onMount, tick } from 'svelte';
-	import { definition } from '../stores/DefinitionStores';
+
 	import Fa from 'svelte-fa';
 	import { faTags } from '@fortawesome/free-solid-svg-icons';
 
 	const drawerStore = getDrawerStore();
+	import EditAnnotation from './EditAnnotation.svelte';
+
 
 	let annotations;
 	let labels;
 	let selectedAnnotation = null as any;
 	let showForm = false;
 	let showPopup = null;
+    let editAnnotation = false;
 
 	const popupFeatured: PopupSettings = {
 		event: 'click',
@@ -145,23 +148,45 @@
 						<p class="text-xs mt-0.5 ml-2" style="color: {label.color};">{label.name}</p>
 					{/each}
 				</div>
-				{#if annotation.definition.definition == '' || annotation.definition.definition == undefined}
-					<p class="text-base ml-2">Definition: .v.t.</p>
-				{:else}
-					<p class="text-base ml-2">Definition: {annotation.definition.definition}</p>
-				{/if}
-				{#if annotation.comment.comment == '' || annotation.definition.definition == undefined}
-					<p class="text-base ml-2">Comment: N.v.t.</p>
-				{:else}
-					<p class="text-base ml-2">Comment: {annotation.comment.comment}</p>
-				{/if}
-				<button
+				{#if annotation.definition.definition == ""}
+                <p class="text-base">Definition: N.v.t.</p>
+                {:else}
+                <p class="text-base">Definition: {annotation.definition.definition}</p>
+                {/if}
+                {#if annotation.comment.comment == ""}
+                <p class="text-base">Comment: N.v.t.</p>        
+                {:else}
+                <p class="text-base">Comment: {annotation.comment.comment}</p>        
+                {/if}
+				<div class="grid grid-cols-2">
+                    <button
 					type="button"
-					class="btn flex flex-col rounded-none bg-secondary-500 m-2"
-					on:click={() => (selectedAnnotation = annotation)}>Relaties Bewerken</button
-				>
+					class="btn rounded-none bg-secondary-500 m-2"
+					on:click={() => {
+                        selectedAnnotation = annotation;
+                        editAnnotation = false;
+                    }}>Relaties bewerken</button
+                    >
+                    <button
+                        type="button"
+                        class="btn rounded-none bg-secondary-500 m-2"
+                        on:click={() => {
+                            selectedAnnotation = annotation;
+                            editAnnotation = true;
+                        }}>Annotatie Bewerken</button
+                    >
+                </div>
 			</div>
 		{/each}
+    {:else if (selectedAnnotation && editAnnotation)}
+    <EditAnnotation 
+        hideComponent = {() => {
+            selectedAnnotation = null;
+            editAnnotation = false;
+        }}
+
+        selectedAnnotationId = {selectedAnnotation.id}
+    />
 	{:else if !showForm}
 		<div>
 			<button
