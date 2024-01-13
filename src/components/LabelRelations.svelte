@@ -6,11 +6,13 @@
 	import { popup } from '@skeletonlabs/skeleton';
 	import { onMount, tick } from 'svelte';
     import {definition } from "../stores/DefinitionStores";
+	import EditAnnotation from './EditAnnotation.svelte';
 
 	let annotations;
 	let labels;
 	let selectedAnnotation = null as any;
 	let showForm = false;
+    let editAnnotation = false;
 
 	const popupFeatured: PopupSettings = {
 		event: 'click',
@@ -119,13 +121,35 @@
                 {:else}
                 <p class="text-base">Comment: {annotation.comment.comment}</p>        
                 {/if}
-				<button
+				<div class="grid grid-cols-2">
+                    <button
 					type="button"
-					class="btn flex flex-col rounded-none bg-secondary-500 m-2"
-					on:click={() => (selectedAnnotation = annotation)}>Edit Relationships</button
-				>
+					class="btn rounded-none bg-secondary-500 m-2"
+					on:click={() => {
+                        selectedAnnotation = annotation;
+                        editAnnotation = false;
+                    }}>Relaties bewerken</button
+                    >
+                    <button
+                        type="button"
+                        class="btn rounded-none bg-secondary-500 m-2"
+                        on:click={() => {
+                            selectedAnnotation = annotation;
+                            editAnnotation = true;
+                        }}>Annotatie Bewerken</button
+                    >
+                </div>
 			</div>
 		{/each}
+    {:else if (selectedAnnotation && editAnnotation)}
+    <EditAnnotation 
+        hideComponent = {() => {
+            selectedAnnotation = null;
+            editAnnotation = false;
+        }}
+
+        selectedAnnotationId = {selectedAnnotation.id}
+    />
 	{:else if !showForm}
 		<div>
 			<button
