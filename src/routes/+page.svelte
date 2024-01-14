@@ -18,7 +18,7 @@
 	initializeStores();
 	const drawerStore = getDrawerStore();
 
-	let fileContent = '';
+	let fileContent: LegalDocument | null = null;
 
 	onMount(async () => {
 		labelStore.set([]);
@@ -28,7 +28,21 @@
 		} else {
 			labelStore.set(data);
 		}
+
+		documentStore.subscribe((value) => {
+			console.dir(value);
+			if (value.title = '') {
+				fileContent = value;
+				localStorage.setItem('legal-document', JSON.stringify(value));
+			}
+		});
 	});
+
+	const popupHover: PopupSettings = {
+		event: 'hover',
+		target: 'popupHover',
+		placement: 'top'
+	};
 </script>
 
 {#if !fileContent}
@@ -57,8 +71,16 @@
 			<FilterFile />
 		</div>
 		<div class="w-3/4 overflow-auto h-[100vh]">
-			<AnnotationView />
-			<AnnotationExport />
+			<div class="h-1/3">
+				<AnnotationView />
+			</div>
+			<div class="ml-10 absolute bottom-0 right-0 m-10">
+				<btn class="btn btn-lg variant-filled-success rounded-md">
+					<Fa size="1.5x" icon={faPlus} />
+				</btn>
+				<AuditLog />
+				<AnnotationExport />
+			</div>
 		</div>
 		<div class="max-w-48">
 			<LabelInputChips />
