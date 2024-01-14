@@ -48,12 +48,6 @@
 			}
 		});
 	});
-
-	const popupHover: PopupSettings = {
-		event: 'hover',
-		target: 'popupHover',
-		placement: 'top'
-	};
 </script>
 
 {#if !fileContent}
@@ -83,7 +77,7 @@
 				<AnnotationView />
 			</div>
 			<div class="ml-10 absolute bottom-0 right-0 m-10">
-				<btn class="btn btn-lg variant-filled-success rounded-md">
+				<btn title="New File" class="btn btn-lg variant-filled-success rounded-md">
 					<Fa size="1.5x" icon={faPlus} />
 				</btn>
 				<AuditLog />
