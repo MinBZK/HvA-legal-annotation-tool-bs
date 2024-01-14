@@ -27,10 +27,29 @@
 			modalStore.trigger(modal);
 		}).then((r) => {
 			if (r) {
-				data.annotations = $annotationStore;
-				fileName = data.filename;
-				fileName = 'LAT_' + fileName;
-				download(fileName, jsonToXML(data));
+				const modal: ModalSettings = {
+					type: 'prompt',
+					title: 'What is your name?',
+					body: 'Provide your full name in the field below.',
+					valueAttr: {
+						type: 'text',
+						placeholder: 'Full name',
+						class: 'input p-2',
+						minlength: 3,
+						maxlength: 50,
+						required: true
+					},
+					response: (r: string) => {
+						if (r) {
+							data.history.push({ user: r, date: new Date() });
+							data.annotations = $annotationStore;
+							fileName = data.filename;
+							fileName = 'LAT_' + fileName;
+							download(fileName, jsonToXML(data));
+						}
+					}
+				};
+				modalStore.trigger(modal);
 			}
 		});
 	}
@@ -40,13 +59,21 @@
 	 */
 
 	function jsonToXML(data: LegalDocument) {
+		let history = data.history.map((h) => {
+			return {
+				user: h.user,
+				date: h.date.toISOString()
+			};
+		});
+
 		let obj = {
 			xml: {
 				title: data.title,
 				filename: data.filename,
 				chapterTitles: data.chapterTitles,
 				chapterContents: data.chapterContents,
-				annotations: data.annotations
+				annotations: data.annotations,
+				history: history
 			}
 		};
 
@@ -189,6 +216,7 @@
 </script>
 
 <button
+	title="Export File"
 	type="button"
 	class="btn btn-lg variant-filled-primary rounded-md"
 	on:click={() => handleClickExport('data.xml', data)}
