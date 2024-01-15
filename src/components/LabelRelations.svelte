@@ -93,15 +93,15 @@
 			</button>
 		</div>
 		{#each annotations as annotation}
-			<div class="gap-3 mt-5 border-2 border-surface-300 ml-2 w-9/12">
+			<div class="gap-3 mt-5 border-2 border-surface-300 ml-2 w-3/4">
 				<!-- confirmation popup for annotation deletion -->
 				<div class="card p-4 w-wrap shadow-xl" data-popup="popupFeatured">
-					<div><p>Are you sure?</p></div>
+					<div><p>Weet u het zeker?</p></div>
 					<div class="flex justify-center mt-6">
-						<button class="bg-error-500 rounded-full w-full">No</button>
+						<button class="bg-error-500 rounded-full w-full">Nee</button>
 						<button
 							class="bg-success-500 rounded-full ml-2 w-full"
-							on:click={() => removeAnnotation(annotation)}>Yes</button
+							on:click={() => removeAnnotation(annotation)}>Ja</button
 						>
 					</div>
 					<div class="arrow bg-surface-100-800-token" />
