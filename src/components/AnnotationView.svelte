@@ -1,31 +1,20 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-
 	import documentStore from '../stores/DocumentStore.ts';
 	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
-
 	import {
 		selectedColor,
-		chipSelected,
 		textSelection,
 		selectedLabels,
-		chipUnselected,
 		labelStore
 	} from '../stores/LabelStore.ts';
+	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
+	import { comment, clearInput } from '../stores/CommentStore.ts';
+	import { definition } from '../stores/DefinitionStores.ts';
 	import Annotation from '../models/Annotation.ts';
 	import type Label from '../models/Label.ts';
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
-	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
-
-	let selectedChapters: any;
-	selectedChaptersStore.subscribe(value => {
-		selectedChapters = value;
-	});
-
-	import {derived} from "svelte/store";
-	import {comment} from "../stores/CommentStore.ts";
-	import {definition} from "../stores/DefinitionStores.ts";
 	import type LegalDocument from '../models/LegalDocument.ts';
 
 	export let activeDocument: LegalDocument;
@@ -35,28 +24,15 @@
 	let inputColor = '';
 	let selectedAnnotation: Annotation | null = null;
 	let labelList: Label[] = [];
-	let lastSpanId: string | null = null;
 	let prevSelectedLabels: Label[] = [];
-	let selectedComment :Comment;
+	let selectedComment: Comment;
 	let selectedDefinition: Definition;
+	let selectionOffset = { start: 0, end: 0 };
+	let boundDoc: HTMLElement;
+	let selectedChapters: any;
+	let highlightSpan;
 
 	$: {
-		// When a chip is selected, change the color of the selected text
-		chipSelected.subscribe((value) => {
-			if (value) {
-				changeTextColor();
-				chipSelected.set(false); // reset the trigger
-			}
-		});
-
-		// When a chip is unselected, remove the color from the selected text
-		chipUnselected.subscribe((value) => {
-			if (value) {
-				removeTextColor();
-				chipUnselected.set(false); // reset the trigger
-			}
-		});
-
 		selectedLabels.subscribe((value) => {
 			if (value) {
 				prevSelectedLabels = value;
@@ -78,13 +54,13 @@
 			labelList = value;
 		});
 
-		comment.subscribe((value)=>{
+		comment.subscribe((value) => {
 			selectedComment = value;
 		});
 
-		definition.subscribe((value)=>{
+		definition.subscribe((value) => {
 			selectedDefinition = value;
-		})
+		});
 	});
 
 	// Add event listener to detect user selection

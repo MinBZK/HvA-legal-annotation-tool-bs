@@ -29,7 +29,6 @@ export const updateCommentToList = (updateComment: Comment) =>{
     })
 }
 
-
 // Remove Comment
 export const removeCommentFromList = (comment: Comment)=>{
     commentList.update((comments)=> comments.filter((c)=> c !== comment));

@@ -63,7 +63,6 @@
 		// Add the selected label to labelList
 		if (labelList.includes(selectedLabel) === false) {
 			labelList = [...labelList, selectedLabel];
-			inputChip = '';
 
 			inputColor = selectedLabel.color;
 			selectedColor.update((store) => {
@@ -78,9 +77,6 @@
 			labels = labelList;
 			return labels;
 		});
-
-		// Set chipSelected based on whether any chip is selected
-		chipSelected.set(labelList.length > 0);
 	}
 
 	// Function to handle chip deselection logic
