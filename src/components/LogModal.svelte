@@ -5,19 +5,22 @@
 		type TableSource,
 		tableMapperValues
 	} from '@skeletonlabs/skeleton';
+	import logStore from '../stores/LogStore';
+	import type EditHistory from '../models/EditHistory';
+	import type { SvelteComponent } from 'svelte';
+
+	export let parent: SvelteComponent;
 
 	// local
 	const modalStore = getModalStore();
 
-	const auditLog = [
-		{ id: 1, name: 'Bill', date: '01-01-2001' },
-		{ id: 2, name: 'John', date: '03-03-2003' },
-		{ id: 3, name: 'James', date: '05-05-2005' }
-	];
+	let auditLog: EditHistory[] = [];
+
+	auditLog = $logStore;
 
 	const tableLog: TableSource = {
 		head: ['Name', 'Date'],
-		body: tableMapperValues(auditLog, ['name', 'date'])
+		body: tableMapperValues(auditLog, ['user', 'date'])
 	};
 </script>
 
