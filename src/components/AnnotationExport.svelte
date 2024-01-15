@@ -41,6 +41,7 @@
 					},
 					response: (r: string) => {
 						if (r) {
+							if (!data.history) data.history = [];
 							data.history.push({ user: r, date: new Date() });
 							data.annotations = $annotationStore;
 							fileName = data.filename;
