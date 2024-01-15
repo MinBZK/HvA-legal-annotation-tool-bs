@@ -61,12 +61,33 @@
 			{#if $drawerStore.id === 'relationships'}
 				<LabelRelations />
 			{/if}
-            {#if $drawerStore.id === 'labelsModify'}
-                <LabelList />
-            {/if}
+			{#if $drawerStore.id === 'labelsModify'}
+				<LabelList />
+			{/if}
+			{#if $drawerStore.id === 'filterFile'}
+				<FilterFile />
+			{/if}
 		</Drawer>
-		<div class="w-1/4 p-5 bg-surface-300 dark:bg-surface-700">
-			<FilterFile />
+		<div
+			class="text-white font-bold py-2 px-4 mt-2 mr-2 fixed left-0 top-1/2 -translate-y-1/2 bg-transparent border-0"
+			on:mousemove={() => {
+				drawerStore.open({
+					id: 'filterFile',
+					position: 'left',
+					bgDrawer: 'bg-surface-600 text-white',
+					width: 'w-[30%]',
+					padding: 'p-4'
+				});
+			}}
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="32"
+				height="32"
+				viewBox="0 0 24 24"
+				fill="rgba(var(--color-primary-700) / 1)"
+				><path d="M7.33 24l-2.83-2.829 9.339-9.175-9.339-9.167 2.83-2.829 12.17 11.996z" /></svg
+			>
 		</div>
 		<div class="flex justify-center items-center h-screen">
 			<div class="w-1/2 overflow-auto h-[100vh]">
