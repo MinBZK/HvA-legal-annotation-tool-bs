@@ -2,12 +2,7 @@
 	import { onMount } from 'svelte';
 	import documentStore from '../stores/DocumentStore.ts';
 	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
-	import {
-		selectedColor,
-		textSelection,
-		selectedLabels,
-		labelStore
-	} from '../stores/LabelStore.ts';
+	import { textSelection, selectedLabels, labelStore } from '../stores/LabelStore.ts';
 	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
 	import { comment, clearInput } from '../stores/CommentStore.ts';
 	import { definition } from '../stores/DefinitionStores.ts';
@@ -21,7 +16,6 @@
 	let activeDocument: LegalDocument;
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
-	let inputColor = '';
 	let selectedAnnotation: Annotation | null = null;
 	let labelList: Label[] = [];
 	let prevSelectedLabels: Label[] = [];
@@ -45,8 +39,6 @@
 		selectedChaptersStore.subscribe((value) => {
 			selectedChapters = value;
 		});
-
-		changeTextColor();
 	}
 
 	onMount(() => {
@@ -54,10 +46,6 @@
 
 		documentStore.subscribe((value) => {
 			activeDocument = value;
-		});
-
-		selectedColor.subscribe((value) => {
-			inputColor = value.color;
 		});
 
 		selectedLabels.subscribe((value) => {
@@ -75,8 +63,7 @@
 
 	// Add event listener to detect user selection
 	const handleSelection = () => (
-		(selectedText = document.getSelection()), selectionLogic(selectedText), detectSelection()
-	);
+		(selectedText = document.getSelection()), selectionLogic(selectedText), detectSelection(), changeTextColor());
 
 	// Logic for handling user selection
 	function selectionLogic(selectionInput: Selection | null) {
@@ -105,14 +92,15 @@
 			// Calculate position of the selected text
 			const range = selection.getRangeAt(0);
 			const rect = range.getBoundingClientRect();
-			const selectedTextTop = rect.top + window.scrollY;
-			const selectedTextLeft = rect.left + window.scrollX;
+			const selectedTextBottom = rect.bottom + window.scrollY;
+			const selectedTextCenter =
+				rect.left + rect.width / 2 - inputChipsDiv.offsetWidth / 2 + window.scrollX;
 
 			// Set the position of the input-chips div
 			if (inputChipsDiv) {
 				inputChipsDiv.style.position = 'absolute';
-				inputChipsDiv.style.top = selectedTextTop + 'px';
-				inputChipsDiv.style.left = selectedTextLeft + 'px';
+				inputChipsDiv.style.top = selectedTextBottom + 'px';
+				inputChipsDiv.style.left = selectedTextCenter + 'px';
 			}
 
 			// Highlight the selected text
@@ -163,7 +151,6 @@
 				});
 
 				labelList = [];
-				changeTextColor();
 			}
 		});
 	}
@@ -242,12 +229,11 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="p-4" role="main">
 	{#if activeDocument}
-		<div class="text-md leading-loose list-none relative m-10">
-			<h2 class="font-medium text-xl">
-				{activeDocument.title}
+		<div class="text-md leading-loose list-none relative bg-surface-200 dark:bg-surface-800 pl-5 pr-5 pt-2">
+			<h2 class="font-medium text-3xl w-96">
+				{activeDocument.title}temp
 			</h2>
-			<br />
-			<div use:selectionOffsets bind:this={boundDoc} on:mouseup={handleSelection}>
+			<div class="mt-3" use:selectionOffsets bind:this={boundDoc} on:mouseup={handleSelection}>
 				{#each activeDocument.chapterContents as chapter, index}
 					{#if selectedChapters.has(index)}
 						<p>{chapter}</p>
