@@ -12,6 +12,11 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { Drawer, Modal, Toast, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
+	import { faPlus } from '@fortawesome/free-solid-svg-icons';
+	import Fa from 'svelte-fa';
+	import documentStore from '../stores/DocumentStore';
+	import type LegalDocument from '../models/LegalDocument';
+	import AuditLog from '../components/AuditLog.svelte';
 	import LabelList from '../components/LabelList.svelte';
 
 	let showAnnotations = false;
