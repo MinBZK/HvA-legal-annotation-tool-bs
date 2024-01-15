@@ -6,7 +6,8 @@ const documentStore = writable<LegalDocument>({
     filename: '',
     chapterTitles: [],
     chapterContents: [],
-    annotations: []
+    annotations: [],
+    history: []
 });
 
 export default documentStore;
