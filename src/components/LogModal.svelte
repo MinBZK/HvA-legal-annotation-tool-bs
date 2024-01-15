@@ -28,7 +28,7 @@
 
 {#if $modalStore[0]}
 	<div class="w-1/2">
-        <h2 class="h2 font-mono">File History</h2>
+		<h2 class="h2 font-mono">File History</h2>
 		<Table source={tableLog} interactive={true} />
 	</div>
 {/if}
