@@ -53,7 +53,7 @@
                 <LabelList />
             {/if}
 		</Drawer>
-		<div class="w-1/4 p-5 bg-gray-300 dark:bg-slate-900">
+		<div class="w-1/4 p-5 bg-surface-300 dark:bg-surface-700">
 			<FilterFile />
 		</div>
 		<div class="w-3/4 overflow-auto h-[100vh]">
@@ -71,7 +71,7 @@
 				drawerStore.open({
 					id: 'relationships',
 					position: 'right',
-					bgDrawer: 'bg-indigo-900 text-white',
+					bgDrawer: 'bg-surface-600 text-white',
 					width: 'w-[40%]',
 					padding: 'p-4',
 					rounded: 'rounded-xl'
@@ -86,7 +86,7 @@
 					width="32"
 					height="32"
 					viewBox="0 0 24 24"
-					fill="rgb(79, 70, 229)"
+					fill="rgba(var(--color-primary-700) / 1)"
 					><path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" /></svg
 				>
 				{#if showAnnotations}

@@ -115,7 +115,7 @@
 			highlightSpan = document.createElement('span');
 			highlightSpan.style.paddingTop = '4px';
 			highlightSpan.style.paddingBottom = '5px';
-			highlightSpan.style.backgroundColor = '#8090bb';
+			highlightSpan.style.backgroundColor = "rgba(var(--color-primary-900) / 1)";
 			highlightSpan.appendChild(range.extractContents());
 			range.insertNode(highlightSpan);
 
@@ -246,7 +246,7 @@
 				{#each activeDocument.chapterContents as chapter, index}
 					{#if selectedChapters.has(index)}
 						<p>{chapter}</p>
-						<p class="bg-red-500 py-10">Test break between chapter</p>
+						<p class="bg-error-500 py-10">Test break between chapter</p>
 					{/if}
 				{/each}
 			</div>
