@@ -2,6 +2,7 @@
 	import { FileDropzone } from '@skeletonlabs/skeleton';
 	import { fileContentStore } from '../stores/fileStore';
 	import documentStore from '../stores/DocumentStore';
+	import { annotationStore } from '../stores/AnnotationStore';
 	import Fa from 'svelte-fa';
 	import { faFileUpload } from '@fortawesome/free-solid-svg-icons';
 	import { xml2js } from 'xml-js';
@@ -71,6 +72,76 @@
 	}
 
 	function convertXMLtoObj(xml: string, filename: string): void {
+		// Checks to see if file is a reimport (i.e. a file prepended with LAT_)
+		if (filename.startsWith('LAT_')) {
+			filename = filename.substring(4);
+			// In case of duplication on client-side, removes the (1), (2)... etc.
+			filename = filename.replace(/ *\([^)]*\) */g, '');
+			const result = xml2js(xml, { compact: true }) as any;
+
+			const title = result.xml.title._text || '';
+			const chaptertitles = result.xml.chapterTitles
+				? result.xml.chapterTitles.map((item: any) => item._text)
+				: [];
+
+			const chapterContents = result.xml.chapterContents
+				? result.xml.chapterContents.map((item: any) => item._text)
+				: [];
+
+			const annotations = result.xml.annotations
+				? result.xml.annotations.map((item: any) => {
+						return {
+							id: item.id._text,
+							text: item.text._text,
+							label: item.label
+								? [
+										{
+											id: item.label.id._text,
+											name: item.label.name._text,
+											color: item.label.color._text
+										}
+								  ]
+								: [],
+							comment: {
+								commentId: item.comment.commentId._text,
+								comment: item.comment.comment._text,
+								creationDate: new Date(item.comment.creationDate._text)
+							},
+							definition: {
+								definitionId: item.definition.definitionId._text,
+								definition: item.definition.definition._text,
+								creationDate: new Date(item.definition.creationDate._text)
+							},
+							relationships: item.relationships
+								? [
+										{
+											type: item.relationships.type._text,
+											source: item.relationships.source._text,
+											target: item.relationships.target._text
+										}
+								  ]
+								: []
+						};
+				  })
+				: [];
+
+			const reimport = new LegalDocument(
+				title,
+				filename,
+				chaptertitles,
+				chapterContents,
+				annotations
+			);
+
+			documentStore.set(reimport);
+			annotationStore.set(annotations);
+
+			console.dir($annotationStore);
+			localStorage.setItem('data', JSON.stringify(reimport, null, 2));
+			fileContent = $documentStore;
+			dispatch('fileUploaded', fileContent);
+			return;
+		}
 		const result = xml2js(xml, { compact: true }) as any;
 		const title = result?.toestand?.wetgeving?.citeertitel?._text || 'No Title';
 		const chapterElements = result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.hoofdstuk;
@@ -78,15 +149,13 @@
 		let chapterTitles: string[] = [];
 		let chapterContents: string[] = [];
 
-
 		if (chapterElements) {
 			if (Array.isArray(chapterElements)) {
-				chapterElements.forEach(hoofdstuk => {
+				chapterElements.forEach((hoofdstuk) => {
 					chapterTitles.push(collectText(hoofdstuk.kop).join(' '));
 					chapterContents.push(collectText(hoofdstuk.paragraaf).join(' '));
 				});
-			}
-			else {
+			} else {
 				chapterTitles.push(collectText(chapterElements.kop).join(' '));
 				chapterContents.push(collectText(chapterElements.paragraaf).join(' '));
 			}

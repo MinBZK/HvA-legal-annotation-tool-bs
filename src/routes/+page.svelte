@@ -12,6 +12,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { Drawer, Modal, Toast, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
+	import LabelList from '../components/LabelList.svelte';
 
 	let showAnnotations = false;
 	initializeStores();
@@ -48,6 +49,9 @@
 			{#if $drawerStore.id === 'relationships'}
 				<LabelRelations />
 			{/if}
+            {#if $drawerStore.id === 'labelsModify'}
+                <LabelList />
+            {/if}
 		</Drawer>
 		<div class="w-1/4 p-5 bg-gray-300 dark:bg-slate-900">
 			<FilterFile />
@@ -86,7 +90,7 @@
 					><path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" /></svg
 				>
 				{#if showAnnotations}
-					<span transition:fade={{ delay: 200, duration: 200 }} class="ml-2">Annotations</span>
+                    <span transition:fade={{ delay: 200, duration: 200 }} class="ml-2">Annotations</span>
 				{/if}
 			</div>
 		</button>
