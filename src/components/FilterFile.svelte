@@ -23,7 +23,7 @@
 
 <div class="mt-10 ml-5">
     <div class="mb-5">
-        <p class="text-gray-500">Selecteer de hoofdstukken die je wilt annoteren.</p>
+        <p class="text-surface-300">Selecteer de hoofdstukken die je wilt annoteren.</p>
     </div>
     {#if $chaptersStore.length > 0}
         {#each $chaptersStore as chapterTitle, index (chapterTitle)}
