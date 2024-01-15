@@ -11,14 +11,7 @@
 	import { labelStore } from '../stores/LabelStore';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import {
-		Drawer,
-		Modal,
-		Toast,
-		getDrawerStore,
-		initializeStores,
-		type PopupSettings
-	} from '@skeletonlabs/skeleton';
+	import { Drawer, Modal, Toast, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import documentStore from '../stores/DocumentStore';
@@ -41,8 +34,7 @@
 		}
 
 		documentStore.subscribe((value) => {
-			console.dir(value);
-			if (value.title = '') {
+			if ((value.title = '')) {
 				fileContent = value;
 				localStorage.setItem('legal-document', JSON.stringify(value));
 			}
