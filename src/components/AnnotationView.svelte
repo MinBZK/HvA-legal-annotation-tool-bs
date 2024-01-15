@@ -15,10 +15,18 @@
 	import type Label from '../models/Label.ts';
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
+	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
+
+	let selectedChapters: any;
+	selectedChaptersStore.subscribe(value => {
+		selectedChapters = value;
+	});
+
+	import {comment} from "../stores/CommentStore.ts";
+	import {definition} from "../stores/DefinitionStores.ts";
 	import type LegalDocument from '../models/LegalDocument.ts';
 
-	export let activeDocument: LegalDocument;
-
+	let activeDocument: LegalDocument;
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
 	let inputColor = '';
