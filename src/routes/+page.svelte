@@ -54,6 +54,8 @@
 		</div>
 	</div>
 {:else}
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 	<div class="flex flex-row">
 		<Modal />
 		<Toast />
@@ -106,10 +108,8 @@
 		<div class="max-w-48">
 			<LabelInputChips />
 		</div>
-		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<button
-			class="text-white font-bold py-2 px-4 mt-2 mr-2"
-			style="position: fixed; right: 0; top: 50%; transform: translateY(-50%); background: none; border: none;"
+			class="text-white font-bold py-2 px-4 mt-2 mr-2 fixed right-0 top-1/2 -translate-y-1/2 bg-transparent border-0"
 			on:click={() => {
 				drawerStore.open({
 					id: 'relationships',
@@ -133,7 +133,7 @@
 					><path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" /></svg
 				>
 				{#if showAnnotations}
-                    <span transition:fade={{ delay: 200, duration: 200 }} class="ml-2">Annotations</span>
+					<span transition:fade={{ delay: 200, duration: 200 }} class="ml-2 text-primary-600">Annotations</span>
 				{/if}
 			</div>
 		</button>
