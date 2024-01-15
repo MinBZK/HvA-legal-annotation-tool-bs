@@ -74,7 +74,7 @@
 			</div>
 			<div class="ml-10 absolute bottom-0 right-0 m-10">
 				<btn title="New File" class="btn btn-lg variant-filled-success rounded-md">
-					<Fa size="1.5x" icon={faPlus} />
+					<Fa size="1.5x" icon={faPlus} class="text-surface-900" />
 				</btn>
 				<AuditLog />
 				<AnnotationExport />
