@@ -68,16 +68,18 @@
 		<div class="w-1/4 p-5 bg-surface-300 dark:bg-surface-700">
 			<FilterFile />
 		</div>
-		<div class="w-3/4 overflow-auto h-[100vh]">
-			<div class="h-1/3">
-				<AnnotationView />
-			</div>
-			<div class="ml-10 absolute bottom-0 right-0 m-10">
-				<btn title="New File" class="btn btn-lg variant-filled-success rounded-md">
-					<Fa size="1.5x" icon={faPlus} />
-				</btn>
-				<AuditLog />
-				<AnnotationExport />
+		<div class="flex justify-center items-center h-screen">
+			<div class="w-1/2 overflow-auto h-[100vh]">
+				<div class="h-1/3">
+					<AnnotationView />
+				</div>
+				<div class="ml-10 absolute bottom-0 right-0 m-10">
+					<btn title="New File" class="btn btn-lg variant-filled-success rounded-md">
+						<Fa size="1.5x" icon={faPlus} />
+					</btn>
+					<AuditLog />
+					<AnnotationExport />
+				</div>
 			</div>
 		</div>
 		<div class="max-w-48">
