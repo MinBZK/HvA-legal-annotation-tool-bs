@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { labelStore, selectedColor, textSelection, selectedLabels } from '../stores/LabelStore';
+	import { labelStore, textSelection, selectedLabels } from '../stores/LabelStore';
 	import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
 	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 	import Label from '../models/Label';
@@ -66,9 +66,6 @@
 			labelList = [...labelList, selectedLabel];
 
 			inputColor = selectedLabel.color;
-			selectedColor.update((store) => {
-				return { ...store, color: inputColor };
-			});
 
 			$labelStore = $labelStore.filter((label) => label.name !== selectedLabel.name);
 		}
@@ -115,7 +112,7 @@
 	}
 </script>
 
-<div class="input-chips max-w-sm mt-6">
+<div class="input-chips max-w-sm mt-1">
 	<div on:change={createAdditional}>
 		<div class="input-group" style="display: flex;">
 			<input

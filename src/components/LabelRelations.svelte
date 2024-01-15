@@ -6,6 +6,8 @@
 	import { getDrawerStore, popup } from '@skeletonlabs/skeleton';
 	import { onMount, tick } from 'svelte';
 	import { definition } from '../stores/DefinitionStores';
+	import Fa from 'svelte-fa';
+	import { faTags } from '@fortawesome/free-solid-svg-icons';
 
 	const drawerStore = getDrawerStore();
 
@@ -78,7 +80,7 @@
 		<div class="float-right">
 			<button
 				type="button"
-				class="btn btn-lg variant-filled rounded-md"
+				class="btn btn-lg variant-filled rounded-md w-20"
 				on:click={() => {
 					drawerStore.open({
 						id: 'labelsModify',
@@ -89,19 +91,19 @@
 						rounded: 'rounded-xl'
 					});
 				}}
-				>Modify Labels
+				><Fa icon={faTags} size="1.5x"></Fa>
 			</button>
 		</div>
 		{#each annotations as annotation}
-			<div class="gap-3 mt-5 border-2 border-surface-300 ml-2 w-9/12">
+			<div class="gap-3 mt-5 border-2 border-surface-300 ml-2 w-3/4">
 				<!-- confirmation popup for annotation deletion -->
 				<div class="card p-4 w-wrap shadow-xl" data-popup="popupFeatured">
-					<div><p>Are you sure?</p></div>
+					<div><p>Weet u het zeker?</p></div>
 					<div class="flex justify-center mt-6">
-						<button class="bg-error-500 rounded-full w-full">No</button>
+						<button class="bg-error-500 rounded-full w-full">Nee</button>
 						<button
 							class="bg-success-500 rounded-full ml-2 w-full"
-							on:click={() => removeAnnotation(annotation)}>Yes</button
+							on:click={() => removeAnnotation(annotation)}>Ja</button
 						>
 					</div>
 					<div class="arrow bg-surface-100-800-token" />
@@ -143,15 +145,15 @@
 						<p class="text-xs mt-0.5 ml-2" style="color: {label.color};">{label.name}</p>
 					{/each}
 				</div>
-				{#if annotation.definition.definition == ''}
-					<p class="text-base ml-2">Definition: N.v.t.</p>
+				{#if annotation.definition.definition == '' || annotation.definition.definition == undefined}
+					<p class="text-base ml-2">Definition: .v.t.</p>
 				{:else}
-					<p class="text-base">Definition: {annotation.definition.definition}</p>
+					<p class="text-base ml-2">Definition: {annotation.definition.definition}</p>
 				{/if}
-				{#if annotation.comment.comment == ''}
+				{#if annotation.comment.comment == '' || annotation.definition.definition == undefined}
 					<p class="text-base ml-2">Comment: N.v.t.</p>
 				{:else}
-					<p class="text-base">Comment: {annotation.comment.comment}</p>
+					<p class="text-base ml-2">Comment: {annotation.comment.comment}</p>
 				{/if}
 				<button
 					type="button"

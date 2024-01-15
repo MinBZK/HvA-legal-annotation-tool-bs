@@ -159,7 +159,9 @@
 									target: item.relationships.target._text
 								}
 						  ]
-						: []
+						: [],
+					startPosition: item.startPosition._text,
+					endPosition: item.endPosition._text
 				};
 			});
 		}
