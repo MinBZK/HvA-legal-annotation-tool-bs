@@ -1,9 +1,6 @@
 import type Annotation from "./Annotation";
+import type EditHistory from "./EditHistory";
 
-interface History {
-    user: string;
-    date: Date;
-}
 
 export default class LegalDocument {
     title: string;
@@ -11,9 +8,9 @@ export default class LegalDocument {
     chapterTitles: string[];
     chapterContents: string[];
     annotations: Annotation[];
-    history: History[];
+    history: EditHistory[];
 
-    constructor(title: string, filename: string, chapterTitles: string[], chapterContents: string[], annotations: Annotation[], history: History[] = []) {
+    constructor(title: string, filename: string, chapterTitles: string[], chapterContents: string[], annotations: Annotation[], history: EditHistory[] = []) {
         this.title = title;
         this.filename = filename;
         this.chapterTitles = chapterTitles;
