@@ -15,17 +15,9 @@
 	import type Label from '../models/Label.ts';
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
-	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
-
-	let selectedChapters: any;
-	selectedChaptersStore.subscribe(value => {
-		selectedChapters = value;
-	});
-
-	import {comment} from "../stores/CommentStore.ts";
-	import {definition} from "../stores/DefinitionStores.ts";
 	import type LegalDocument from '../models/LegalDocument.ts';
 
+	let selectedChapters: any;
 	let activeDocument: LegalDocument;
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
@@ -37,8 +29,11 @@
 	let selectedDefinition: Definition;
 	let selectionOffset = { start: 0, end: 0 };
 	let boundDoc: HTMLElement;
-	let selectedChapters: any;
 	let highlightSpan;
+
+	selectedChaptersStore.subscribe((value) => {
+		selectedChapters = value;
+	});
 
 	$: {
 		selectedLabels.subscribe((value) => {
@@ -50,10 +45,11 @@
 		selectedChaptersStore.subscribe((value) => {
 			selectedChapters = value;
 		});
+
+		changeTextColor();
 	}
 
 	onMount(() => {
-		changeTextColor();
 		selectionLogic(null);
 
 		documentStore.subscribe((value) => {
@@ -123,7 +119,7 @@
 			highlightSpan = document.createElement('span');
 			highlightSpan.style.paddingTop = '4px';
 			highlightSpan.style.paddingBottom = '5px';
-			highlightSpan.style.backgroundColor = "rgba(var(--color-primary-900) / 1)";
+			highlightSpan.style.backgroundColor = 'rgba(var(--color-primary-900) / 1)';
 			highlightSpan.appendChild(range.extractContents());
 			range.insertNode(highlightSpan);
 
@@ -190,28 +186,29 @@
 	function changeTextColor() {
 		annotationStore.subscribe((annotations) => {
 			annotations.forEach((annotation) => {
-				const walker = document.createTreeWalker(boundDoc, NodeFilter.SHOW_TEXT, null);
+				if (boundDoc) {
+					const walker = document.createTreeWalker(boundDoc, NodeFilter.SHOW_TEXT, null);
+					let node;
+					let index = 0;
+					while ((node = walker.nextNode())) {
+						const nextIndex = index + node.textContent.length;
+						if (index <= annotation.startPosition && annotation.endPosition <= nextIndex) {
+							const range = document.createRange();
+							range.setStart(node, annotation.startPosition - index);
+							range.setEnd(node, annotation.endPosition - index);
 
-				let node;
-				let index = 0;
-				while ((node = walker.nextNode())) {
-					const nextIndex = index + node.textContent.length;
-					if (index <= annotation.startPosition && annotation.endPosition <= nextIndex) {
-						const range = document.createRange();
-						range.setStart(node, annotation.startPosition - index);
-						range.setEnd(node, annotation.endPosition - index);
+							const span = document.createElement('span');
+							span.style.fontWeight = 'bold';
+							span.style.textDecoration = `underline ${annotation.label[0].color}`;
+							span.style.textDecorationThickness = '2px';
+							span.style.textUnderlineOffset = '4px';
+							span.appendChild(range.extractContents());
+							range.insertNode(span);
 
-						const span = document.createElement('span');
-						span.style.fontWeight = 'bold';
-						span.style.textDecoration = `underline ${annotation.label[0].color}`;
-						span.style.textDecorationThickness = '2px';
-						span.style.textUnderlineOffset = '4px';
-						span.appendChild(range.extractContents());
-						range.insertNode(span);
-
-						break;
+							break;
+						}
+						index = nextIndex;
 					}
-					index = nextIndex;
 				}
 			});
 		});
