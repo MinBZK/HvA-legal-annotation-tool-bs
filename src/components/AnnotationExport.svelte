@@ -220,5 +220,5 @@
 	class="btn btn-lg variant-filled-primary rounded-md"
 	on:click={() => handleClickExport('data.xml', $documentStore)}
 >
-	<Fa size="1.5x" icon={faDownload} />
+	<Fa size="1.5x" icon={faDownload} class="text-surface-900" />
 </button>
