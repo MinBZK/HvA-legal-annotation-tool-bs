@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+
 	import { documentStore } from '../stores/DocumentStore.ts';
 	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
 	import { textSelection, selectedLabels, labelStore } from '../stores/LabelStore.ts';
 	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
 	import { comment, clearInput } from '../stores/CommentStore.ts';
 	import { definition } from '../stores/DefinitionStores.ts';
+
 	import Annotation from '../models/Annotation.ts';
 	import type Label from '../models/Label.ts';
 	import Comment from '../models/Comment.ts';
@@ -13,16 +15,10 @@
 	import { titleStore } from '../stores/TitleStore.ts';
 
 	let selectedChapters: any;
+
 	selectedChaptersStore.subscribe(value => {
 		selectedChapters = value;
 	});
-
-	import { comment } from "../stores/CommentStore.ts";
-	import { definition } from "../stores/DefinitionStores.ts";
-	import type LegalDocument from '../models/LegalDocument.ts';
-
-	export let activeDocument: LegalDocument;
-
 
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
