@@ -8,6 +8,7 @@
 	import { xml2js } from 'xml-js';
 	import { createEventDispatcher } from 'svelte';
 	import LegalDocument from '../models/LegalDocument';
+	import logStore from '../stores/LogStore';
 
 	let fileContent: {};
 
@@ -105,7 +106,7 @@
 		dispatch('fileUploaded', fileContent);
 	}
 
-	// Parses a document with the _LAT prepend, mapping it to the LegalDocument model
+	// Parses a document with the LAT_ prepend, mapping it to the LegalDocument model
 	function parseLAT(filename: string, xml: string): void {
 		filename = filename.substring(4);
 		// In case of duplication on client-side, removes the (1), (2)... etc.
@@ -121,55 +122,74 @@
 			? result.xml.chapterContents.map((item: any) => item._text)
 			: [];
 
-		const annotations = result.xml.annotations
-			? result.xml.annotations.map((item: any) => {
-					return {
-						id: item.id._text,
-						text: item.text._text,
-						label: item.label
-							? [
-									{
-										id: item.label.id._text,
-										name: item.label.name._text,
-										color: item.label.color._text
-									}
-							  ]
-							: [],
-						comment: {
-							commentId: item.comment.commentId._text,
-							comment: item.comment.comment._text,
-							creationDate: new Date(item.comment.creationDate._text)
-						},
-						definition: {
-							definitionId: item.definition.definitionId._text,
-							definition: item.definition.definition._text,
-							creationDate: new Date(item.definition.creationDate._text)
-						},
-						relationships: item.relationships
-							? [
-									{
-										type: item.relationships.type._text,
-										source: item.relationships.source._text,
-										target: item.relationships.target._text
-									}
-							  ]
-							: []
-					};
-			  })
-			: [];
+		let annotations = result.xml.annotations;
+		if (!Array.isArray(annotations)) annotations = [annotations];
+
+		if (annotations[0].id._text === undefined) {
+			annotations = [];
+		} else {
+			annotations = annotations.map((item: any) => {
+				return {
+					id: item.id._text,
+					text: item.text._text,
+					label: item.label
+						? [
+								{
+									id: item.label.id._text,
+									name: item.label.name._text,
+									color: item.label.color._text
+								}
+						  ]
+						: [],
+					comment: {
+						commentId: item.comment.commentId._text,
+						comment: item.comment.comment._text,
+						creationDate: new Date(item.comment.creationDate._text)
+					},
+					definition: {
+						definitionId: item.definition.definitionId._text,
+						definition: item.definition.definition._text,
+						creationDate: new Date(item.definition.creationDate._text)
+					},
+					relationships: item.relationships
+						? [
+								{
+									type: item.relationships.type._text,
+									source: item.relationships.source._text,
+									target: item.relationships.target._text
+								}
+						  ]
+						: []
+				};
+			});
+		}
+
+		let editHistory = result.xml.history;
+		if (!Array.isArray(editHistory)) editHistory = [editHistory];
+
+		if (editHistory[0].user._text === undefined) {
+			editHistory = [];
+		} else {
+			editHistory = editHistory.map((item: any) => {
+				return {
+					user: item.user._text,
+					date: new Date(item.date._text)
+				};
+			});
+		}
 
 		const reimport = new LegalDocument(
 			title,
 			filename,
 			chaptertitles,
 			chapterContents,
-			annotations
+			annotations,
+			editHistory
 		);
 
 		documentStore.set(reimport);
 		annotationStore.set(annotations);
-
-		console.dir($annotationStore);
+		logStore.set(editHistory);
 		localStorage.setItem('legal-document', JSON.stringify(reimport));
 		fileContent = $documentStore;
 		dispatch('fileUploaded', fileContent);
