@@ -6,6 +6,8 @@
 	import { getDrawerStore, popup } from '@skeletonlabs/skeleton';
 	import { onMount, tick } from 'svelte';
 	import { definition } from '../stores/DefinitionStores';
+	import Fa from 'svelte-fa';
+	import { faTags } from '@fortawesome/free-solid-svg-icons';
 
 	const drawerStore = getDrawerStore();
 
@@ -78,7 +80,7 @@
 		<div class="float-right">
 			<button
 				type="button"
-				class="btn btn-lg variant-filled rounded-md"
+				class="btn btn-lg variant-filled rounded-md w-20"
 				on:click={() => {
 					drawerStore.open({
 						id: 'labelsModify',
@@ -89,7 +91,7 @@
 						rounded: 'rounded-xl'
 					});
 				}}
-				>Modify Labels
+				><Fa icon={faTags} size="1.5x"></Fa>
 			</button>
 		</div>
 		{#each annotations as annotation}
