@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-
 	import documentStore from '../stores/DocumentStore.ts';
 	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
-
 	import {
 		selectedColor,
 		chipSelected,
@@ -23,9 +21,8 @@
 		selectedChapters = value;
 	});
 
-	import {derived} from "svelte/store";
-	import {comment} from "../stores/CommentStore.ts";
-	import {definition} from "../stores/DefinitionStores.ts";
+	import { comment } from "../stores/CommentStore.ts";
+	import { definition } from "../stores/DefinitionStores.ts";
 	import type LegalDocument from '../models/LegalDocument.ts';
 
 	export let activeDocument: LegalDocument;
@@ -192,6 +189,10 @@
 		}
 	}
 
+	function splitSentences(text) {
+		return text.split('\n');
+	}
+
 </script>
 
 <div class="p-4" role="main">
@@ -204,10 +205,11 @@
 			<br />
 			<div on:mouseup={handleSelection}>
 				{#each activeDocument.chapterContents as chapter, index}
-
 					{#if selectedChapters.has(index)}
 						<div>
-							<p>{chapter}</p>
+							{#each splitSentences(chapter) as line}
+								<p>{line}</p>
+							{/each}
 							<p class="bg-red-500 py-10">Test break between chapter</p>
 						</div>
 					{/if}

@@ -23,11 +23,19 @@
 
 <div class="mt-10 ml-5">
     <div class="mb-5">
-        <p class="text-gray-500">Selecteer de hoofdstukken die je wilt annoteren.</p>
+        <p class="text-gray-500 mb-5">Selecteer de hoofdstukken die je wilt annoteren.</p>
+        <div class="flex">
+            <input
+                    class="checkbox mr-3 min-w-[1.3rem] min-h-[1.3rem] mb-2"
+                    type="checkbox"
+                    name="selectAll"
+                    id="selectAll">
+            <label for="selectAll" class="ml-2 cursor-pointer font-medium">Selecteer alles</label>
+        </div>
     </div>
     {#if $chaptersStore.length > 0}
         {#each $chaptersStore as chapterTitle, index (chapterTitle)}
-            <div class="flex items-center mb-8">
+            <div class="flex items-center mb-8 ml-5">
                 <input
                         type="checkbox"
                         id={`chapter-${index}`}
