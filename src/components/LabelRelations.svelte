@@ -38,11 +38,11 @@
 
 			if (sourceAnnotation && targetAnnotation) {
 				sourceAnnotation.relationships = sourceAnnotation.relationships.filter(
-					(r) => !(r.source === relation.source && r.target === relation.target)
+					(r) => !(r.source === relation.source && r.target === relation.target  && r.type === relation.type)
 				);
 
 				targetAnnotation.relationships = targetAnnotation.relationships.filter(
-					(r) => !(r.source === relation.source && r.target === relation.target)
+					(r) => !(r.source === relation.source && r.target === relation.target  && r.type === relation.type)
 				);
 			}
 
@@ -141,7 +141,7 @@
 				<button
 					type="button"
 					class="btn flex flex-col rounded-none bg-secondary-500 m-2"
-					on:click={() => (selectedAnnotation = annotation)}>Edit Relationships</button
+					on:click={() => (selectedAnnotation = annotation)}>Relaties Bewerken</button
 				>
 			</div>
 		{/each}
@@ -149,16 +149,16 @@
 		<div>
 			<button
 				type="button"
-				class="btn variant-filled float-right mb-5"
-				on:click={() => (selectedAnnotation = null)}>Return</button
+				class="btn variant-filled float-right mb-5 hover:variant-filled-secondary text-white font-bold"
+				on:click={() => (selectedAnnotation = null)}>Terugkeren</button
 			>
 			<div class="table-container">
 				<table class="table table-hover">
 					<thead>
 						<tr>
-							<th>Annotation 1</th>
-							<th>Relationship</th>
-							<th>Annotation 2</th>
+							<th>Annotatie 1</th>
+							<th>Relatie</th>
+							<th>Annotatie 2</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -171,8 +171,8 @@
 								<th
 									><button
 										type="button"
-										class="btn variant-filled"
-										on:click={() => onDeleteRelation(relationship)}>Delete</button
+										class="btn variant-filled-error hover:variant-filled-error-secondary text-white font-bold my-2"
+										on:click={() => onDeleteRelation(relationship)}>Wissen</button
 									></th
 								>
 							</tr>
@@ -180,8 +180,8 @@
 					</tbody>
 				</table>
 			</div>
-			<button type="button" class="btn variant-filled mt-5" on:click={() => (showForm = true)}
-				>Add relationship</button
+			<button type="button" class="btn variant-filled mt-5 hover:variant-filled-secondary text-white font-bold" on:click={() => (showForm = true)}
+				>Relatie toevoegen</button
 			>
 		</div>
 	{:else}
