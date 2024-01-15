@@ -30,8 +30,7 @@
 		}
 
 		documentStore.subscribe((value) => {
-			console.dir(value);
-			if (value.title = '') {
+			if ((value.title = '')) {
 				fileContent = value;
 				localStorage.setItem('legal-document', JSON.stringify(value));
 			}
