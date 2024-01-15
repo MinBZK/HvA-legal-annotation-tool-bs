@@ -23,9 +23,6 @@
 		event: 'click',
 		target: 'popupStyle',
 		placement: 'bottom',
-		middleware: {
-			shift: 24,
-		}
 	};
 
 	import '../app.css';
