@@ -38,10 +38,16 @@
 				prevSelectedLabels = value;
 			}
 		});
+
+		selectedChaptersStore.subscribe((value) => {
+			selectedChapters = value;
+		});
 	}
 
 	onMount(() => {
+		changeTextColor();
 		selectionLogic(null);
+
 		documentStore.subscribe((value) => {
 			activeDocument = value;
 		});
@@ -72,6 +78,20 @@
 	function selectionLogic(selectionInput: Selection | null) {
 		const selection = selectionInput;
 		const inputChipsDiv = document.querySelector('.input-chips') as HTMLElement;
+		clearInput.set(true);
+
+		// If there's a previous selection, create an annotation for it
+		if (previousSelection && labelList.length > 0) {
+			createAnnotation(previousSelection);
+		}
+
+		// Remove the highlight from the selected text
+		if (highlightSpan && highlightSpan.parentNode) {
+			while (highlightSpan.firstChild) {
+				highlightSpan.parentNode.insertBefore(highlightSpan.firstChild, highlightSpan);
+			}
+			highlightSpan.parentNode.removeChild(highlightSpan);
+		}
 
 		if (selection && selection.toString().length > 3) {
 			inputChipsDiv.style.display = 'block';
@@ -91,38 +111,57 @@
 				inputChipsDiv.style.left = selectedTextLeft + 'px';
 			}
 
+			// Highlight the selected text
+			highlightSpan = document.createElement('span');
+			highlightSpan.style.paddingTop = '4px';
+			highlightSpan.style.paddingBottom = '5px';
+			highlightSpan.style.backgroundColor = '#8090bb';
+			highlightSpan.appendChild(range.extractContents());
+			range.insertNode(highlightSpan);
+
 			previousSelection = selectedText;
 		} else {
 			inputChipsDiv.style.display = 'none';
-
-			annotationStore.subscribe((annotations) => {
-				// Check if the name of previousSelection is not already appointed to an annotation
-				const isNameAlreadyAppointed = annotations.some(
-					(annotation) => annotation.text === previousSelection?.toString()
-				);
-
-				if (!isNameAlreadyAppointed && previousSelection && labelList.length > 0) {
-					selectedAnnotation = new Annotation(
-						Math.floor(Math.random() * 1000) + 1,
-						previousSelection.toString(),
-						labelList,
-						selectedComment,
-						selectedDefinition,
-						[]
-					);
-					addAnnotation(selectedAnnotation);
-					console.log(selectedAnnotation);
-					selectedComment = new Comment(0,"");
-					selectedDefinition = new Definition(0, "");
-					// Update the labelStore with the contents of previously selectedLabels
-					labelStore.update((labels) => {
-						return [...labels, ...prevSelectedLabels];
-					});
-
-					labelList = [];
-				}
-			});
 		}
+	}
+
+	// Function to create an annotation
+	function createAnnotation(text: string) {
+		annotationStore.subscribe((annotations) => {
+			// Check if the name of previousSelection is not already appointed to an annotation
+			const isNameAlreadyAppointed = annotations.some(
+				(annotation) => annotation.text === previousSelection?.toString()
+			);
+
+			if (!isNameAlreadyAppointed && previousSelection && labelList.length > 0) {
+				// Get the start and end positions of the selected text
+				const startPosition = selectionOffset.start;
+				const endPosition = selectionOffset.end;
+
+				selectedAnnotation = new Annotation(
+					Math.floor(Math.random() * 1000) + 1,
+					previousSelection.toString(),
+					labelList,
+					selectedComment,
+					selectedDefinition,
+					[],
+					startPosition,
+					endPosition
+				);
+				addAnnotation(selectedAnnotation);
+				console.log(selectedAnnotation);
+				selectedComment = new Comment(0, '');
+				selectedDefinition = new Definition(0, '');
+
+				// Update the labelStore with the contents of previously selectedLabels
+				labelStore.update((labels) => {
+					return [...labels, ...prevSelectedLabels];
+				});
+
+				labelList = [];
+				changeTextColor();
+			}
+		});
 	}
 
 	// Detect if user has selected text
@@ -141,51 +180,73 @@
 
 	// Apply color to the selected text
 	function changeTextColor() {
-		const selection = document.getSelection();
+		annotationStore.subscribe((annotations) => {
+			annotations.forEach((annotation) => {
+				const walker = document.createTreeWalker(boundDoc, NodeFilter.SHOW_TEXT, null);
 
-		if (selection && selection.toString().length > 3) {
-			const selectedText = selection.toString();
+				let node;
+				let index = 0;
+				while ((node = walker.nextNode())) {
+					const nextIndex = index + node.textContent.length;
+					if (index <= annotation.startPosition && annotation.endPosition <= nextIndex) {
+						const range = document.createRange();
+						range.setStart(node, annotation.startPosition - index);
+						range.setEnd(node, annotation.endPosition - index);
 
-			const span = document.createElement('span');
-			span.style.color = inputColor;
-			span.appendChild(document.createTextNode(selectedText));
-			span.id = 'selected-text-' + Date.now();
-			selection?.getRangeAt(0).surroundContents(span);
+						const span = document.createElement('span');
+						span.style.fontWeight = 'bold';
+						span.style.textDecoration = `underline ${annotation.label[0].color}`;
+						span.style.textDecorationThickness = '2px';
+						span.style.textUnderlineOffset = '4px';
+						span.appendChild(range.extractContents());
+						range.insertNode(span);
 
-			lastSpanId = span.id;
-		}
+						break;
+					}
+					index = nextIndex;
+				}
+			});
+		});
 	}
 
-	// Remove color from the selected text
-	function removeTextColor() {
-		if (lastSpanId) {
-			const span = document.getElementById(lastSpanId);
-			if (span) {
-				const textNode = document.createTextNode(span.textContent || '');
-				span.parentNode?.replaceChild(textNode, span);
-			}
-			lastSpanId = null;
+	function getSelectionCharacterOffsetWithin(element) {
+		let start = 0;
+		let end = 0;
+		const sel = window.getSelection();
+		if (sel && sel.rangeCount > 0) {
+			const range = sel.getRangeAt(0);
+			const preSelectionRange = range.cloneRange();
+			preSelectionRange.selectNodeContents(element);
+			preSelectionRange.setEnd(range.startContainer, range.startOffset);
+			start = preSelectionRange.toString().length;
+			end = start + range.toString().length;
 		}
+		return { start, end };
 	}
 
+	function selectionOffsets(node) {
+		node.addEventListener('mouseup', () => {
+			// Delay the resetting of the selection offsets by 1 millisecond
+			setTimeout(() => {
+				selectionOffset = getSelectionCharacterOffsetWithin(node);
+			}, 1);
+		});
+	}
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="p-4" role="main">
 	{#if activeDocument}
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div class="text-md leading-loose list-none relative m-10">
 			<h2 class="font-medium text-xl">
 				{activeDocument.title}
 			</h2>
 			<br />
-			<div on:mouseup={handleSelection}>
+			<div use:selectionOffsets bind:this={boundDoc} on:mouseup={handleSelection}>
 				{#each activeDocument.chapterContents as chapter, index}
-
 					{#if selectedChapters.has(index)}
-						<div>
-							<p>{chapter}</p>
-							<p class="bg-red-500 py-10">Test break between chapter</p>
-						</div>
+						<p>{chapter}</p>
+						<p class="bg-red-500 py-10">Test break between chapter</p>
 					{/if}
 				{/each}
 			</div>
