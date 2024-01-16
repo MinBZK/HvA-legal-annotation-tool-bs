@@ -175,8 +175,7 @@
                             editAnnotation = true;
                         }}>Annotatie Bewerken</button
                     >
-                </div>
-			</div>
+            </div>
 		{/each}
     {:else if (selectedAnnotation && editAnnotation)}
     <EditAnnotation 
