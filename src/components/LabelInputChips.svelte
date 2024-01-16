@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { labelStore, textSelection, selectedLabels } from '../stores/LabelStore';
-	import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
+	import { Autocomplete } from '@skeletonlabs/skeleton';
 	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 	import Label from '../models/Label';
+	import { CustomInputChip } from '$lib';
 
 	import Comment from '../models/Comment';
 	import { comment, clearInput } from '../stores/CommentStore';
@@ -136,9 +137,13 @@
 			<button class="variant-form-secondary" on:click={clearDefInput}>Clear</button>
 		</div>
 	</div>
-	<InputChip
+
+
+	
+	<CustomInputChip
 		placeholder="Find Label..."
 		bind:value={labelNames}
+		chipColors={labelList.map((label) => label.color)}
 		name="chips"
 		chips="variant-filled-primary"
 		allowUpperCase
