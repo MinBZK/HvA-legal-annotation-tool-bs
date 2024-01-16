@@ -91,18 +91,6 @@
 				><path d="M7.33 24l-2.83-2.829 9.339-9.175-9.339-9.167 2.83-2.829 12.17 11.996z" /></svg
 			>
 		</div>
-		<div class="w-3/4 overflow-auto h-[100vh]">
-			<div class="h-1/3">
-				<AnnotationView />
-			</div>
-			<div class="ml-10 absolute bottom-0 right-0 m-10">
-				<btn title="New File" class="btn btn-lg variant-filled-success rounded-md">
-					<Fa size="1.5x" icon={faPlus} class="text-surface-900" />
-				</btn>
-				<AuditLog />
-				<AnnotationExport />
-			</div>
-		</div>
 		<div class="flex justify-center items-center h-screen">
 			<div class="w-1/2 overflow-auto h-[100vh]">
 				<div class="h-1/3">
