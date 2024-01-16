@@ -13,6 +13,7 @@
 	};
 
 	import '../app.css';
+	import { documentStore } from '../stores/DocumentStore';
 </script>
 
 <AppShell>
@@ -20,11 +21,17 @@
 	<svelte:fragment slot="header">
 		<AppBar gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end">
 			<svelte:fragment slot="lead">
-				<h5 class="h5 font-mono">PROTOTYPE VERSION</h5>
+				<h5 class="h3 font-sans">LEGAL ANNOTATION TOOL</h5>
 			</svelte:fragment>
+			{#if $documentStore.filename}
+			<h4 class="h4">
+				<span class="font-mono font-thin uppercase">{$documentStore.filename}</span>
+			</h4>
+			{:else}
 			<h3 class="h3">
-				<span class=""><a href="/">LEGAL ANNOTATION TOOL</a></span>
+				<span class="font-mono">WORK IN PROGRESS</span>
 			</h3>
+			{/if}
 			<svelte:fragment slot="trail">
 				<LightSwitch />
 			</svelte:fragment>
