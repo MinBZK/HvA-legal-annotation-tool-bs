@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { FileDropzone } from '@skeletonlabs/skeleton';
 	import { fileContentStore } from '../stores/fileStore';
-	import documentStore from '../stores/DocumentStore';
+	import { documentStore } from '../stores/DocumentStore';
 	import { annotationStore } from '../stores/AnnotationStore';
 	import Fa from 'svelte-fa';
 	import { faFileUpload } from '@fortawesome/free-solid-svg-icons';
@@ -9,6 +9,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import LegalDocument from '../models/LegalDocument';
 	import logStore from '../stores/LogStore';
+	import { titleStore } from '../stores/TitleStore';
 
 	let fileContent: {};
 
@@ -80,7 +81,8 @@
 		}
 
 		const result = xml2js(xml, { compact: true }) as any;
-		const title = result?.toestand?.wetgeving?.citeertitel?._text || 'No Title';
+		const title: string = result?.toestand?.wetgeving?.citeertitel?._text || 'No Title';
+		const trimmedTitle = title.trim().replace(/\n/g, ' ');
 		const chapterElements = result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.hoofdstuk;
 
 		let chapterTitles: string[] = [];
@@ -98,10 +100,14 @@
 			}
 		}
 
-		const data = new LegalDocument(title, filename, chapterTitles, chapterContents, []);
+		const data = new LegalDocument(trimmedTitle, filename, chapterTitles, chapterContents, [], []);
 
 		documentStore.set(data);
-		localStorage.setItem('legal-document', JSON.stringify(data, null, 2));
+		titleStore.set(trimmedTitle);
+		console.dir($titleStore);
+
+
+		localStorage.setItem('legal-document', JSON.stringify(data));
 		fileContent = $documentStore;
 		dispatch('fileUploaded', fileContent);
 	}
@@ -192,6 +198,8 @@
 		documentStore.set(reimport);
 		annotationStore.set(annotations);
 		logStore.set(editHistory);
+		titleStore.set(title);
+
 		localStorage.setItem('legal-document', JSON.stringify(reimport));
 		fileContent = $documentStore;
 		dispatch('fileUploaded', fileContent);
