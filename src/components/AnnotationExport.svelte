@@ -1,20 +1,19 @@
 <script lang="ts">
 	import { getModalStore, getToastStore, type ModalSettings } from '@skeletonlabs/skeleton';
-	import documentStore from '../stores/DocumentStore';
+	import { documentStore } from '../stores/DocumentStore';
 	import { annotationStore } from '../stores/AnnotationStore';
 	import type LegalDocument from '../models/LegalDocument';
+	import { js2xml } from 'xml-js';
+	import Fa from 'svelte-fa';
+	import { faDownload } from '@fortawesome/free-solid-svg-icons';
 	const modalStore = getModalStore();
 	const toastStore = getToastStore();
-
-	let data = $documentStore;
 
 	function handleClickExport(fileName = '', data: LegalDocument) {
 		// TO-DO: Clarify required relationships, commented out for ease of demo...
 		// if(!checkRelationships()) {
 		//     return;
 		// }
-
-		console.log('TESTING123:  ' + JSON.stringify($annotationStore));
 
 		new Promise<boolean>((resolve) => {
 			const modal: ModalSettings = {
@@ -26,37 +25,58 @@
 			modalStore.trigger(modal);
 		}).then((r) => {
 			if (r) {
-				data.annotations = $annotationStore;
-				fileName = data.filename;
-				fileName = 'LAT_' + fileName;
-				download(fileName, jsonToXML(data));
+				const modal: ModalSettings = {
+					type: 'prompt',
+					title: 'What is your name?',
+					body: 'Provide your full name in the field below.',
+					valueAttr: {
+						type: 'text',
+						placeholder: 'Full name',
+						class: 'input p-2',
+						minlength: 3,
+						maxlength: 50,
+						required: true
+					},
+					response: (r: string) => {
+						if (r) {
+							if (!data.history) data.history = [];
+							data.history.push({ user: r, date: new Date() });
+							data.annotations = $annotationStore;
+							fileName = data.filename;
+							fileName = 'LAT_' + fileName;
+							download(fileName, jsonToXML(data));
+						}
+					}
+				};
+				modalStore.trigger(modal);
 			}
 		});
 	}
 
 	/**
-	 * @param {Object} json
+	 * @param {LegalDocument} data
 	 */
 
-	function jsonToXML(json: Object, indent = 0) {
-		let xml = '';
-		const indentation = ' '.repeat(indent * 2);
+	function jsonToXML(data: LegalDocument) {
+		let history = data.history.map((h) => {
+			return {
+				user: h.user,
+				date: h.date.toISOString()
+			};
+		});
 
-		for (let prop in json) {
-			xml += json[prop] instanceof Array ? '' : '\n' + indentation + '<' + prop + '>';
-			if (json[prop] instanceof Array) {
-				for (let array in json[prop]) {
-					xml += '\n' + indentation + '<' + prop + '>';
-					xml += jsonToXML(new Object(json[prop][array]), indent + 2);
-					xml += '\n' + indentation + '</' + prop + '>';
-				}
-			} else if (typeof json[prop] == 'object') {
-				xml += jsonToXML(new Object(json[prop]), indent + 1);
-			} else {
-				xml += json[prop];
+		let obj = {
+			xml: {
+				title: data.title,
+				filename: data.filename,
+				chapterTitles: data.chapterTitles,
+				chapterContents: data.chapterContents,
+				annotations: data.annotations,
+				history: history
 			}
-			xml += json[prop] instanceof Array ? '' : '</' + prop + '>';
-		}
+		};
+
+		let xml = js2xml(obj, { compact: true, spaces: 4 });
 		return xml;
 	}
 
@@ -194,11 +214,11 @@
 	}
 </script>
 
-<div class="ml-10 absolute bottom-0 mx-10 my-5 right-0">
-	<button
-		type="button"
-		class="btn btn-lg variant-filled rounded-md"
-		on:click={() => handleClickExport('data.xml', data)}
-		>Export to XML
-	</button>
-</div>
+<button
+	title="Export File"
+	type="button"
+	class="btn btn-lg variant-filled-primary rounded-md"
+	on:click={() => handleClickExport('data.xml', $documentStore)}
+>
+	<Fa size="1.5x" icon={faDownload} />
+</button>

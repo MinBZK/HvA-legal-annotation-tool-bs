@@ -5,6 +5,8 @@ import  Comment from "../models/Comment";
 const initialComment = Comment.createEmpty();
 
 export const comment = writable(initialComment);
+export const clearInput = writable(false);
+
 // List of Comment
 export const commentList = writable([] as Comment[]);
 
@@ -28,7 +30,6 @@ export const updateCommentToList = (updateComment: Comment) =>{
         })
     })
 }
-
 
 // Remove Comment
 export const removeCommentFromList = (comment: Comment)=>{
