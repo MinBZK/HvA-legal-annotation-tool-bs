@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { getToastStore } from "@skeletonlabs/skeleton";
 	import { annotationStore } from "../stores/AnnotationStore";
-    import { relationTypes } from "../stores/relationStore";
 	import type Label from "../models/Label";
 
     const toastStore = getToastStore();
