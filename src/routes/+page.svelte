@@ -101,6 +101,8 @@
 				</btn>
 				<AuditLog />
 				<AnnotationExport />
+			</div>
+		</div>
 		<div class="flex justify-center items-center h-screen">
 			<div class="w-1/2 overflow-auto h-[100vh]">
 				<div class="h-1/3">
