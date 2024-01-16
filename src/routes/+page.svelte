@@ -12,6 +12,12 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { Drawer, Modal, Toast, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
+	import { faPlus } from '@fortawesome/free-solid-svg-icons';
+	import Fa from 'svelte-fa';
+	import { documentStore } from '../stores/DocumentStore';
+	import type LegalDocument from '../models/LegalDocument';
+	import AuditLog from '../components/AuditLog.svelte';
+	import LabelList from '../components/LabelList.svelte';
 
 	let showAnnotations = false;
 	let showFilter = false;
@@ -19,7 +25,7 @@
 	initializeStores();
 	const drawerStore = getDrawerStore();
 
-	let fileContent = '';
+	let fileContent: LegalDocument | null = null;
 
 	onMount(async () => {
 		labelStore.set([]);
@@ -29,6 +35,13 @@
 		} else {
 			labelStore.set(data);
 		}
+
+		documentStore.subscribe((value) => {
+			if ((value.title = '')) {
+				fileContent = value;
+				localStorage.setItem('legal-document', JSON.stringify(value));
+			}
+		});
 	});
 </script>
 
@@ -43,6 +56,8 @@
 		</div>
 	</div>
 {:else}
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 	<div class="flex flex-row">
 		<Modal />
 		<Toast />
@@ -50,62 +65,58 @@
 			{#if $drawerStore.id === 'relationships'}
 				<LabelRelations />
 			{/if}
+			{#if $drawerStore.id === 'labelsModify'}
+				<LabelList />
+			{/if}
+			{#if $drawerStore.id === 'filterFile'}
+				<FilterFile />
+			{/if}
 		</Drawer>
-
-			<Drawer>
-				{#if $drawerStore.id === 'filters'}
-					<FilterFile />
-				{/if}
-			</Drawer>
-		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-		<button
-			class="text-white font-bold py-2 px-4 mt-2 mr-2"
-			style="position: fixed; left: 0; top: 50%; transform: translateY(-50%); background: none; border: none;"
-			on:click={() => {
+		<div
+			class="text-white font-bold py-2 px-4 mt-2 mr-2 fixed left-0 top-1/2 -translate-y-1/2 bg-transparent border-0"
+			on:mousemove={() => {
 				drawerStore.open({
-					id: 'filters',
+					id: 'filterFile',
 					position: 'left',
-					bgDrawer: 'bg-indigo-900 text-white',
-					width: 'w-[40%]',
-					padding: 'p-4',
-					rounded: 'rounded-xl'
+					bgDrawer: 'bg-surface-600 text-white',
+					width: 'w-[30%]',
+					padding: 'p-4'
 				});
 			}}
-				on:mouseover={() => (showFilter = true)}
-				on:mouseout={() => (showFilter = false)}
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="32"
+				height="32"
+				viewBox="0 0 24 24"
+				fill="rgba(var(--color-primary-700) / 1)"
+				><path d="M7.33 24l-2.83-2.829 9.339-9.175-9.339-9.167 2.83-2.829 12.17 11.996z" /></svg
 			>
-				<div class="flex items-center group">
-					<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="32"
-							height="32"
-							viewBox="0 0 24 24"
-							fill="rgb(79, 70, 229)"
-							style="transform: scaleX(-1)"
-					><path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" />
-					</svg>
-					{#if showFilter}
-						<span transition:fade={{ delay: 200, duration: 200 }} class="ml-2">Filters</span>
-					{/if}
+		</div>
+		<div class="flex justify-center items-center h-screen">
+			<div class="w-1/2 overflow-auto h-[100vh]">
+				<div class="h-1/3">
+					<AnnotationView />
 				</div>
-			</button>
-
-		<div class="w-full overflow-auto h-[100vh]">
-			<AnnotationView />
-			<AnnotationExport />
+				<div class="ml-10 absolute bottom-0 right-0 m-10">
+					<btn title="New File" class="btn btn-lg variant-filled-success rounded-md">
+						<Fa size="1.5x" icon={faPlus} />
+					</btn>
+					<AuditLog />
+					<AnnotationExport />
+				</div>
+			</div>
 		</div>
 		<div class="max-w-48">
 			<LabelInputChips />
 		</div>
-		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 		<button
-			class="text-white font-bold py-2 px-4 mt-2 mr-2"
-			style="position: fixed; right: 0; top: 50%; transform: translateY(-50%); background: none; border: none;"
+			class="text-white font-bold py-2 px-4 mt-2 mr-2 fixed right-0 top-1/2 -translate-y-1/2 bg-transparent border-0"
 			on:click={() => {
 				drawerStore.open({
 					id: 'relationships',
 					position: 'right',
-					bgDrawer: 'bg-indigo-900 text-white',
+					bgDrawer: 'bg-surface-600 text-white',
 					width: 'w-[40%]',
 					padding: 'p-4',
 					rounded: 'rounded-xl'
@@ -120,11 +131,13 @@
 					width="32"
 					height="32"
 					viewBox="0 0 24 24"
-					fill="rgb(79, 70, 229)"
+					fill="rgba(var(--color-primary-700) / 1)"
 					><path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" /></svg
 				>
 				{#if showAnnotations}
-					<span transition:fade={{ delay: 200, duration: 200 }} class="ml-2">Annotations</span>
+					<span transition:fade={{ delay: 200, duration: 200 }} class="ml-2 text-primary-600"
+						>Annotations</span
+					>
 				{/if}
 			</div>
 		</button>

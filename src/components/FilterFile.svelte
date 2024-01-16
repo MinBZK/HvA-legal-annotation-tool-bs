@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { derived } from 'svelte/store';
-    import documentStore from '../stores/DocumentStore.ts';
-    import { selectedChaptersStore }  from '../stores/SelectedChapterStore.ts';
+	import { derived } from 'svelte/store';
+	import { documentStore } from '../stores/DocumentStore.ts';
+	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
 
     const chaptersStore = derived(documentStore, $documentStore =>
         $documentStore.chapterTitles || []
@@ -65,4 +65,3 @@
         <p>Geen hoofdstukken gevonden.</p>
     {/if}
 </div>
-
