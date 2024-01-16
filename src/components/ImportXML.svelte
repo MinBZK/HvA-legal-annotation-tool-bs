@@ -73,7 +73,11 @@
 	function convertXMLtoObj(xml: string, filename: string): void {
 		const result = xml2js(xml, { compact: true }) as any;
 		const title = result?.toestand?.wetgeving?.citeertitel?._text || 'No Title';
-		const chapterElements = result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.hoofdstuk;
+		const chapterElements = result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.hoofdstuk ||
+				result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.deel?.hoofdstuk ||
+				result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.artikel
+
+		console.log(chapterElements);
 
 		let chapterTitles: string[] = [];
 		let chapterContents: string[] = [];
@@ -84,11 +88,13 @@
 				chapterElements.forEach(hoofdstuk => {
 					chapterTitles.push(collectText(hoofdstuk.kop).join(' '));
 					chapterContents.push(collectText(hoofdstuk.paragraaf).join(' '));
+					chapterContents.push(collectText(hoofdstuk).join(' '));
 				});
 			}
 			else {
 				chapterTitles.push(collectText(chapterElements.kop).join(' '));
 				chapterContents.push(collectText(chapterElements.paragraaf).join(' '));
+				chapterContents.push(collectText(chapterElements).join(' '));
 			}
 		}
 

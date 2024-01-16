@@ -14,6 +14,8 @@
 	import { Drawer, Modal, Toast, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
 
 	let showAnnotations = false;
+	let showFilter = false;
+
 	initializeStores();
 	const drawerStore = getDrawerStore();
 
@@ -49,10 +51,46 @@
 				<LabelRelations />
 			{/if}
 		</Drawer>
-		<div class="w-1/4 p-5 bg-gray-300 dark:bg-slate-900">
-			<FilterFile />
-		</div>
-		<div class="w-3/4 overflow-auto h-[100vh]">
+
+			<Drawer>
+				{#if $drawerStore.id === 'filters'}
+					<FilterFile />
+				{/if}
+			</Drawer>
+		<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+		<button
+			class="text-white font-bold py-2 px-4 mt-2 mr-2"
+			style="position: fixed; left: 0; top: 50%; transform: translateY(-50%); background: none; border: none;"
+			on:click={() => {
+				drawerStore.open({
+					id: 'filters',
+					position: 'left',
+					bgDrawer: 'bg-indigo-900 text-white',
+					width: 'w-[40%]',
+					padding: 'p-4',
+					rounded: 'rounded-xl'
+				});
+			}}
+				on:mouseover={() => (showFilter = true)}
+				on:mouseout={() => (showFilter = false)}
+			>
+				<div class="flex items-center group">
+					<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="32"
+							height="32"
+							viewBox="0 0 24 24"
+							fill="rgb(79, 70, 229)"
+							style="transform: scaleX(-1)"
+					><path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" />
+					</svg>
+					{#if showFilter}
+						<span transition:fade={{ delay: 200, duration: 200 }} class="ml-2">Filters</span>
+					{/if}
+				</div>
+			</button>
+
+		<div class="w-full overflow-auto h-[100vh]">
 			<AnnotationView />
 			<AnnotationExport />
 		</div>

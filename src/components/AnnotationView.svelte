@@ -210,7 +210,6 @@
 							{#each splitSentences(chapter) as line}
 								<p>{line}</p>
 							{/each}
-							<p class="bg-red-500 py-10">Test break between chapter</p>
 						</div>
 					{/if}
 				{/each}
