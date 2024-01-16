@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import type LegalDocument from '../models/LegalDocument';
 
-const documentStore = writable<LegalDocument>({
+export const documentStore = writable<LegalDocument>({
     title: '',
     filename: '',
     chapterTitles: [],
@@ -9,5 +9,3 @@ const documentStore = writable<LegalDocument>({
     annotations: [],
     history: []
 });
-
-export default documentStore;

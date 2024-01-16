@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getModalStore, getToastStore, type ModalSettings } from '@skeletonlabs/skeleton';
-	import documentStore from '../stores/DocumentStore';
+	import { documentStore } from '../stores/DocumentStore';
 	import { annotationStore } from '../stores/AnnotationStore';
 	import type LegalDocument from '../models/LegalDocument';
 	import { js2xml } from 'xml-js';
@@ -8,8 +8,6 @@
 	import { faDownload } from '@fortawesome/free-solid-svg-icons';
 	const modalStore = getModalStore();
 	const toastStore = getToastStore();
-
-	let data = $documentStore;
 
 	function handleClickExport(fileName = '', data: LegalDocument) {
 		// TO-DO: Clarify required relationships, commented out for ease of demo...
@@ -220,7 +218,7 @@
 	title="Export File"
 	type="button"
 	class="btn btn-lg variant-filled-primary rounded-md"
-	on:click={() => handleClickExport('data.xml', data)}
+	on:click={() => handleClickExport('data.xml', $documentStore)}
 >
 	<Fa size="1.5x" icon={faDownload} />
 </button>

@@ -14,7 +14,7 @@
 	import { Drawer, Modal, Toast, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
-	import documentStore from '../stores/DocumentStore';
+	import { documentStore } from '../stores/DocumentStore';
 	import type LegalDocument from '../models/LegalDocument';
 	import AuditLog from '../components/AuditLog.svelte';
 	import LabelList from '../components/LabelList.svelte';
@@ -133,7 +133,9 @@
 					><path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" /></svg
 				>
 				{#if showAnnotations}
-					<span transition:fade={{ delay: 200, duration: 200 }} class="ml-2 text-primary-600">Annotations</span>
+					<span transition:fade={{ delay: 200, duration: 200 }} class="ml-2 text-primary-600"
+						>Annotations</span
+					>
 				{/if}
 			</div>
 		</button>

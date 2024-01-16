@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import documentStore from '../stores/DocumentStore.ts';
+	import { documentStore } from '../stores/DocumentStore.ts';
 	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
 	import { textSelection, selectedLabels, labelStore } from '../stores/LabelStore.ts';
 	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
@@ -10,10 +10,9 @@
 	import type Label from '../models/Label.ts';
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
-	import type LegalDocument from '../models/LegalDocument.ts';
+	import { titleStore } from '../stores/TitleStore.ts';
 
 	let selectedChapters: any;
-	let activeDocument: LegalDocument;
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
 	let selectedAnnotation: Annotation | null = null;
@@ -24,10 +23,6 @@
 	let selectionOffset = { start: 0, end: 0 };
 	let boundDoc: HTMLElement;
 	let highlightSpan;
-
-	selectedChaptersStore.subscribe((value) => {
-		selectedChapters = value;
-	});
 
 	$: {
 		selectedLabels.subscribe((value) => {
@@ -44,10 +39,6 @@
 	onMount(() => {
 		selectionLogic(null);
 
-		documentStore.subscribe((value) => {
-			activeDocument = value;
-		});
-
 		selectedLabels.subscribe((value) => {
 			labelList = value;
 		});
@@ -63,7 +54,11 @@
 
 	// Add event listener to detect user selection
 	const handleSelection = () => (
-		(selectedText = document.getSelection()), selectionLogic(selectedText), detectSelection(), changeTextColor());
+		(selectedText = document.getSelection()),
+		selectionLogic(selectedText),
+		detectSelection(),
+		changeTextColor()
+	);
 
 	// Logic for handling user selection
 	function selectionLogic(selectionInput: Selection | null) {
@@ -228,16 +223,22 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="p-4" role="main">
-	{#if activeDocument}
-		<div class="text-md leading-loose list-none relative bg-surface-200 dark:bg-surface-800 pl-5 pr-5 pt-2">
-			<h2 class="font-medium text-3xl w-96">
-				{activeDocument.title}temp
-			</h2>
+	{#if $documentStore}
+		<div
+			class="text-md leading-loose list-none relative bg-surface-200 dark:bg-surface-800 pl-5 pr-5 pt-2"
+		>
 			<div class="mt-3" use:selectionOffsets bind:this={boundDoc} on:mouseup={handleSelection}>
-				{#each activeDocument.chapterContents as chapter, index}
+				{#if $selectedChaptersStore && $selectedChaptersStore.size > 0}
+					<h1 class="h1 font-mono">
+						{$titleStore}
+					</h1>
+				{/if}
+				{#each $documentStore.chapterContents as chapter, index}
 					{#if selectedChapters.has(index)}
+						<h2 class="h2 font-serif">{$documentStore.chapterTitles[index]}</h2>
 						<p>{chapter}</p>
-						<p class="bg-error-500 py-10">Test break between chapter</p>
+						<hr class="!border-t-8" />
+						<br />
 					{/if}
 				{/each}
 			</div>
