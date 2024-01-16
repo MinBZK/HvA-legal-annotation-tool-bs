@@ -2,11 +2,14 @@
 	import { onMount } from "svelte";
 	import type Label from "../models/Label";
 	import { labelStore } from "../stores/LabelStore";
-    import { getModalStore, getToastStore, type ModalSettings } from "@skeletonlabs/skeleton";
+    import { getDrawerStore, getModalStore, getToastStore, type ModalSettings } from "@skeletonlabs/skeleton";
 	import supabase from "$lib/supabaseClient";
+    import Fa from "svelte-fa";
+	import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 
     const toastStore = getToastStore();
     const modalStore = getModalStore();
+    const drawerStore = getDrawerStore();
 
     const immutableLabels = [
         'Rechtsbetrekking', 
@@ -112,6 +115,18 @@
 
 <div class="m-5 overflow-auto">
     {#if !showForm}
+        <button type="button" class="btn-icon variant-filled mb-5" on:click={() => {
+            drawerStore.open({
+                id: 'relationships',
+                position: 'right',
+                bgDrawer: 'bg-surface-600 text-white',
+                width: 'w-[40%]',
+                padding: 'p-4',
+                rounded: 'rounded-xl'
+            });
+        }}>
+            <Fa size="1.5x" icon={faArrowLeftLong} />
+        </button>
         <div class="table-container">
             <table class="table table-hover">
                 <thead>
@@ -127,7 +142,7 @@
                             <th>
                                 <button
                                     type="button"
-                                    class="btn variant-filled hover:variant-filled-secondary"
+                                    class="btn variant-filled-error hover:variant-filled-error-secondary text-white font-bold my-1"
                                     disabled={immutableLabels.includes(label.name)}
                                     on:click={() => confirmationPopup(label.id)}>
                                     Wissen
