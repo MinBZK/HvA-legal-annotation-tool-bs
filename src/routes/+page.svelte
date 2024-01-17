@@ -56,6 +56,7 @@
 			response: (r:boolean) => {
 				if(r){
 					console.log("file upload")
+					localStorage.clear();
 					fileContent = null;
 				}
 			}
