@@ -146,7 +146,7 @@
 					{/each}
 				</div>
 				{#if annotation.definition.definition == '' || annotation.definition.definition == undefined}
-					<p class="text-base ml-2">Definition: .v.t.</p>
+					<p class="text-base ml-2">Definition: N.v.t.</p>
 				{:else}
 					<p class="text-base ml-2">Definition: {annotation.definition.definition}</p>
 				{/if}
