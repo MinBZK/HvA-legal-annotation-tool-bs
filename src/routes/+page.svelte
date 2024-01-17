@@ -18,7 +18,6 @@
 	import type LegalDocument from '../models/LegalDocument';
 	import AuditLog from '../components/AuditLog.svelte';
 	import LabelList from '../components/LabelList.svelte';
-	import {FileButton} from '@skeletonlabs/skeleton'
 
 	let showAnnotations = false;
 	let showFilter = false;
