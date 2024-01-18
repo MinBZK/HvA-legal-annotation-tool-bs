@@ -51,7 +51,6 @@
 			
 			if(!value.filename){
 				fileContent = null;
-				console.log("fileContent should be");
 			} else {
 				const file = $documentStore;
 				const newFile = new LegalDocument(
