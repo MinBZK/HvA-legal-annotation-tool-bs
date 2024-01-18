@@ -23,11 +23,12 @@
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { documentStore } from '../stores/DocumentStore';
-	import LegalDocument from '../models/LegalDocument';
+	import  LegalDocument from '../models/LegalDocument';
 	import AuditLog from '../components/AuditLog.svelte';
 	import LabelList from '../components/LabelList.svelte';
 	import { annotationStore } from '../stores/AnnotationStore';
 	import { titleStore } from '../stores/TitleStore';
+	import { selectedChaptersStore } from '../stores/SelectedChapterStore';
 
 	let showAnnotations = false;
 	let showFilter = false;
@@ -47,9 +48,9 @@
 		}
 
 		documentStore.subscribe((value) => {
-			if (!value) {
-				fileContent = value;
-				$documentStore;
+			
+			if(!value.filename){
+				fileContent = null;
 			} else {
 				const file = $documentStore;
 				const newFile = new LegalDocument(
@@ -61,11 +62,13 @@
 					file.history
 				);
 				fileContent = newFile;
+				fileContent = $documentStore;
+				console.log('else');
 			}
 		});
 	});
 
-
+	// handleNewFile resets the document presistence to cleansheet
 	function handleNewFile() {
 		const modal: ModalSettings = {
 			type: 'confirm',
@@ -77,8 +80,14 @@
 				if (r) {
 					localStorage.clear();
 					titleStore.set('');
+					$documentStore.title = '';
 					$documentStore.filename = '';
+					$documentStore.chapterTitles = [];
+					$documentStore.chapterContents = [];
+					$documentStore.annotations = [];
+					$documentStore.history = [];
 					annotationStore.set([]);
+					selectedChaptersStore.set([]);
 					fileContent = null;
 				}
 			}
@@ -141,7 +150,11 @@
 					<AnnotationView />
 				</div>
 				<div class="ml-10 absolute bottom-0 right-0 m-10">
-					<button title="Nieuw Bestand" class="btn btn-lg variant-filled-success rounded-md" on:click={() => handleNewFile()}>
+					<button
+						title="New File"
+						class="btn btn-lg variant-filled-success rounded-md"
+						on:click={() => handleNewFile()}
+					>
 						<Fa class="text-surface-900" size="1.5x" icon={faPlus} />
 					</button>
 					<AuditLog />
