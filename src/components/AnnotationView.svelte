@@ -77,6 +77,12 @@
 		}
 
 		if (selection && selection.toString().length > 3) {
+			
+			// Check if the parent tag is a header tag.
+			const parentTag = selection.anchorNode?.parentNode?.nodeName.toLowerCase();
+			if (parentTag?.startsWith('h') && !isNaN(Number(parentTag[1]))) return;
+
+
 			inputChipsDiv.style.display = 'block';
 			const selectedText = selection.toString();
 			console.log(selectedText);
