@@ -79,7 +79,6 @@
 		if (selection && selection.toString().length > 3) {
 			inputChipsDiv.style.display = 'block';
 			const selectedText = selection.toString();
-			console.log(selectedText);
 
 			// Calculate position of the selected text
 			const range = selection.getRangeAt(0);
@@ -133,7 +132,6 @@
 					endPosition
 				);
 				addAnnotation(selectedAnnotation);
-				console.log(selectedAnnotation);
 				selectedComment = new Comment(0, '');
 				selectedDefinition = new Definition(0, '');
 
