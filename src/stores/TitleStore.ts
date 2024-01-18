@@ -1,3 +1,4 @@
-import { writable } from 'svelte/store';
+import { localStorageStore } from '@skeletonlabs/skeleton';
+import type { Writable } from 'svelte/store';
 
-export const titleStore = writable<string>('');
+export const titleStore: Writable<string> = localStorageStore('title', 'initial title');
