@@ -1,28 +1,37 @@
 <script lang="ts">
 	import { getToastStore } from "@skeletonlabs/skeleton";
 	import { annotationStore } from "../stores/AnnotationStore";
-	import type Label from "../models/Label";
 
+    // Initialize stores
     const toastStore = getToastStore();
+
+    // Initialize variables imported from the parent component
     export let setShowForm: Function;
     export let selectedAnnotationId: number;
+
+    // Initialize variables
     let annotations;
     let selectedAnnotation;
     let relation = { type: "", source: selectedAnnotationId, target: 0};
-
     let filteredTypes: string[] = [];
 
     $: if (relation.target) {
         filteredTypes = getFilteredTypes();
     }
 
+    // Subscribe to annotation store and update annotations
     annotationStore.subscribe(e => {
         annotations = e;
         selectedAnnotation = e.find(a => a.id === selectedAnnotationId);
         filteredTypes = getFilteredTypes();
     });
 
+    /**
+     * Function to handle the logic when a relation is added
+     * @returns void
+     */
     function addRelationship() {
+        // Check if the relation is valid
         if(relation.target === 0 || relation.type === "") {
             toastStore.trigger({
                 message: "Please select a relation type and annotation.",
@@ -32,6 +41,7 @@
             return;
         }
 
+        // Check if the relation already exists
         const sourceAnnotation = annotations.find(a => a.id === relation.source);
         const targetAnnotation = annotations.find(a => a.id === relation.target);
 
@@ -44,19 +54,27 @@
             return;
         }
 
+        // Add the relation to the source and target annotation
         if (sourceAnnotation && targetAnnotation) {
             sourceAnnotation.relationships = [...sourceAnnotation.relationships, relation];
             targetAnnotation.relationships = [...targetAnnotation.relationships, relation];
         }
         
+        // Update the annotation store
         annotationStore.set(annotations);
         
+        // Close the form
         setShowForm(false);
     }
 
+    /**
+     * Function to get the filtered relation types
+     * @returns string[] - The filtered relation types
+     */
     function getFilteredTypes() {
         let filteredTypes: string[] = [];
 
+        // Define the possible relations
         const labelRelations = {
             'rechtsbetrekking': {
                 'rechtssubject': ["wie heeft het recht", "wie heeft de plicht"],
@@ -88,15 +106,19 @@
             }
         };
 
+        // Get the labels of the source annotation
         const sourceAnnotationLabel = annotations.find(a => a.id === relation.source)?.label.map(l => l.name.toLowerCase());
 
+        // Check if the source annotation has labels
         if (sourceAnnotationLabel && sourceAnnotationLabel.length > 0) {
             sourceAnnotationLabel.forEach(label => {
                 const relations = labelRelations[label];
+
                 if (relations) {
+                    // Check if the target annotation has the label specified by 'key'
                     Object.entries(relations).forEach(([key, relationArray]) => {
-                        // Check if the target annotation has the label specified by 'key'
                         const targetAnnotation = annotations.find(a => a.id === relation.target);
+
                         if (targetAnnotation && targetAnnotation.label.some(l => l.name.toLowerCase() === key)) {
                             // @ts-ignore
                             relationArray.forEach(relation => {
@@ -113,6 +135,13 @@
         return filteredTypes;
     }
 
+    /**
+     * Function to check if a relation already exists
+     * @param sourceAnnotation - The source annotation
+     * @param targetAnnotation - The target annotation
+     * @param relationType - The relation type
+     * @returns boolean - Whether the relation already exists
+     */
     function relationExists(sourceAnnotation, targetAnnotation, relationType) {
         return sourceAnnotation.relationships.some(r => 
             r.target === targetAnnotation.id && r.type === relationType

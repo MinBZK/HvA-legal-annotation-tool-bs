@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from "svelte";
 	import type Label from "../models/Label";
 	import { labelStore } from "../stores/LabelStore";
     import { getDrawerStore, getModalStore, getToastStore, type ModalSettings } from "@skeletonlabs/skeleton";
@@ -7,10 +6,12 @@
     import Fa from "svelte-fa";
 	import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 
+    // Initialize stores
     const toastStore = getToastStore();
     const modalStore = getModalStore();
     const drawerStore = getDrawerStore();
 
+    // These labels should not be deleted
     const immutableLabels = [
         'Rechtsbetrekking', 
         'Rechtsobject', 
@@ -29,15 +30,21 @@
         'Brondefinitie', 
         'Rechtssubject'
     ];
-
+    
+    // Initialize variables
     let labels = [] as Label[];
     let showForm = false;
     let newLabel = { name: "", color: "#000000" } as Label;
 
+    // Subscribe to label store and update labels
     $: labels;
     
     labelStore.subscribe(e => labels = e);
 
+    /**
+     * Function to handle the logic when a label is created
+     * @returns void
+     */
     async function onCreateLabel() {
         // Check if label already exists
         if (labels.find(l => l.name === newLabel.name)) {
@@ -81,6 +88,11 @@
         showForm = false;
     }
 
+    /**
+     * Function to show a confirmation popup
+     * @param labelId number - The id of the label to delete
+     * @returns void
+     */
     const confirmationPopup = (labelId: number) => {
         const modal: ModalSettings = {
             type: "confirm",
@@ -96,6 +108,11 @@
         modalStore.trigger(modal);
     }
 
+    /**
+     * Function to handle the logic when a label is deleted
+     * @param labelId number - The id of the label to delete
+     * @returns void
+     */
     async function onDeleteLabel(labelId: number) {
         const { error } = await supabase.from('labels').delete().eq('id', labelId);
 
