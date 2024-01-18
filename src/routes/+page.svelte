@@ -20,6 +20,8 @@
 	import LabelList from '../components/LabelList.svelte';
 
 	let showAnnotations = false;
+	let showFilter = false;
+
 	initializeStores();
 	const drawerStore = getDrawerStore();
 
