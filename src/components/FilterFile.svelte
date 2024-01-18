@@ -56,7 +56,7 @@
                         id={`chapter-${index}`}
                         class="checkbox mr-3 min-w-[1.3rem] min-h-[1.3rem]"
                         on:change={(e) => handleCheckboxChange(index, e)}
-                        checked={$selectedChaptersStore.includes(index.toString())}
+                        checked={$selectedChaptersStore.includes(index)}
                 >
                 <label for={`chapter-${index}`} class="ml-2 cursor-pointer">{chapterTitle}</label>
             </div>
