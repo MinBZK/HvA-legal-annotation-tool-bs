@@ -15,7 +15,7 @@
 		let valid: boolean = checkRelationships();
 
 		new Promise<boolean>((resolve) => {
-            const body = valid ? 'Are you sure you wish to proceed?' : ("Are you sure you wish to proceed?" + message);
+            const body = valid ? 'Are you sure you wish to proceed?' : ("Are you sure you wish to proceed? " + message);
 			const modal: ModalSettings = {
 				type: 'confirm',
 				title: 'Exporting annotations...',
@@ -105,7 +105,7 @@
 		let valid = true;
 
 		if (!annotations.length) {
-			message = 'No annotations found<br>';
+			message = 'No annotations were found<br>';
 			valid = false;
 		} else {
 			for (let annotation of annotations) {
