@@ -66,7 +66,6 @@
 	});
 
 
-	
 	function handleNewFile() {
 		const modal: ModalSettings = {
 			type: 'confirm',
@@ -76,9 +75,10 @@
 			buttonTextConfirm: 'Bevestigen',
 			response: (r: boolean) => {
 				if (r) {
-					// console.log('file upload');
 					localStorage.clear();
-					$titleStore = '';
+					titleStore.set('');
+					$documentStore.filename = '';
+					annotationStore.set([]);
 					fileContent = null;
 				}
 			}
