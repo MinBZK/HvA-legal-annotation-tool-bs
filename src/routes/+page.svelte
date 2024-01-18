@@ -23,12 +23,12 @@
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { documentStore } from '../stores/DocumentStore';
-	import LegalDocument from '../models/LegalDocument';
+	import  LegalDocument from '../models/LegalDocument';
 	import AuditLog from '../components/AuditLog.svelte';
 	import LabelList from '../components/LabelList.svelte';
 	import { annotationStore } from '../stores/AnnotationStore';
 	import { titleStore } from '../stores/TitleStore';
-	import { selectedChaptersStore} from '../stores/SelectedChapterStore';
+	import { selectedChaptersStore } from '../stores/SelectedChapterStore';
 
 	let showAnnotations = false;
 	let showFilter = false;
@@ -48,9 +48,10 @@
 		}
 
 		documentStore.subscribe((value) => {
-			if (!value) {
-				fileContent = value;
-				$documentStore;
+			
+			if(!value.filename){
+				fileContent = null;
+				console.log("fileContent should be");
 			} else {
 				const file = $documentStore;
 				const newFile = new LegalDocument(
@@ -62,6 +63,8 @@
 					file.history
 				);
 				fileContent = newFile;
+				fileContent = $documentStore;
+				console.log('else');
 			}
 		});
 	});
