@@ -11,18 +11,20 @@
 	import { labelStore } from '../stores/LabelStore';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import { Drawer, Modal, Toast, getDrawerStore, initializeStores } from '@skeletonlabs/skeleton';
+	import { Drawer, Modal, Toast, getDrawerStore, getModalStore, initializeStores, type ModalSettings } from '@skeletonlabs/skeleton';
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { documentStore } from '../stores/DocumentStore';
-	import type LegalDocument from '../models/LegalDocument';
+	import  LegalDocument from '../models/LegalDocument';
 	import AuditLog from '../components/AuditLog.svelte';
 	import LabelList from '../components/LabelList.svelte';
 
 	let showAnnotations = false;
+	let showFilter = false;
+
 	initializeStores();
 	const drawerStore = getDrawerStore();
-
+	const modalStore = getModalStore();
 	let fileContent: LegalDocument | null = null;
 
 	onMount(async () => {
@@ -35,12 +37,49 @@
 		}
 
 		documentStore.subscribe((value) => {
-			if ((value.title = '')) {
+			if ((!value)) {
 				fileContent = value;
-				localStorage.setItem('legal-document', JSON.stringify(value));
+				$documentStore
 			}
+			else{
+				const file = $documentStore;
+				const newFile = new LegalDocument (
+					file.title,
+					file.filename,
+					file.chapterTitles,
+					file.chapterContents,
+					file.annotations,
+					file.history
+				)
+				console.log("Newfile",newFile)
+				fileContent = newFile;
+				console.log(fileContent)
+			}
+				
 		});
 	});
+	// TODO fix the fileContent = true after the refresh. and clear the titleStore after the button
+	function handleNewFile(){
+			const modal: ModalSettings = {
+			type: 'confirm',
+			title: 'Nieuwe bestand uploaden',
+			body: 'ALERT: huidige bestand wordt niet opgeslagen, weet u zeker om een nieuw bestand te uploaden? ',
+			buttonTextCancel: 'Annuleer',
+			buttonTextConfirm: 'Bevestig'
+			,
+			response: (r:boolean) => {
+				if(r){
+					console.log("file upload")
+					localStorage.clear();
+					fileContent = null;
+				}
+			}
+		};
+		modalStore.trigger(modal);
+		
+		
+	}
+
 </script>
 
 {#if !fileContent}
