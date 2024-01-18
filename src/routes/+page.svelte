@@ -63,7 +63,6 @@
 				);
 				fileContent = newFile;
 				fileContent = $documentStore;
-				console.log('else');
 			}
 		});
 	});
