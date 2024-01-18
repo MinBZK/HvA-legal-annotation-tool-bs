@@ -113,7 +113,6 @@
 		console.dir($titleStore);
 
 
-		localStorage.setItem('legal-document', JSON.stringify(data));
 		fileContent = $documentStore;
 		dispatch('fileUploaded', fileContent);
 	}
@@ -206,7 +205,6 @@
 		logStore.set(editHistory);
 		titleStore.set(title);
 
-		localStorage.setItem('legal-document', JSON.stringify(reimport));
 		fileContent = $documentStore;
 		dispatch('fileUploaded', fileContent);
 		return;
