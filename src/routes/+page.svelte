@@ -101,7 +101,7 @@
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 	<div class="flex flex-row">
-		<Modal />
+		<Modal regionBody="overflow-scroll" />
 		<Toast />
 		<Drawer>
 			{#if $drawerStore.id === 'relationships'}
