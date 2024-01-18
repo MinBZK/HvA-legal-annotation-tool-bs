@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { FileDropzone } from '@skeletonlabs/skeleton';
-	import { fileContentStore } from '../stores/fileStore';
 	import { documentStore } from '../stores/DocumentStore';
 	import { annotationStore } from '../stores/AnnotationStore';
 	import Fa from 'svelte-fa';
@@ -24,7 +23,6 @@
 
 			reader.onload = function (event) {
 				const content = event.target?.result as string;
-				fileContentStore.set(content);
 				convertXMLtoObj(content, file.name);
 			};
 
