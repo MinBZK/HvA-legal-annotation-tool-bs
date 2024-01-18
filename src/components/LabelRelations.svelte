@@ -5,13 +5,14 @@
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import { getDrawerStore, popup } from '@skeletonlabs/skeleton';
 	import { onMount, tick } from 'svelte';
-	import { definition } from '../stores/DefinitionStores';
 	import Fa from 'svelte-fa';
 	import { faTags } from '@fortawesome/free-solid-svg-icons';
+    import EditAnnotation from './EditAnnotation.svelte';
 
+    // Initialize stores
 	const drawerStore = getDrawerStore();
-	import EditAnnotation from './EditAnnotation.svelte';
 
+    // Initialize variables
 	let annotations;
 	let labels;
 	let selectedAnnotation = null as any;
@@ -25,6 +26,7 @@
 		placement: 'top'
 	};
 
+    // Subscribe to stores
 	labelStore.subscribe((e) => (labels = e));
 	annotationStore.subscribe((e) => (annotations = e));
 
@@ -35,12 +37,20 @@
 		});
 	});
 
+    /**
+     * Function to handle the logic when a relation is deleted
+     * @param relation - The relation that is deleted
+     * @returns void
+     */
 	function onDeleteRelation(relation) {
 		annotationStore.update((annotations) => {
+            // Get the source and target annotation
 			const sourceAnnotation = annotations.find((a) => a.id === relation.source);
 			const targetAnnotation = annotations.find((a) => a.id === relation.target);
 
+            // Check if the source and target annotation exist
 			if (sourceAnnotation && targetAnnotation) {
+                // Remove the relation from the source annotation
 				sourceAnnotation.relationships = sourceAnnotation.relationships.filter(
 					(r) =>
 						!(
@@ -50,6 +60,7 @@
 						)
 				);
 
+                // Remove the relation from the target annotation
 				targetAnnotation.relationships = targetAnnotation.relationships.filter(
 					(r) =>
 						!(
@@ -64,6 +75,10 @@
 		});
 	}
 
+    /**
+     * Function to shorten the text of an annotation
+     * @param text
+     */
 	function shortenText(text) {
 		const words = text.split(' ');
 		if (words.length <= 8) {
