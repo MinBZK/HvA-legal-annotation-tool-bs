@@ -11,13 +11,23 @@
 	import { labelStore } from '../stores/LabelStore';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import { Drawer, Modal, Toast, getDrawerStore, getModalStore, initializeStores, type ModalSettings } from '@skeletonlabs/skeleton';
+	import {
+		Drawer,
+		Modal,
+		Toast,
+		getDrawerStore,
+		getModalStore,
+		initializeStores,
+		type ModalSettings
+	} from '@skeletonlabs/skeleton';
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { documentStore } from '../stores/DocumentStore';
-	import  LegalDocument from '../models/LegalDocument';
+	import LegalDocument from '../models/LegalDocument';
 	import AuditLog from '../components/AuditLog.svelte';
 	import LabelList from '../components/LabelList.svelte';
+	import { annotationStore } from '../stores/AnnotationStore';
+	import { titleStore } from '../stores/TitleStore';
 
 	let showAnnotations = false;
 	let showFilter = false;
@@ -37,49 +47,44 @@
 		}
 
 		documentStore.subscribe((value) => {
-			if ((!value)) {
+			if (!value) {
 				fileContent = value;
-				$documentStore
-			}
-			else{
+				$documentStore;
+			} else {
 				const file = $documentStore;
-				const newFile = new LegalDocument (
+				const newFile = new LegalDocument(
 					file.title,
 					file.filename,
 					file.chapterTitles,
 					file.chapterContents,
 					file.annotations,
 					file.history
-				)
-				console.log("Newfile",newFile)
+				);
 				fileContent = newFile;
-				console.log(fileContent)
 			}
-				
 		});
 	});
-	// TODO fix the fileContent = true after the refresh. and clear the titleStore after the button
-	function handleNewFile(){
-			const modal: ModalSettings = {
+
+
+	
+	function handleNewFile() {
+		const modal: ModalSettings = {
 			type: 'confirm',
 			title: 'Nieuwe bestand uploaden',
-			body: 'ALERT: huidige bestand wordt niet opgeslagen, weet u zeker om een nieuw bestand te uploaden? ',
-			buttonTextCancel: 'Annuleer',
-			buttonTextConfirm: 'Bevestig'
-			,
-			response: (r:boolean) => {
-				if(r){
-					console.log("file upload")
+			body: 'Huidige bestand wordt niet opgeslagen, weet u zeker om een nieuw bestand te uploaden? ',
+			buttonTextCancel: 'Annuleren',
+			buttonTextConfirm: 'Bevestigen',
+			response: (r: boolean) => {
+				if (r) {
+					// console.log('file upload');
 					localStorage.clear();
+					$titleStore = '';
 					fileContent = null;
 				}
 			}
 		};
 		modalStore.trigger(modal);
-		
-		
 	}
-
 </script>
 
 {#if !fileContent}
@@ -136,8 +141,12 @@
 					<AnnotationView />
 				</div>
 				<div class="ml-10 absolute bottom-0 right-0 m-10">
-					<button title="New File" class="btn btn-lg variant-filled-success rounded-md" on:click={() => handleNewFile()}>
-						<Fa class="text-surface-900" size="1.5x" icon={faPlus} />
+					<button
+						title="New File"
+						class="btn btn-lg variant-filled-success rounded-md"
+						on:click={() => handleNewFile()}
+					>
+						<Fa size="1.5x" icon={faPlus} />
 					</button>
 					<AuditLog />
 					<AnnotationExport />
