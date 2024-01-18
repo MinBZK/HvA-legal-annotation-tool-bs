@@ -94,7 +94,7 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div class="m-5 overflow-auto">
 	{#if selectedAnnotation === null}
-		<h1 class="font-bold inline">All Annotations</h1>
+		<h1 class="font-bold inline">Alle Annotaties</h1>
 		<div class="float-right">
 			<button
 				type="button"
@@ -202,6 +202,8 @@
     />
 	{:else if !showForm}
 		<div>
+            <h1 class="h5 font-bold">Annotatie: "{selectedAnnotation.text}"</h1>
+
 			<button
 				type="button"
 				class="btn variant-filled float-right mb-5 hover:variant-filled-secondary text-white font-bold"
