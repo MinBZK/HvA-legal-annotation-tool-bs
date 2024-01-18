@@ -94,7 +94,7 @@
 			>
 		</div>
 		<div class="flex justify-center items-center h-screen">
-			<div class="w-1/2 overflow-auto h-[100vh]">
+			<div class="w-1/2 overflow-auto h-[100vh] flex justify-center">
 				<div class="h-1/3">
 					<AnnotationView />
 				</div>

@@ -14,12 +14,6 @@
 	import Definition from '../models/Definition.ts';
 	import { titleStore } from '../stores/TitleStore.ts';
 
-	let selectedChapters: any;
-
-	selectedChaptersStore.subscribe(value => {
-		selectedChapters = value;
-	});
-
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
 	let selectedAnnotation: Annotation | null = null;
@@ -36,10 +30,6 @@
 			if (value) {
 				prevSelectedLabels = value;
 			}
-		});
-
-		selectedChaptersStore.subscribe((value) => {
-			selectedChapters = value;
 		});
 	}
 
@@ -188,6 +178,7 @@
 
 							const span = document.createElement('span');
 							span.style.fontWeight = 'bold';
+							span.style.whiteSpace = "no-wrap";
 							span.style.textDecoration = `underline ${annotation.label[0].color}`;
 							span.style.textDecorationThickness = '2px';
 							span.style.textUnderlineOffset = '4px';
@@ -235,20 +226,18 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="p-4" role="main">
 	{#if $documentStore}
-		<div
-			class="text-md leading-loose list-none relative bg-surface-200 dark:bg-surface-800 pl-5 pr-5 pt-2"
-		>
+		<div class="text-md leading-loose list-none relative bg-surface-200 dark:bg-surface-800 pl-5 pr-5 pt-2 w-full">
 			<div class="mt-3" use:selectionOffsets bind:this={boundDoc} on:mouseup={handleSelection}>
-				{#if $selectedChaptersStore && $selectedChaptersStore.size > 0}
-					<h1 class="h1 font-mono">
+				{#if $selectedChaptersStore && $selectedChaptersStore.length > 0}
+					<h1 class="h1 font-mono mb-2">
 						{$titleStore}
 					</h1>
 				{/if}
 				{#each $documentStore.chapterContents as chapter, index}
-					{#if selectedChapters.has(index)}
-						<h2 class="h2 font-serif">{$documentStore.chapterTitles[index]}</h2>
+					{#if $selectedChaptersStore.includes(index)}
+						<h2 class="h2 font-serif mb-2">{$documentStore.chapterTitles[index]}</h2>
 						{#each splitSentences(chapter) as line}
-								<p>{line}</p>
+							<p>{line}</p>
 						{/each}
 						<hr class="!border-t-8" />
 						<br />
