@@ -28,7 +28,7 @@
 
 <Modal />
 <button
-	title="File History"
+	title="Bestandsgeschiedenis"
 	class="btn btn-lg variant-filled-tertiary rounded-md"
 	on:click={() => handleClick()}
 	type="button"

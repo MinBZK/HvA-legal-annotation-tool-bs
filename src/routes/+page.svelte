@@ -151,7 +151,7 @@
 				</div>
 				<div class="ml-10 absolute bottom-0 right-0 m-10">
 					<button
-						title="New File"
+						title="Nieuw Bestand"
 						class="btn btn-lg variant-filled-success rounded-md"
 						on:click={() => handleNewFile()}
 					>
@@ -191,7 +191,7 @@
 				>
 				{#if showAnnotations}
 					<span transition:fade={{ delay: 200, duration: 200 }} class="ml-2 text-primary-600"
-						>Annotations</span
+						>Annotaties</span
 					>
 				{/if}
 			</div>
