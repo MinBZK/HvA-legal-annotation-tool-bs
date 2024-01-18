@@ -246,12 +246,20 @@
 				{/if}
 				{#each $documentStore.chapterContents as chapter, index}
 					{#if selectedChapters.has(index)}
+<<<<<<< HEAD
 						<h2 class="h2 font-serif">{$documentStore.chapterTitles[index]}</h2>
 						{#each splitSentences(chapter) as line}
 								<p>{line}</p>
 						{/each}
 						<hr class="!border-t-8" />
 						<br />
+=======
+						<div>
+							{#each splitSentences(chapter) as line}
+								<p>{line}</p>
+							{/each}
+						</div>
+>>>>>>> 48820d5 (feat: added the ability to parse diff .xml files.)
 					{/if}
 				{/each}
 			</div>

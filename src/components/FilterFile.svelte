@@ -6,7 +6,6 @@
     const chaptersStore = derived(documentStore, $documentStore =>
         $documentStore.chapterTitles || []
     );
-
     let selectAll = false;
 
     function toggleSelectAll() {

@@ -88,6 +88,7 @@
 				result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.deel?.hoofdstuk ||
 				result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.artikel
 
+
 		let chapterTitles: string[] = [];
 		let chapterContents: string[] = [];
 
