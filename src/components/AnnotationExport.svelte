@@ -183,7 +183,7 @@
 </script>
 
 <button
-	title="Export File"
+	title="Exporteer Bestand"
 	type="button"
 	class="btn btn-lg variant-filled-primary rounded-md"
 	on:click={() => handleClickExport('data.xml', $documentStore)}
