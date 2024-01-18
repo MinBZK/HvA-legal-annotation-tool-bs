@@ -1,5 +1,4 @@
 <script lang="ts">
-    // TODO: Create adding labels functionality, create removing labels functionality
 	import { annotationStore } from "../stores/AnnotationStore";
     import { Autocomplete, InputChip, getToastStore, type AutocompleteOption } from "@skeletonlabs/skeleton";
 	import { labelStore } from "../stores/LabelStore";
@@ -87,7 +86,7 @@
 
         <div class="mb-3 mt-3 w-1/2">
             <label for="labelName" class="font-bold">Definition</label>
-            <input type="text" class="input" bind:value={selectedAnnotation.definition.comment} />
+            <input type="text" class="input" bind:value={selectedAnnotation.definition.definition} />
         </div>
 
         <div>

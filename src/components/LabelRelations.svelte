@@ -148,18 +148,17 @@
 						<p class="text-xs mt-0.5 ml-2" style="color: {label.color};">{label.name}</p>
 					{/each}
 				</div>
-				{#if annotation.definition.definition == ""}
-                <p class="text-base">Definition: N.v.t.</p>
-                {:else}
-                <p class="text-base">Definition: {annotation.definition.definition}</p>
-                {/if}
-                {#if annotation.comment.comment == ""}
-                <p class="text-base">Comment: N.v.t.</p>        
-                {:else}
-                <p class="text-base">Comment: {annotation.comment.comment}</p>        
-                {/if}
-				<div class="grid grid-cols-2">
-                    <button
+				{#if annotation.definition.definition == '' || annotation.definition.definition == undefined}
+					<p class="text-base ml-2">Definition: N.v.t.</p>
+				{:else}
+					<p class="text-base ml-2">Definition: {annotation.definition.definition}</p>
+				{/if}
+				{#if annotation.comment.comment == '' || annotation.definition.definition == undefined}
+					<p class="text-base ml-2">Comment: N.v.t.</p>
+				{:else}
+					<p class="text-base ml-2">Comment: {annotation.comment.comment}</p>
+				{/if}
+				<button
 					type="button"
 					class="btn rounded-none bg-secondary-500 m-2"
 					on:click={() => {
