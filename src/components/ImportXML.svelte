@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { FileDropzone } from '@skeletonlabs/skeleton';
-	import { fileContentStore } from '../stores/fileStore';
 	import { documentStore } from '../stores/DocumentStore';
 	import { annotationStore } from '../stores/AnnotationStore';
 	import Fa from 'svelte-fa';
@@ -24,7 +23,6 @@
 
 			reader.onload = function (event) {
 				const content = event.target?.result as string;
-				fileContentStore.set(content);
 				convertXMLtoObj(content, file.name);
 			};
 
@@ -113,7 +111,6 @@
 		console.dir($titleStore);
 
 
-		localStorage.setItem('legal-document', JSON.stringify(data));
 		fileContent = $documentStore;
 		dispatch('fileUploaded', fileContent);
 	}
@@ -206,7 +203,6 @@
 		logStore.set(editHistory);
 		titleStore.set(title);
 
-		localStorage.setItem('legal-document', JSON.stringify(reimport));
 		fileContent = $documentStore;
 		dispatch('fileUploaded', fileContent);
 		return;

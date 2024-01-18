@@ -8,17 +8,19 @@
 	import { faDownload } from '@fortawesome/free-solid-svg-icons';
 	const modalStore = getModalStore();
 
-    let message = 'Not all mandatory relationships are present!<br>';
+    let message = 'Niet alle verplichte relaties tussen labels zijn aanwezig!<br>';
 
 	function handleClickExport(fileName = '', data: LegalDocument) {
 		// TO-DO: Clarify required relationships, commented out for ease of demo...
 		let valid: boolean = checkRelationships();
 
 		new Promise<boolean>((resolve) => {
-            const body = valid ? 'Are you sure you wish to proceed?' : ("Are you sure you wish to proceed? " + message);
+            const body = valid ? 'Weet u zeker dat u door wilt gaan?' : ('Weet u zeker dat u door wilt gaan?<br>' + message);
 			const modal: ModalSettings = {
 				type: 'confirm',
-				title: 'Exporting annotations...',
+				title: 'Annotaties exporteren...',
+                buttonTextCancel: "Annuleren", 
+                buttonTextConfirm: "Bevestigen", 
 				body: body,
 				response: (r: boolean) => resolve(r)
 			};
@@ -27,16 +29,18 @@
 			if (r) {
 				const modal: ModalSettings = {
 					type: 'prompt',
-					title: 'What is your name?',
-					body: 'Provide your full name in the field below.',
+					title: 'Wat is uw naam?',
+					body: 'Vul in het onderstaande veld uw volledige naam in.',
 					valueAttr: {
 						type: 'text',
-						placeholder: 'Full name',
+						placeholder: 'Volledige naam',
 						class: 'input p-2',
 						minlength: 3,
 						maxlength: 50,
 						required: true
 					},
+                    buttonTextCancel: "Annuleren", 
+                    buttonTextSubmit: "Exporteren", 
 					response: (r: string) => {
 						if (r) {
 							if (!data.history) data.history = [];
@@ -105,156 +109,70 @@
 		let valid = true;
 
 		if (!annotations.length) {
-			message = 'No annotations were found<br>';
+			message = 'Er zijn nog geen annotaties<br>';
 			valid = false;
 		} else {
 			for (let annotation of annotations) {
+                /** 
+                 * Checks if the annotation has more than the maxCount relationships of the given type
+                 * @param {string} type
+                 * @param {number} maxCount
+                 * @returns {void}
+                 */
+                const checkMaxRelationships = (type: string, maxCount: number) => {
+                    if (
+                        annotation.relationships.filter((r: { type: string }) => r.type === type).length >
+                        maxCount
+                    ) {
+                        message += `"${annotation.text}" heeft meer dan ${maxCount} relatie(s) van het type "${type}"<br>`;
+                        valid = false;
+                    }
+                };
+
+                /** 
+                 * Checks if the annotation has a relationship of the given type with a target of the given label
+                 * @param {string} type
+                 * @param {string} targetLabel
+                 * @returns {void}
+                 */
+                const checkRelationship = (type: string, targetLabel: string) => {
+                    if (
+                        !annotation.relationships.some(
+                            (r: { type: any; target: any }) =>
+                                r.type === type && annotations
+                                    .find((a: { id: any }) => a.id === r.target)
+                                    ?.label.map((l: { name: string }) => l.name.toLowerCase())
+                                    .includes(targetLabel)
+                                    )
+                            ) {
+                                message += `"${annotation.text}" mist een relatie van het type "${type}" met een andere annotatie met het label "${targetLabel}"<br>`;
+                                valid = false;
+                            }
+                    };
+
 				const annotationLabels = annotation.label.map((l) => l.name.toLowerCase());
 
 				for (let label of annotationLabels) {
 					switch (label) {
 						case 'rechtsbetrekking':
-							if (
-								!annotation.relationships.some(
-									(r) =>
-										r.type === 'wie heeft het recht' &&
-										annotations
-											.find((a) => a.id === r.target)
-											?.label.map((l) => l.name.toLowerCase())
-											.includes('rechtssubject')
-								)
-							) {
-								message += `${annotation.text} misses a relationship of type "wie heeft het recht" with a target of label "rechtssubject"<br>`;
-								valid = false;
-							}
-							if (
-								!annotation.relationships.some(
-									(r) =>
-										r.type === 'wie heeft de plicht' &&
-										annotations
-											.find((a) => a.id === r.target)
-											?.label.map((l) => l.name.toLowerCase())
-											.includes('rechtssubject')
-								)
-							) {
-								message += `${annotation.text} misses a relationship of type "wie heeft de plicht" with a target of label "rechtssubject"<br>`;
-								valid = false;
-							}
-							if (
-								!annotation.relationships.some(
-									(r) =>
-										r.type === 'heeft als voorwerp' &&
-										annotations
-											.find((a) => a.id === r.target)
-											?.label.map((l) => l.name.toLowerCase())
-											.includes('rechtsobject')
-								)
-							) {
-								message += `${annotation.text} misses a relationship of type "heeft als voorwerp" with a target of label "rechtsobject"<br>`;
-								valid = false;
-							}
-
-                            // Check if there is no more than 1 relationship for:
-                            // rechtsbetrekking -> wie heeft het recht
-                            // rechtsbetrekking -> wie heeft de plicht
-                            // rechtsbetrekking -> heeft als voorwerp
-
-                            if(annotation.relationships.filter(r => r.type === 'wie heeft het recht').length > 1) {
-                                message += `${annotation.text} has more than 1 relationship of type "wie heeft het recht"<br>`;
-                                valid = false;
-                            }
-
-                            if(annotation.relationships.filter(r => r.type === 'wie heeft de plicht').length > 1) {
-                                message += `${annotation.text} has more than 1 relationship of type "wie heeft de plicht"<br>`;
-                                valid = false;
-                            }
-
-                            if(annotation.relationships.filter(r => r.type === 'heeft als voorwerp').length > 1) {
-                                message += `${annotation.text} has more than 1 relationship of type "heeft als voorwerp"<br>`;
-                                valid = false;
-                            }
-
-							break;
+                            checkRelationship('wie heeft het recht', 'rechtssubject');
+                            checkRelationship('wie heeft de plicht', 'rechtssubject');
+                            checkRelationship('heeft als voorwerp', 'rechtsobject');
+                            checkMaxRelationships('wie heeft het recht', 1);
+                            checkMaxRelationships('wie heeft de plicht', 1);
+                            checkMaxRelationships('heeft als voorwerp', 1);
+                            break;
 						case 'rechtsfeit':
-							if (
-								!annotation.relationships.some(
-									(r) =>
-										r.type === 'heeft als voorwerp' &&
-										annotations
-											.find((a) => a.id === r.target)
-											?.label.map((l) => l.name.toLowerCase())
-											.includes('rechtsobject')
-								)
-							) {
-								message += `${annotation.text} misses a relationship of type "heeft als voorwerp" with a target of label "rechtsobject"<br>`;
-								valid = false;
-							}
-							if (
-								!annotation.relationships.some(
-									(r) =>
-										r.type === 'vindt plaats op' &&
-										annotations
-											.find((a) => a.id === r.target)
-											?.label.map((l) => l.name.toLowerCase())
-											.includes('tijdsaanduiding')
-								)
-							) {
-								message += `${annotation.text} misses a relationship of type "vind plaats op" with a target of label "tijdsaanduiding"<br>`;
-								valid = false;
-							}
-
-                            // Check if there is no more than 1 relationship for:
-                            // rechtsfeit -> heeft als voorwerp
-                            // rechtsfeit -> vindt plaats op
-
-                            if(annotation.relationships.filter(r => r.type === 'heeft als voorwerp').length > 1) {
-                                message += `${annotation.text} has more than 1 relationship of type "heeft als voorwerp"<br>`;
-                                valid = false;
-                            }
-
-                            if(annotation.relationships.filter(r => r.type === 'vindt plaats op').length > 1) {
-                                message += `${annotation.text} has more than 1 relationship of type "vindt plaats op"<br>`;
-                                valid = false;
-                            }
-
-							break;
+                            checkRelationship('heeft als voorwerp', 'rechtsobject');
+                            checkRelationship('vindt plaats op', 'tijdsaanduiding');
+                            checkMaxRelationships('heeft als voorwerp', 1);
+                            checkMaxRelationships('vindt plaats op', 1);
+                            break;
 						case 'afleidingsregel':
-							if (
-								!annotation.relationships.some(
-									(r) =>
-										r.type === 'heeft als uitvoer' &&
-										annotations
-											.find((a) => a.id === r.target)
-											?.label.map((l) => l.name.toLowerCase())
-											.includes('variabele')
-								)
-							) {
-								message += `${annotation.text} misses a relationship of type "heeft als uitvoer" with a target of label "variabele"<br>`;
-								valid = false;
-							}
-                            if (
-								!annotation.relationships.some(
-									(r) =>
-										r.type === 'gebruikt' &&
-										annotations
-											.find((a) => a.id === r.target)
-											?.label.map((l) => l.name.toLowerCase())
-											.includes('operator')
-								)
-							) {
-								message += `${annotation.text} misses a relationship of type "gebruikt" with a target of label "operator"<br>`;
-								valid = false;
-							}
-
-                            // Check if there is no more than 1 relationship for:
-                            // afleidingsregel -> heeft als uitvoer
-
-                            if(annotation.relationships.filter(r => r.type === 'heeft als uitvoer').length > 1) {
-                                message += `${annotation.text} has more than 1 relationship of type "heeft als uitvoer"<br>`;
-                                valid = false;
-                            }
-
-							break;
+                            checkRelationship('heeft als uitvoer', 'variabele');
+                            checkRelationship('gebruikt', 'operator');
+                            checkMaxRelationships('heeft als uitvoer', 1);
+                            break;
 					}
 				}
 			}
@@ -265,7 +183,7 @@
 </script>
 
 <button
-	title="Export File"
+	title="Exporteer Bestand"
 	type="button"
 	class="btn btn-lg variant-filled-primary rounded-md"
 	on:click={() => handleClickExport('data.xml', $documentStore)}

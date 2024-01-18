@@ -99,7 +99,7 @@
 </script>
 
 <div>
-    <h1 class="h5 font-bold mb-5 inline">Annotatie: "{selectedAnnotation.text}"</h1>
+    <h1 class="h5 font-bold mb-5">Annotatie: "{selectedAnnotation.text}"</h1>
 
     <button type="button" class="btn variant-filled hover:variant-filled-secondary float-right font-bold mb-3"
             on:click={() => submitAnnotation()}>
@@ -127,6 +127,7 @@
                 chips="variant-filled-primary"
                 allowUpperCase
                 on:remove={e => onRemoveLabel(e)}
+                placeholder="Label naam..."
             />
             <div class="card max-h-52 p-4 overflow-y-auto" tabindex="-1">
                 <Autocomplete
