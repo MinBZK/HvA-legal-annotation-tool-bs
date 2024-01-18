@@ -137,7 +137,7 @@
 		let annotations = result.xml.annotations;
 		if (!Array.isArray(annotations)) annotations = [annotations];
 
-		if (annotations[0].id._text === undefined) {
+		if (annotations[0] === undefined) {
 			annotations = [];
 		} else {
 			annotations = annotations.map((item: any) => {
