@@ -136,12 +136,8 @@
 					<AnnotationView />
 				</div>
 				<div class="ml-10 absolute bottom-0 right-0 m-10">
-					<button 
-					title="New File" 
-					class="btn btn-lg variant-filled-success rounded-md"
-					on:click={()=> handleNewFile()}
-					>
-						<Fa size="1.5x" icon={faPlus} />
+					<button title="New File" class="btn btn-lg variant-filled-success rounded-md" on:click={() => handleNewFile()}>
+						<Fa class="text-surface-900" size="1.5x" icon={faPlus} />
 					</button>
 					<AuditLog />
 					<AnnotationExport />
