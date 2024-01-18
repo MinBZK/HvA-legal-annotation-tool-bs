@@ -169,25 +169,33 @@
 					const walker = document.createTreeWalker(boundDoc, NodeFilter.SHOW_TEXT, null);
 					let node;
 					let index = 0;
+					let startNode, endNode, startIndex, endIndex;
 					while ((node = walker.nextNode())) {
 						const nextIndex = index + node.textContent.length;
-						if (index <= annotation.startPosition && annotation.endPosition <= nextIndex) {
-							const range = document.createRange();
-							range.setStart(node, annotation.startPosition - index);
-							range.setEnd(node, annotation.endPosition - index);
-
-							const span = document.createElement('span');
-							span.style.fontWeight = 'bold';
-							span.style.whiteSpace = "no-wrap";
-							span.style.textDecoration = `underline ${annotation.label[0].color}`;
-							span.style.textDecorationThickness = '2px';
-							span.style.textUnderlineOffset = '4px';
-							span.appendChild(range.extractContents());
-							range.insertNode(span);
-
-							break;
+						if (index <= annotation.startPosition && annotation.startPosition < nextIndex) {
+							startNode = node;
+							startIndex = annotation.startPosition - index;
+						}
+						if (index < annotation.endPosition && annotation.endPosition <= nextIndex) {
+							endNode = node;
+							endIndex = annotation.endPosition - index;
 						}
 						index = nextIndex;
+					}
+
+					if (startNode && endNode) {
+						const range = document.createRange();
+						range.setStart(startNode, startIndex);
+						range.setEnd(endNode, endIndex);
+
+						const span = document.createElement('span');
+						span.style.fontWeight = 'bold';
+						span.style.whiteSpace = 'no-wrap';
+						span.style.textDecoration = `underline ${annotation.label[0].color}`;
+						span.style.textDecorationThickness = '2px';
+						span.style.textUnderlineOffset = '4px';
+						span.appendChild(range.extractContents());
+						range.insertNode(span);
 					}
 				}
 			});
