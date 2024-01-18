@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { labelStore, textSelection, selectedLabels } from '../stores/LabelStore';
-	import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
+	import { Autocomplete } from '@skeletonlabs/skeleton';
 	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 	import Label from '../models/Label';
+	import { CustomInputChip } from '$lib';
 
 	import Comment from '../models/Comment';
 	import { comment, clearInput } from '../stores/CommentStore';
@@ -112,33 +113,32 @@
 	}
 </script>
 
-<div class="input-chips max-w-sm mt-1">
+<div class="input-chips max-w-sm mt-1 bg-surface-500 bg-opacity-80 p-1 rounded-xl">
 	<div on:change={createAdditional}>
-		<div class="input-group" style="display: flex;">
+		<div class="input-group flex">
 			<input
 				bind:value={additionalComment}
 				type="text"
 				placeholder="Enter your Comment..."
 				class="input variant-form-material p-2 placeholder-grey"
-				style="flex-grow: 1;"
 			/>
 			<button class="variant-form-secondary" on:click={clearComInput}>Clear</button>
 		</div>
 
-		<div class="input-group" style="display: flex;">
+		<div class="input-group flex">
 			<input
 				bind:value={additionalDefinition}
 				type="text"
 				placeholder="Enter your Definition..."
 				class="input variant-form-material p-2 placeholder-grey"
-				style="flex-grow: 1;"
 			/>
 			<button class="variant-form-secondary" on:click={clearDefInput}>Clear</button>
 		</div>
 	</div>
-	<InputChip
+	<CustomInputChip
 		placeholder="Find Label..."
 		bind:value={labelNames}
+		chipColors={labelList.map((label) => label.color)}
 		name="chips"
 		chips="variant-filled-primary"
 		allowUpperCase

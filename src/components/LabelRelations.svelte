@@ -10,11 +10,13 @@
 	import { faTags } from '@fortawesome/free-solid-svg-icons';
 
 	const drawerStore = getDrawerStore();
+	import EditAnnotation from './EditAnnotation.svelte';
 
 	let annotations;
 	let labels;
 	let selectedAnnotation = null as any;
 	let showForm = false;
+    let editAnnotation = false;
 	let showPopup = null;
 
 	const popupFeatured: PopupSettings = {
@@ -157,11 +159,31 @@
 				{/if}
 				<button
 					type="button"
-					class="btn flex flex-col rounded-none bg-secondary-500 m-2"
-					on:click={() => (selectedAnnotation = annotation)}>Relaties Bewerken</button
-				>
-			</div>
+					class="btn rounded-none bg-secondary-500 m-2"
+					on:click={() => {
+                        selectedAnnotation = annotation;
+                        editAnnotation = false;
+                    }}>Relaties bewerken</button
+                    >
+                    <button
+                        type="button"
+                        class="btn rounded-none bg-secondary-500 m-2"
+                        on:click={() => {
+                            selectedAnnotation = annotation;
+                            editAnnotation = true;
+                        }}>Annotatie Bewerken</button
+                    >
+            </div>
 		{/each}
+    {:else if (selectedAnnotation && editAnnotation)}
+    <EditAnnotation 
+        hideComponent = {() => {
+            selectedAnnotation = null;
+            editAnnotation = false;
+        }}
+
+        selectedAnnotationId = {selectedAnnotation.id}
+    />
 	{:else if !showForm}
 		<div>
 			<button

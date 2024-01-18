@@ -33,5 +33,5 @@
 	on:click={() => handleClick()}
 	type="button"
 >
-	<Fa size="1.5x" icon={faClockRotateLeft} />
+	<Fa size="1.5x" icon={faClockRotateLeft} class="text-surface-900" />
 </button>

@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+
 	import { documentStore } from '../stores/DocumentStore.ts';
 	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
 	import { textSelection, selectedLabels, labelStore } from '../stores/LabelStore.ts';
 	import { addAnnotation, annotationStore } from '../stores/AnnotationStore.ts';
 	import { comment, clearInput } from '../stores/CommentStore.ts';
 	import { definition } from '../stores/DefinitionStores.ts';
+
 	import Annotation from '../models/Annotation.ts';
 	import type Label from '../models/Label.ts';
 	import Comment from '../models/Comment.ts';
@@ -13,6 +15,11 @@
 	import { titleStore } from '../stores/TitleStore.ts';
 
 	let selectedChapters: any;
+
+	selectedChaptersStore.subscribe(value => {
+		selectedChapters = value;
+	});
+
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
 	let selectedAnnotation: Annotation | null = null;
@@ -211,6 +218,10 @@
 		return { start, end };
 	}
 
+	function splitSentences(text) {
+		return text.split('\n');
+	}
+
 	function selectionOffsets(node) {
 		node.addEventListener('mouseup', () => {
 			// Delay the resetting of the selection offsets by 1 millisecond
@@ -236,7 +247,9 @@
 				{#each $documentStore.chapterContents as chapter, index}
 					{#if selectedChapters.has(index)}
 						<h2 class="h2 font-serif">{$documentStore.chapterTitles[index]}</h2>
-						<p>{chapter}</p>
+						{#each splitSentences(chapter) as line}
+								<p>{line}</p>
+						{/each}
 						<hr class="!border-t-8" />
 						<br />
 					{/if}
