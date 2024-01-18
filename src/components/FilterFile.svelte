@@ -1,41 +1,42 @@
 <script lang="ts">
-	import { derived } from 'svelte/store';
-	import { documentStore } from '../stores/DocumentStore.ts';
-	import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
+    import { derived } from 'svelte/store';
+    import { documentStore } from '../stores/DocumentStore.ts';
+    import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
 
     const chaptersStore = derived(documentStore, $documentStore =>
         $documentStore.chapterTitles || []
     );
+
     let selectAll = false;
+
+    $: selectAll = $selectedChaptersStore.length === $chaptersStore.length;
 
     function toggleSelectAll() {
         if (selectAll) {
-            selectedChaptersStore.set(new Set());
+            selectedChaptersStore.set([]);
         } else {
-            selectedChaptersStore.set(new Set($chaptersStore));
+            selectedChaptersStore.set([...$chaptersStore]);
         }
         selectAll = !selectAll;
     }
 
     function handleCheckboxChange(chapterIndex, event) {
         selectedChaptersStore.update(currentSelection => {
-            const newSelection = new Set(currentSelection);
+            const newSelection = [...currentSelection];
+            const indexInArray = newSelection.indexOf(chapterIndex);
             if (event.target.checked) {
-                newSelection.add(chapterIndex);
+                if (indexInArray === -1) newSelection.push(chapterIndex);
             } else {
-                newSelection.delete(chapterIndex);
+                if (indexInArray !== -1) newSelection.splice(indexInArray, 1);
             }
-            selectAll = newSelection.size === $chaptersStore.length;
             return newSelection;
         });
     }
-
-    $: selectAll = $selectedChaptersStore.size === $chaptersStore.length;
 </script>
 
 <div class="mt-10 ml-5">
     <div class="mb-5">
-        <p class="text-gray-500 mb-5">Selecteer de hoofdstukken die je wilt annoteren.</p>
+        <p class="text-slate-300 mb-5">Selecteer de hoofdstukken die je wilt annoteren.</p>
         <div class="flex">
             <input
                     class="checkbox mr-3 min-w-[1.3rem] min-h-[1.3rem] mb-2"
@@ -55,7 +56,7 @@
                         id={`chapter-${index}`}
                         class="checkbox mr-3 min-w-[1.3rem] min-h-[1.3rem]"
                         on:change={(e) => handleCheckboxChange(index, e)}
-                        checked={$selectedChaptersStore.has(chapterTitle)}
+                        checked={$selectedChaptersStore.includes(index)}
                 >
                 <label for={`chapter-${index}`} class="ml-2 cursor-pointer">{chapterTitle}</label>
             </div>
