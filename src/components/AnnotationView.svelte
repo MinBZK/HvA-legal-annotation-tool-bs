@@ -237,7 +237,7 @@
 					{#if $selectedChaptersStore.includes(index)}
 						<h2 class="h2 font-serif mb-2">{$documentStore.chapterTitles[index]}</h2>
 						{#each splitSentences(chapter) as line}
-							<p>{line}</p>
+							{line}<br />
 						{/each}
 						<hr class="!border-t-8" />
 						<br />
