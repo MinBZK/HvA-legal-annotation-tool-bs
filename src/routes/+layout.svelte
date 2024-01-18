@@ -59,7 +59,7 @@
 					<Fa icon={faGear} />
 				</button>
 				<div class="card p-4 w-72 shadow-xl" data-popup="popupStyle">
-					<div class="flex content-center justify-between">
+					<div class="flex items-center justify-between">
 						<div class="flex-initial m-1">
 							<select
 								id="theme-selector"
@@ -80,7 +80,7 @@
 							</select>
 						</div>
 						<div class="flex-initial m-1">
-							<LightSwitch class="size-fit" />
+							<LightSwitch />
 						</div>
 					</div>
 					<div class="arrow bg-surface-100-800-token" />
