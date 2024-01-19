@@ -63,7 +63,6 @@
 				);
 				fileContent = newFile;
 				fileContent = $documentStore;
-				console.log('else');
 			}
 		});
 	});
@@ -110,7 +109,7 @@
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 	<div class="flex flex-row">
-		<Modal regionBody="overflow-scroll" />
+		<Modal regionBody="overflow-auto" />
 		<Toast />
 		<Drawer>
 			{#if $drawerStore.id === 'relationships'}
