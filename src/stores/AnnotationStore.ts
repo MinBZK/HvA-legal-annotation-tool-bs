@@ -12,11 +12,3 @@ export const annotationStore:Writable<Annotation[]> = localStorageStore('annotat
 export const addAnnotation = (annotation: Annotation) => {
     annotationStore.update((annotations: Annotation[]) => [...annotations, annotation]);
 };
-
-// Function to remove an annotation from the store
-export const removeAnnotation = (index: number) => {
-    annotationStore.update((annotations) => {
-        annotations.splice(index, 1);
-        return annotations;
-    });
-};
