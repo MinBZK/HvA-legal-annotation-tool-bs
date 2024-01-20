@@ -8,7 +8,6 @@
 	import { createEventDispatcher } from 'svelte';
 	import LegalDocument from '../models/LegalDocument';
 	import logStore from '../stores/LogStore';
-	import { titleStore } from '../stores/TitleStore';
 
 	let fileContent: {};
 
@@ -106,9 +105,6 @@
 		const data = new LegalDocument(trimmedTitle, filename, chapterTitles, chapterContents, [], []);
 
 		documentStore.set(data);
-		titleStore.set(trimmedTitle);
-		console.dir($titleStore);
-
 
 		fileContent = $documentStore;
 		dispatch('fileUploaded', fileContent);
@@ -200,7 +196,6 @@
 		documentStore.set(reimport);
 		annotationStore.set(annotations);
 		logStore.set(editHistory);
-		titleStore.set(title);
 
 		fileContent = $documentStore;
 		dispatch('fileUploaded', fileContent);

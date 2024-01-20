@@ -6,7 +6,13 @@
 	import { getDrawerStore, popup } from '@skeletonlabs/skeleton';
 	import { onMount, tick } from 'svelte';
 	import Fa from 'svelte-fa';
-	import { faHandshakeAngle, faPenToSquare, faSpaghettiMonsterFlying, faTags, faTrash } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faHandshakeAngle,
+		faPenToSquare,
+		faSpaghettiMonsterFlying,
+		faTags,
+		faTrash
+	} from '@fortawesome/free-solid-svg-icons';
 	import EditAnnotation from './EditAnnotation.svelte';
 
 	// Initialize stores
@@ -113,20 +119,6 @@
 		</div>
 		{#each annotations as annotation, index}
 			<div class="gap-3 mt-5 bg-surface-800 p-3 rounded-md ml-2 w-3/4">
-				<!-- confirmation popup for annotation deletion -->
-				<!-- <div class="card p-4 w-wrap shadow-xl" data-popup="popupFeatured">
-					<div><p>Weet u het zeker?</p></div>
-					<div class="flex justify-center mt-6">
-						<button class="bg-error-500 rounded-full w-full">Nee</button>
-						<button
-							class="bg-success-500 rounded-full ml-2 w-full"
-							on:click={() => annotationStore.update((annotations) => {
-								annotations.splice(index, 1);
-								return annotations;})}>Ja</button
-						>
-					</div>
-					<div class="arrow bg-surface-100-800-token" />
-				</div> -->
 				<div class="flex justify-between items-center">
 					<!-- set showPopup to the id of the corresponding div on mouseover -->
 					<p
@@ -143,17 +135,17 @@
 
 					<div class="self-start">
 						<button
-						type="button"
-						class="btn rounded-md bg-error-500 m-2"
-						on:click={() => {
-							annotationStore.update((annotations) => {
-								annotations.splice(index, 1);
-								return annotations;
-							});
-						}}
-					>
-					<Fa class="text-surface-900" size="1.5x" icon={faTrash} />
-					</button>
+							type="button"
+							class="btn rounded-md bg-error-500 m-2"
+							on:click={() => {
+								annotationStore.update((annotations) => {
+									annotations.splice(index, 1);
+									return annotations;
+								});
+							}}
+						>
+							<Fa class="text-surface-900" size="1.5x" icon={faTrash} />
+						</button>
 					</div>
 				</div>
 
@@ -186,25 +178,25 @@
 				{/if}
 				<div class="flex">
 					<button
-					type="button"
-					class="btn rounded-md bg-success-500 m-2"
-					on:click={() => {
-						selectedAnnotation = annotation;
-						editAnnotation = false;
-					}}>
-					<Fa class="text-surface-900" size="1.5x" icon={faHandshakeAngle} />
-					</button
-				>
-				<button
-					type="button"
-					class="btn rounded-md bg-primary-500 m-2"
-					on:click={() => {
-						selectedAnnotation = annotation;
-						editAnnotation = true;
-					}}>
-					<Fa class="text-surface-900" size="1.5x" icon={faPenToSquare} />
-					</button
-				>
+						type="button"
+						class="btn rounded-md bg-success-500 m-2"
+						on:click={() => {
+							selectedAnnotation = annotation;
+							editAnnotation = false;
+						}}
+					>
+						<Fa class="text-surface-900" size="1.5x" icon={faHandshakeAngle} />
+					</button>
+					<button
+						type="button"
+						class="btn rounded-md bg-primary-500 m-2"
+						on:click={() => {
+							selectedAnnotation = annotation;
+							editAnnotation = true;
+						}}
+					>
+						<Fa class="text-surface-900" size="1.5x" icon={faPenToSquare} />
+					</button>
 				</div>
 			</div>
 		{/each}
