@@ -7,7 +7,7 @@
         $documentStore.chapterTitles || []
     );
 
-    let selectAll = $selectedChaptersStore.length === $chaptersStore.length;
+    let selectAll = true;
 
     $: selectAll = $selectedChaptersStore.length === $chaptersStore.length;
 
