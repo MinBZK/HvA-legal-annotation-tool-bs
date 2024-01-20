@@ -84,8 +84,7 @@
 		const trimmedTitle = title.trim().replace(/\n/g, ' ');
 		const chapterElements = result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.hoofdstuk ||
 				result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.deel?.hoofdstuk ||
-				result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.artikel
-
+				result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.artikel;
 
 		let chapterTitles: string[] = [];
 		let chapterContents: string[] = [];
