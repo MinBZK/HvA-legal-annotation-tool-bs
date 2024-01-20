@@ -152,7 +152,7 @@
 					><path d="M7.33 24l-2.83-2.829 9.339-9.175-9.339-9.167 2.83-2.829 12.17 11.996z" /></svg
 				>
 			</div>
-		</button>
+		</div>
 		<div class="flex justify-center items-center h-screen">
 			<div class="w-1/2 overflow-auto h-[100vh] flex justify-center">
 				<div class="h-1/3">
