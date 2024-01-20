@@ -236,8 +236,9 @@
 						{#each splitSentences(chapter) as line}
 							<p>{line}</p>
 						{/each}
+						<br>
 						<hr class="!border-t-8" />
-						<br />
+						<br>
 					{/if}
 				{/each}
 			</div>
