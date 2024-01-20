@@ -27,7 +27,6 @@
 	import AuditLog from '../components/AuditLog.svelte';
 	import LabelList from '../components/LabelList.svelte';
 	import { annotationStore } from '../stores/AnnotationStore';
-	import { titleStore } from '../stores/TitleStore';
 	import { selectedChaptersStore } from '../stores/SelectedChapterStore';
 
 	let showAnnotations = false;
@@ -78,7 +77,6 @@
 			response: (r: boolean) => {
 				if (r) {
 					localStorage.clear();
-					titleStore.set('');
 					$documentStore.title = '';
 					$documentStore.filename = '';
 					$documentStore.chapterTitles = [];
@@ -106,8 +104,6 @@
 		</div>
 	</div>
 {:else}
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<!-- svelte-ignore a11y-mouse-events-have-key-events -->
 	<div class="flex flex-row">
 		<Modal regionBody="overflow-auto" />
 		<Toast />
@@ -123,6 +119,8 @@
 			{/if}
 		</Drawer>
 		<div
+			role="button"
+			tabindex="0"
 			class="text-white font-bold py-2 px-4 mt-2 mr-2 fixed left-0 top-1/2 -translate-y-1/2 bg-transparent border-0"
 			on:mousemove={() => {
 				drawerStore.open({
@@ -165,6 +163,7 @@
 			<LabelInputChips />
 		</div>
 		<button
+			tabindex="0"
 			class="text-white font-bold py-2 px-4 mt-2 mr-2 fixed right-0 top-1/2 -translate-y-1/2 bg-transparent border-0"
 			on:click={() => {
 				drawerStore.open({
@@ -177,7 +176,9 @@
 				});
 			}}
 			on:mouseover={() => (showAnnotations = true)}
+			on:focus={() => (showAnnotations = true)}
 			on:mouseout={() => (showAnnotations = false)}
+			on:blur={() => (showAnnotations = false)}
 		>
 			<div class="flex items-center group">
 				<svg

@@ -8,7 +8,6 @@
 	import { createEventDispatcher } from 'svelte';
 	import LegalDocument from '../models/LegalDocument';
 	import logStore from '../stores/LogStore';
-	import { titleStore } from '../stores/TitleStore';
 
 	let fileContent: {};
 
@@ -84,8 +83,7 @@
 		const trimmedTitle = title.trim().replace(/\n/g, ' ');
 		const chapterElements = result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.hoofdstuk ||
 				result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.deel?.hoofdstuk ||
-				result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.artikel
-
+				result?.toestand?.wetgeving?.['wet-besluit']?.wettekst?.artikel;
 
 		let chapterTitles: string[] = [];
 		let chapterContents: string[] = [];
@@ -107,9 +105,6 @@
 		const data = new LegalDocument(trimmedTitle, filename, chapterTitles, chapterContents, [], []);
 
 		documentStore.set(data);
-		titleStore.set(trimmedTitle);
-		console.dir($titleStore);
-
 
 		fileContent = $documentStore;
 		dispatch('fileUploaded', fileContent);
@@ -201,7 +196,6 @@
 		documentStore.set(reimport);
 		annotationStore.set(annotations);
 		logStore.set(editHistory);
-		titleStore.set(title);
 
 		fileContent = $documentStore;
 		dispatch('fileUploaded', fileContent);
