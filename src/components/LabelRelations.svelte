@@ -1,23 +1,23 @@
 <script lang="ts">
-	import { annotationStore, removeAnnotation } from '../stores/AnnotationStore';
+	import { annotationStore } from '../stores/AnnotationStore';
 	import RelationForm from './RelationForm.svelte';
 	import { labelStore } from '../stores/LabelStore';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import { getDrawerStore, popup } from '@skeletonlabs/skeleton';
 	import { onMount, tick } from 'svelte';
 	import Fa from 'svelte-fa';
-	import { faTags } from '@fortawesome/free-solid-svg-icons';
-    import EditAnnotation from './EditAnnotation.svelte';
+	import { faHandshakeAngle, faPenToSquare, faSpaghettiMonsterFlying, faTags, faTrash } from '@fortawesome/free-solid-svg-icons';
+	import EditAnnotation from './EditAnnotation.svelte';
 
-    // Initialize stores
+	// Initialize stores
 	const drawerStore = getDrawerStore();
 
-
-    // Initialize variables
+	// Initialize variables
 	let annotations;
 	let labels;
 	let selectedAnnotation = null as any;
 	let showForm = false;
+	let editAnnotation = false;
 	let showPopup = null;
     let editAnnotation = false;
 
@@ -27,7 +27,7 @@
 		placement: 'top'
 	};
 
-    // Subscribe to stores
+	// Subscribe to stores
 	labelStore.subscribe((e) => (labels = e));
 	annotationStore.subscribe((e) => (annotations = e));
 
@@ -38,20 +38,20 @@
 		});
 	});
 
-    /**
-     * Function to handle the logic when a relation is deleted
-     * @param relation - The relation that is deleted
-     * @returns void
-     */
+	/**
+	 * Function to handle the logic when a relation is deleted
+	 * @param relation - The relation that is deleted
+	 * @returns void
+	 */
 	function onDeleteRelation(relation) {
 		annotationStore.update((annotations) => {
-            // Get the source and target annotation
+			// Get the source and target annotation
 			const sourceAnnotation = annotations.find((a) => a.id === relation.source);
 			const targetAnnotation = annotations.find((a) => a.id === relation.target);
 
-            // Check if the source and target annotation exist
+			// Check if the source and target annotation exist
 			if (sourceAnnotation && targetAnnotation) {
-                // Remove the relation from the source annotation
+				// Remove the relation from the source annotation
 				sourceAnnotation.relationships = sourceAnnotation.relationships.filter(
 					(r) =>
 						!(
@@ -61,7 +61,7 @@
 						)
 				);
 
-                // Remove the relation from the target annotation
+				// Remove the relation from the target annotation
 				targetAnnotation.relationships = targetAnnotation.relationships.filter(
 					(r) =>
 						!(
@@ -76,10 +76,10 @@
 		});
 	}
 
-    /**
-     * Function to shorten the text of an annotation
-     * @param text
-     */
+	/**
+	 * Function to shorten the text of an annotation
+	 * @param text
+	 */
 	function shortenText(text) {
 		const words = text.split(' ');
 		if (words.length <= 8) {
@@ -112,20 +112,22 @@
 				><Fa icon={faTags} size="1.5x"></Fa>
 			</button>
 		</div>
-		{#each annotations as annotation}
-			<div class="gap-3 mt-5 border-2 border-surface-300 ml-2 w-3/4">
+		{#each annotations as annotation, index}
+			<div class="gap-3 mt-5 bg-surface-800 p-3 rounded-md ml-2 w-3/4">
 				<!-- confirmation popup for annotation deletion -->
-				<div class="card p-4 w-wrap shadow-xl" data-popup="popupFeatured">
+				<!-- <div class="card p-4 w-wrap shadow-xl" data-popup="popupFeatured">
 					<div><p>Weet u het zeker?</p></div>
 					<div class="flex justify-center mt-6">
 						<button class="bg-error-500 rounded-full w-full">Nee</button>
 						<button
 							class="bg-success-500 rounded-full ml-2 w-full"
-							on:click={() => removeAnnotation(annotation)}>Ja</button
+							on:click={() => annotationStore.update((annotations) => {
+								annotations.splice(index, 1);
+								return annotations;})}>Ja</button
 						>
 					</div>
 					<div class="arrow bg-surface-100-800-token" />
-				</div>
+				</div> -->
 				<div class="flex justify-between items-center">
 					<!-- set showPopup to the id of the corresponding div on mouseover -->
 					<p
@@ -140,10 +142,20 @@
 						{shortenText(annotation.text)}
 					</p>
 
-					<button
-						class="mr-2 bg-transparent text-red-500 text-3xl hover:text-white rounded-full"
-						use:popup={popupFeatured}>X</button
+					<div class="self-start">
+						<button
+						type="button"
+						class="btn rounded-md bg-error-500 m-2"
+						on:click={() => {
+							annotationStore.update((annotations) => {
+								annotations.splice(index, 1);
+								return annotations;
+							});
+						}}
 					>
+					<Fa class="text-surface-900" size="1.5x" icon={faTrash} />
+					</button>
+					</div>
 				</div>
 
 				<!-- add an id to each popup div -->
@@ -157,52 +169,57 @@
 					<p>{annotation.text}</p>
 				</div>
 
-				<div class="flex space-x-1 ml-2">
+				<div class="flex space-x-1 ml-2 pt-3">
 					<p class="text-sm">Labels:</p>
 					{#each annotation.label as label}
 						<p class="text-xs mt-0.5 ml-2" style="color: {label.color};">{label.name}</p>
 					{/each}
 				</div>
 				{#if annotation.definition.definition == '' || annotation.definition.definition == undefined}
-					<p class="text-base ml-2">Definition: N.v.t.</p>
+					<p class="text-base pt-2 ml-2">Definition: N.v.t.</p>
 				{:else}
-					<p class="text-base ml-2">Definition: {annotation.definition.definition}</p>
+					<p class="text-base pt-2 ml-2">Definition: {annotation.definition.definition}</p>
 				{/if}
 				{#if annotation.comment.comment == '' || annotation.definition.definition == undefined}
 					<p class="text-base ml-2">Comment: N.v.t.</p>
 				{:else}
 					<p class="text-base ml-2">Comment: {annotation.comment.comment}</p>
 				{/if}
+				<div class="flex">
+					<button
+					type="button"
+					class="btn rounded-md bg-success-500 m-2"
+					on:click={() => {
+						selectedAnnotation = annotation;
+						editAnnotation = false;
+					}}>
+					<Fa class="text-surface-900" size="1.5x" icon={faHandshakeAngle} />
+					</button
+				>
 				<button
 					type="button"
-					class="btn rounded-none bg-secondary-500 m-2"
+					class="btn rounded-md bg-primary-500 m-2"
 					on:click={() => {
-                        selectedAnnotation = annotation;
-                        editAnnotation = false;
-                    }}>Relaties bewerken</button
-                    >
-                    <button
-                        type="button"
-                        class="btn rounded-none bg-secondary-500 m-2"
-                        on:click={() => {
-                            selectedAnnotation = annotation;
-                            editAnnotation = true;
-                        }}>Annotatie Bewerken</button
-                    >
-            </div>
+						selectedAnnotation = annotation;
+						editAnnotation = true;
+					}}>
+					<Fa class="text-surface-900" size="1.5x" icon={faPenToSquare} />
+					</button
+				>
+				</div>
+			</div>
 		{/each}
-    {:else if (selectedAnnotation && editAnnotation)}
-    <EditAnnotation 
-        hideComponent = {() => {
-            selectedAnnotation = null;
-            editAnnotation = false;
-        }}
-
-        selectedAnnotationId = {selectedAnnotation.id}
-    />
+	{:else if selectedAnnotation && editAnnotation}
+		<EditAnnotation
+			hideComponent={() => {
+				selectedAnnotation = null;
+				editAnnotation = false;
+			}}
+			selectedAnnotationId={selectedAnnotation.id}
+		/>
 	{:else if !showForm}
 		<div>
-            <h1 class="h5 font-bold">Annotatie: "{selectedAnnotation.text}"</h1>
+			<h1 class="h5 font-bold">Annotatie: "{selectedAnnotation.text}"</h1>
 
 			<button
 				type="button"
