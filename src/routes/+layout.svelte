@@ -21,9 +21,18 @@
 
 	let theme = 'skeleton';
 
+	onMount(() => {
+		const savedTheme = localStorage.getItem('theme');
+		if (savedTheme) {
+			theme = savedTheme;
+			document.body.setAttribute('data-theme', theme);
+		}
+	});
+
 	function changeTheme(event: any) {
 		theme = event.target.value;
 		document.body.setAttribute('data-theme', theme);
+		localStorage.setItem('theme', theme);
 	}
 
 	const popupStyle: PopupSettings = {
@@ -36,6 +45,7 @@
 	import { documentStore } from '../stores/DocumentStore';
 	import Fa from 'svelte-fa';
 	import { faGear } from '@fortawesome/free-solid-svg-icons';
+	import {onMount} from "svelte";
 </script>
 
 <AppShell>
