@@ -19,7 +19,6 @@
 	let showForm = false;
 	let editAnnotation = false;
 	let showPopup = null;
-    let editAnnotation = false;
 
 	const popupFeatured: PopupSettings = {
 		event: 'click',
