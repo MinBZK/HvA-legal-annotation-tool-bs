@@ -12,7 +12,6 @@
 	import type Label from '../models/Label.ts';
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
-	import { titleStore } from '../stores/TitleStore.ts';
 
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
@@ -228,7 +227,7 @@
 			<div class="mt-3" use:selectionOffsets bind:this={boundDoc} on:mouseup={handleSelection}>
 				{#if $selectedChaptersStore && $selectedChaptersStore.length > 0}
 					<h1 class="h1 font-mono mb-2">
-						{$titleStore}
+						{$documentStore.title}
 					</h1>
 				{/if}
 				{#each $documentStore.chapterContents as chapter, index}
