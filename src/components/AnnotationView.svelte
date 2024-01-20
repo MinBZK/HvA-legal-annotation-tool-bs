@@ -12,7 +12,6 @@
 	import type Label from '../models/Label.ts';
 	import Comment from '../models/Comment.ts';
 	import Definition from '../models/Definition.ts';
-	import { titleStore } from '../stores/TitleStore.ts';
 
 	let selectedText: Selection | null;
 	let previousSelection: string | null = null;
@@ -77,6 +76,12 @@
 		}
 
 		if (selection && selection.toString().length > 3) {
+			
+			// Check if the parent tag is a header tag.
+			const parentTag = selection.anchorNode?.parentNode?.nodeName.toLowerCase();
+			if (parentTag?.startsWith('h') && !isNaN(Number(parentTag[1]))) return;
+
+
 			inputChipsDiv.style.display = 'block';
 			const selectedText = selection.toString();
 
@@ -95,16 +100,20 @@
 			}
 
 			// Highlight the selected text
-			highlightSpan = document.createElement('span');
-			highlightSpan.style.paddingTop = '4px';
-			highlightSpan.style.paddingBottom = '5px';
-			highlightSpan.style.backgroundColor = 'rgba(var(--color-primary-900) / 1)';
-			highlightSpan.appendChild(range.extractContents());
-			range.insertNode(highlightSpan);
+			// highlightSpan = document.createElement('span');
+			// highlightSpan.style.paddingTop = '4px';
+			// highlightSpan.style.paddingBottom = '5px';
+			// highlightSpan.style.backgroundColor = 'rgba(var(--color-primary-900) / 1)';
+			// highlightSpan.appendChild(range.surroundContents(highlightSpan));
+			// range.insertNode(highlightSpan);
 
 			previousSelection = selectedText;
 		} else {
 			inputChipsDiv.style.display = 'none';
+
+			annotationStore.subscribe((annotations) => {
+				deleteSpansWithoutAnnotations(annotations);
+			});
 		}
 	}
 
@@ -167,29 +176,59 @@
 					const walker = document.createTreeWalker(boundDoc, NodeFilter.SHOW_TEXT, null);
 					let node;
 					let index = 0;
+					let startNode, endNode, startIndex, endIndex;
 					while ((node = walker.nextNode())) {
 						const nextIndex = index + node.textContent.length;
-						if (index <= annotation.startPosition && annotation.endPosition <= nextIndex) {
-							const range = document.createRange();
-							range.setStart(node, annotation.startPosition - index);
-							range.setEnd(node, annotation.endPosition - index);
-
-							const span = document.createElement('span');
-							span.style.fontWeight = 'bold';
-							span.style.whiteSpace = "no-wrap";
-							span.style.textDecoration = `underline ${annotation.label[0].color}`;
-							span.style.textDecorationThickness = '2px';
-							span.style.textUnderlineOffset = '4px';
-							span.appendChild(range.extractContents());
-							range.insertNode(span);
-
-							break;
+						if (index <= annotation.startPosition && annotation.startPosition < nextIndex) {
+							startNode = node;
+							startIndex = annotation.startPosition - index;
+						}
+						if (index < annotation.endPosition && annotation.endPosition <= nextIndex) {
+							endNode = node;
+							endIndex = annotation.endPosition - index;
 						}
 						index = nextIndex;
+					}
+
+					if (startNode && endNode) {
+						const range = document.createRange();
+						range.setStart(startNode, startIndex);
+						range.setEnd(endNode, endIndex);
+
+						const span = document.createElement('span');
+						span.style.fontWeight = 'bold';
+						span.style.whiteSpace = 'no-wrap';
+						span.style.textDecoration = `underline ${annotation.label[0].color}`;
+						span.style.textDecorationThickness = '2px';
+						span.style.textUnderlineOffset = '4px';
+						span.appendChild(range.extractContents());
+						range.insertNode(span);
 					}
 				}
 			});
 		});
+	}
+
+	function deleteSpansWithoutAnnotations(annotations) {
+		// Create a new TreeWalker for span elements
+		const spanWalker = document.createTreeWalker(boundDoc, NodeFilter.SHOW_ELEMENT, {
+			acceptNode: (node) => {
+				return node.nodeName.toLowerCase() === 'span'
+					? NodeFilter.FILTER_ACCEPT
+					: NodeFilter.FILTER_SKIP;
+			}
+		});
+
+		let spanNode;
+		while ((spanNode = spanWalker.nextNode())) {
+			const spanText = spanNode.textContent;
+			const match = annotations.some((annotation) => annotation.text === spanText);
+
+			if (!match) {
+				// Replace the span with its own text content
+				spanNode.replaceWith(spanText);
+			}
+		}
 	}
 
 	function getSelectionCharacterOffsetWithin(element) {
@@ -228,17 +267,18 @@
 			<div class="mt-3" use:selectionOffsets bind:this={boundDoc} on:mouseup={handleSelection}>
 				{#if $selectedChaptersStore && $selectedChaptersStore.length > 0}
 					<h1 class="h1 font-mono mb-2">
-						{$titleStore}
+						{$documentStore.title}
 					</h1>
 				{/if}
 				{#each $documentStore.chapterContents as chapter, index}
 					{#if $selectedChaptersStore.includes(index)}
 						<h2 class="h2 font-serif mb-2">{$documentStore.chapterTitles[index]}</h2>
 						{#each splitSentences(chapter) as line}
-							<p>{line}</p>
+							{line}<br />
 						{/each}
+						<br>
 						<hr class="!border-t-8" />
-						<br />
+						<br>
 					{/if}
 				{/each}
 			</div>
