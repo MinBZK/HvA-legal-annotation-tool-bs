@@ -7,7 +7,7 @@
         $documentStore.chapterTitles || []
     );
 
-    let selectAll = false;
+    let selectAll = $selectedChaptersStore.length === $chaptersStore.length;
 
     $: selectAll = $selectedChaptersStore.length === $chaptersStore.length;
 
@@ -15,9 +15,8 @@
         if (selectAll) {
             selectedChaptersStore.set([]);
         } else {
-            selectedChaptersStore.set([...$chaptersStore]);
+            selectedChaptersStore.set($chaptersStore.map((_, index) => index));
         }
-        selectAll = !selectAll;
     }
 
     function handleCheckboxChange(chapterIndex, event) {
