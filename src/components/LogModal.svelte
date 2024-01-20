@@ -9,8 +9,6 @@
 	import type EditHistory from '../models/EditHistory';
 	import type { SvelteComponent } from 'svelte';
 
-	export let parent: SvelteComponent;
-
 	// local
 	const modalStore = getModalStore();
 
