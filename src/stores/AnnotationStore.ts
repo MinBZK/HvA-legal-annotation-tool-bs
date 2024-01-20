@@ -14,6 +14,9 @@ export const addAnnotation = (annotation: Annotation) => {
 };
 
 // Function to remove an annotation from the store
-export const removeAnnotation = (annotation: Annotation) => {
-    annotationStore.update((annotations) => annotations.filter((a) => a !== annotation));
+export const removeAnnotation = (index: number) => {
+    annotationStore.update((annotations) => {
+        annotations.splice(index, 1);
+        return annotations;
+    });
 };
