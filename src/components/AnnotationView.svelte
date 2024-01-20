@@ -100,12 +100,12 @@
 			}
 
 			// Highlight the selected text
-			highlightSpan = document.createElement('span');
-			highlightSpan.style.paddingTop = '4px';
-			highlightSpan.style.paddingBottom = '5px';
-			highlightSpan.style.backgroundColor = 'rgba(var(--color-primary-900) / 1)';
-			highlightSpan.appendChild(range.surroundContents(highlightSpan));
-			range.insertNode(highlightSpan);
+			// highlightSpan = document.createElement('span');
+			// highlightSpan.style.paddingTop = '4px';
+			// highlightSpan.style.paddingBottom = '5px';
+			// highlightSpan.style.backgroundColor = 'rgba(var(--color-primary-900) / 1)';
+			// highlightSpan.appendChild(range.surroundContents(highlightSpan));
+			// range.insertNode(highlightSpan);
 
 			previousSelection = selectedText;
 		} else {
