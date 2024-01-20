@@ -5,13 +5,21 @@
 	import Fa from 'svelte-fa';
 	import { faFileUpload } from '@fortawesome/free-solid-svg-icons';
 	import { xml2js } from 'xml-js';
-	import { createEventDispatcher } from 'svelte';
+	import {createEventDispatcher, onMount} from 'svelte';
 	import LegalDocument from '../models/LegalDocument';
 	import logStore from '../stores/LogStore';
 
 	let fileContent: {};
 
 	const dispatch = createEventDispatcher();
+
+	// Makes sure the selectedChaptersStore is set to all chapters when a new file is uploaded
+	const chaptersStore = derived(documentStore, $documentStore =>
+			$documentStore.chapterTitles || []
+	);
+	onMount(() => {
+		selectedChaptersStore.set($chaptersStore.map((_, index) => index));
+	});
 
 	function onChangeHandler(e: Event): void {
 		const input = e.target as HTMLInputElement;

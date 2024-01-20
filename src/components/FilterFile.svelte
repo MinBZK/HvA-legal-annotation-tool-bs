@@ -2,6 +2,7 @@
     import { derived } from 'svelte/store';
     import { documentStore } from '../stores/DocumentStore.ts';
     import { selectedChaptersStore } from '../stores/SelectedChapterStore.ts';
+    import {onMount} from "svelte";
 
     const chaptersStore = derived(documentStore, $documentStore =>
         $documentStore.chapterTitles || []
