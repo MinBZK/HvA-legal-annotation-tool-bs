@@ -110,6 +110,10 @@
 			previousSelection = selectedText;
 		} else {
 			inputChipsDiv.style.display = 'none';
+
+			annotationStore.subscribe((annotations) => {
+				deleteSpansWithoutAnnotations(annotations);
+			});
 		}
 	}
 
@@ -203,6 +207,28 @@
 				}
 			});
 		});
+	}
+
+	function deleteSpansWithoutAnnotations(annotations) {
+		// Create a new TreeWalker for span elements
+		const spanWalker = document.createTreeWalker(boundDoc, NodeFilter.SHOW_ELEMENT, {
+			acceptNode: (node) => {
+				return node.nodeName.toLowerCase() === 'span'
+					? NodeFilter.FILTER_ACCEPT
+					: NodeFilter.FILTER_SKIP;
+			}
+		});
+
+		let spanNode;
+		while ((spanNode = spanWalker.nextNode())) {
+			const spanText = spanNode.textContent;
+			const match = annotations.some((annotation) => annotation.text === spanText);
+
+			if (!match) {
+				// Replace the span with its own text content
+				spanNode.replaceWith(spanText);
+			}
+		}
 	}
 
 	function getSelectionCharacterOffsetWithin(element) {
