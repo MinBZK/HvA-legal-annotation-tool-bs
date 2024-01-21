@@ -14,6 +14,7 @@
 	let labelList: Label[] = [];
 	let labelNames: string[] = [];
 	let inputColor = '';
+	let inputChip = '';
 
 	type completeOptions = AutocompleteOption<string>;
 	let autoCompleteOptions: completeOptions[] = [];
@@ -138,6 +139,7 @@
 	<CustomInputChip
 		placeholder="Find Label..."
 		bind:value={labelNames}
+		bind:input={inputChip}
 		chipColors={labelList.map((label) => label.color)}
 		name="chips"
 		chips="variant-filled-primary"
@@ -145,6 +147,6 @@
 		on:remove={onInputChipDeselect}
 	/>
 	<div class="card max-h-48 p-4 overflow-y-auto" tabindex="-1">
-		<Autocomplete options={autoCompleteOptions} on:selection={onInputChipSelect} />
+		<Autocomplete bind:input={inputChip} options={autoCompleteOptions} on:selection={onInputChipSelect} />
 	</div>
 </div>
