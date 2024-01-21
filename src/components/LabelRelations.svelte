@@ -118,7 +118,7 @@
 			</button>
 		</div>
 		{#each annotations as annotation, index}
-			<div class="gap-3 mt-5 bg-surface-800 p-3 rounded-md ml-2 w-3/4">
+			<div class="gap-3 mt-5 bg-surface-800 p-3 rounded-md ml-2 w-5/6">
 				<div class="flex justify-between items-center">
 					<!-- set showPopup to the id of the corresponding div on mouseover -->
 					<p
@@ -271,7 +271,7 @@
 	.hoverPop::after {
 		content: '';
 		position: absolute;
-		top: 45%;
+		top: 35%;
 		right: -23px;
 		border-width: 12px;
 		border-style: solid;
