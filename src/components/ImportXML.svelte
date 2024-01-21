@@ -85,7 +85,6 @@
 		const formattedXML = beautify(xml);
 
 		// Checks to see if file is a reimport (i.e. a file prepended with LAT_)
-		console.dir(formattedXML);
 		if (filename.startsWith('LAT_')) {
 			parseLAT(filename, formattedXML);
 			return;
