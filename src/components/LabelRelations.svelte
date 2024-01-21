@@ -264,7 +264,7 @@
 	.hoverPop::after {
 		content: '';
 		position: absolute;
-		top: 45%;
+		top: 35%;
 		right: -23px;
 		border-width: 12px;
 		border-style: solid;
