@@ -140,6 +140,13 @@
 							on:click={() => {
 								annotationStore.update((annotations) => {
 									annotations.splice(index, 1);
+
+                                    annotations.forEach((annotation) => {
+                                        annotation.relationships = annotation.relationships.filter((relationship) => {
+                                            return relationship.source !== annotation.id && relationship.target !== annotation.id;
+                                        });
+                                    });
+                                    
 									return annotations;
 								});
 							}}
