@@ -5,6 +5,7 @@
 	import Fa from 'svelte-fa';
 	import { faFileUpload } from '@fortawesome/free-solid-svg-icons';
 	import { xml2js } from 'xml-js';
+	import beautify from 'xml-beautifier';
 	import {createEventDispatcher, onMount} from 'svelte';
 	import LegalDocument from '../models/LegalDocument';
 	import logStore from '../stores/LogStore';
@@ -81,13 +82,15 @@
 
 	// Converts XML to a LegalDocument model, if the file is a reimport, it is parsed by parseLAT().
 	function convertXMLtoObj(xml: string, filename: string): void {
+		const formattedXML = beautify(xml);
+
 		// Checks to see if file is a reimport (i.e. a file prepended with LAT_)
+		console.dir(formattedXML);
 		if (filename.startsWith('LAT_')) {
-			parseLAT(filename, xml);
+			parseLAT(filename, formattedXML);
 			return;
 		}
-
-		const result = xml2js(xml, { compact: true }) as any;
+		const result = xml2js(formattedXML, { compact: true }) as any;
 
 		const title = result?.toestand?.wetgeving?.citeertitel?._text || 'No Title';
 		const trimmedTitle = title.trim().replace(/\n/g, ' ');
