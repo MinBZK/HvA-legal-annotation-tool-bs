@@ -18,7 +18,10 @@
 		getDrawerStore,
 		getModalStore,
 		initializeStores,
-		type ModalSettings
+		type ModalSettings,
+
+		localStorageStore
+
 	} from '@skeletonlabs/skeleton';
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
@@ -82,7 +85,8 @@
 					$documentStore.chapterContents = [];
 					$documentStore.annotations = [];
 					$documentStore.history = [];
-					annotationStore.set([]);
+					localStorage.clear();
+					location.reload();
 					selectedChaptersStore.set([]);
 					fileContent = null;
 				}
