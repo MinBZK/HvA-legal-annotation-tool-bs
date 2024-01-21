@@ -85,10 +85,12 @@
 					$documentStore.chapterContents = [];
 					$documentStore.annotations = [];
 					$documentStore.history = [];
+					selectedChaptersStore.set([]);
+					annotationStore.set([]);
+					fileContent = null;
 					localStorage.clear();
 					location.reload();
-					selectedChaptersStore.set([]);
-					fileContent = null;
+
 				}
 			}
 		};
