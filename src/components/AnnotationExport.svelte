@@ -11,7 +11,6 @@
     let message = 'Niet alle verplichte relaties tussen labels zijn aanwezig!<br>';
 
 	function handleClickExport(fileName = '', data: LegalDocument) {
-		// TO-DO: Clarify required relationships, commented out for ease of demo...
 		let valid: boolean = checkRelationships();
 
 		new Promise<boolean>((resolve) => {

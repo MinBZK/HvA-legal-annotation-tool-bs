@@ -7,7 +7,6 @@
 	} from '@skeletonlabs/skeleton';
 	import logStore from '../stores/LogStore';
 	import type EditHistory from '../models/EditHistory';
-	import type { SvelteComponent } from 'svelte';
 
 	// local
 	const modalStore = getModalStore();

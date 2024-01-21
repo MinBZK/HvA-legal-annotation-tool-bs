@@ -8,6 +8,8 @@
 	import {createEventDispatcher, onMount} from 'svelte';
 	import LegalDocument from '../models/LegalDocument';
 	import logStore from '../stores/LogStore';
+	import { derived } from 'svelte/store';
+	import { selectedChaptersStore } from '../stores/SelectedChapterStore';
 
 	let fileContent: {};
 
