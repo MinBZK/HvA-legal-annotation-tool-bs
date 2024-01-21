@@ -16,7 +16,7 @@
 	auditLog = $logStore;
 
 	const tableLog: TableSource = {
-		head: ['Name', 'Date'],
+		head: ['Naam', 'Datum'],
 		body: tableMapperValues(auditLog, ['user', 'date'])
 	};
 </script>
@@ -25,7 +25,7 @@
 
 {#if $modalStore[0]}
 	<div class="w-1/2">
-		<h2 class="h2 font-mono">File History</h2>
+		<h2 class="h2 font-mono">Geschiedenis</h2>
 		<Table source={tableLog} interactive={true} />
 	</div>
 {/if}
