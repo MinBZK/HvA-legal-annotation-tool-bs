@@ -22,7 +22,7 @@
 	let selectedDefinition: Definition;
 	let selectionOffset = { start: 0, end: 0 };
 	let boundDoc: HTMLElement;
-	let highlightSpan: { parentNode: { insertBefore: (arg0: any, arg1: any) => void; removeChild: (arg0: any) => void; }; firstChild: any; };
+	let highlightSpan;
 
 	$: {
 		selectedLabels.subscribe((value) => {
@@ -173,16 +173,12 @@
 		annotationStore.subscribe((annotations) => {
 			annotations.forEach((annotation) => {
 				if (boundDoc) {
-					let startNode: Node | null = null;
-					let endNode: Node | null = null;
-					let startIndex = 0;
-					let endIndex = 0;
-
 					const walker = document.createTreeWalker(boundDoc, NodeFilter.SHOW_TEXT, null);
-					let node: Node | null;
+					let node;
 					let index = 0;
+					let startNode, endNode, startIndex, endIndex;
 					while ((node = walker.nextNode())) {
-						const nextIndex = index + (node.textContent?.length ?? 0);
+						const nextIndex = index + node.textContent.length;
 						if (index <= annotation.startPosition && annotation.startPosition < nextIndex) {
 							startNode = node;
 							startIndex = annotation.startPosition - index;
@@ -213,7 +209,7 @@
 		});
 	}
 
-	function deleteSpansWithoutAnnotations(annotations: any[]) {
+	function deleteSpansWithoutAnnotations(annotations) {
 		// Create a new TreeWalker for span elements
 		const spanWalker = document.createTreeWalker(boundDoc, NodeFilter.SHOW_ELEMENT, {
 			acceptNode: (node) => {
@@ -223,19 +219,19 @@
 			}
 		});
 
-		let spanNode: Node | null;
+		let spanNode;
 		while ((spanNode = spanWalker.nextNode())) {
 			const spanText = spanNode.textContent;
-			const match = annotations.some((annotation: { text: any; }) => annotation.text === spanText);
+			const match = annotations.some((annotation) => annotation.text === spanText);
 
 			if (!match) {
 				// Replace the span with its own text content
-				spanNode.textContent = spanText;
+				spanNode.replaceWith(spanText);
 			}
 		}
 	}
 
-	function getSelectionCharacterOffsetWithin(element: Node) {
+	function getSelectionCharacterOffsetWithin(element) {
 		let start = 0;
 		let end = 0;
 		const sel = window.getSelection();
@@ -250,11 +246,11 @@
 		return { start, end };
 	}
 
-	function splitSentences(text: string) {
+	function splitSentences(text) {
 		return text.split('\n');
 	}
 
-	function selectionOffsets(node: HTMLDivElement) {
+	function selectionOffsets(node) {
 		node.addEventListener('mouseup', () => {
 			// Delay the resetting of the selection offsets by 1 millisecond
 			setTimeout(() => {
@@ -264,22 +260,21 @@
 	}
 </script>
 
-
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="p-4" role="main">
 	{#if $documentStore}
 		<div class="text-md leading-loose list-none relative bg-surface-200 dark:bg-surface-800 pl-5 pr-5 pt-2 w-full">
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<div class="mt-3" use:selectionOffsets bind:this={boundDoc} on:mouseup={handleSelection}>
 				{#if $selectedChaptersStore && $selectedChaptersStore.length > 0}
 					<h1 class="h1 font-mono mb-2">
 						{$documentStore.title}
-					</h1>	
+					</h1>
 				{/if}
 				{#each $documentStore.chapterContents as chapter, index}
 					{#if $selectedChaptersStore.includes(index)}
 						<h2 class="h2 font-serif mb-2">{$documentStore.chapterTitles[index]}</h2>
 						{#each splitSentences(chapter) as line}
-							{line} <br>
+							{line}<br />
 						{/each}
 						<br>
 						<hr class="!border-t-8" />
